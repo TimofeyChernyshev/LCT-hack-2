@@ -1,0 +1,33 @@
+ARG GO_VERSION=1.26
+FROM golang:${GO_VERSION}-alpine AS build
+
+RUN apk add --no-cache git ca-certificates
+WORKDIR /src
+
+COPY go.mod go.sum ./
+RUN go mod download
+
+COPY pkg/ ./pkg/
+COPY internal/auth/ ./internal/auth/
+COPY cmd/auth/ ./cmd/auth/
+
+RUN CGO_ENABLED=0 GOOS=linux go build \
+      -trimpath -ldflags="-s -w" \
+      -o /out/service ./cmd/auth
+
+FROM alpine:3.20
+
+RUN apk add --no-cache ca-certificates tzdata wget \
+ && adduser -D -u 10001 -h /app app
+
+USER app
+WORKDIR /app
+COPY --from=build /out/service /app/service
+
+ENV HTTP_PORT=8080
+EXPOSE 8080
+
+HEALTHCHECK --interval=10s --timeout=3s --start-period=10s --retries=5 \
+  CMD wget -qO- "http://127.0.0.1:${HTTP_PORT}/healthz" || exit 1
+
+ENTRYPOINT ["/app/service"]
