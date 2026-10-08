@@ -1,0 +1,373 @@
+openapi: 3.1.0
+info: { title: FSP Platform — Candidate Service, version: 1.0.0 }
+servers: [{ url: http://localhost:8083 }]
+security: [{ bearerAuth: [] }]
+
+paths:
+  /healthz:
+    get:
+      security: []
+      operationId: healthz
+      responses:
+        "200": { description: OK }
+
+  /me/profile:
+    get:
+      operationId: getMyProfile
+      responses:
+        "200":
+          description: Профиль кандидата
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/CandidateProfile" }
+    patch:
+      operationId: updateMyProfile
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/UpdateProfileRequest" }
+      responses:
+        "200":
+          description: Обновлённый профиль
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/CandidateProfile" }
+
+  /me/contacts:
+    get:
+      operationId: getMyContacts
+      responses:
+        "200":
+          description: Контакты
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/CandidateContacts" }
+    put:
+      operationId: replaceMyContacts
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/CandidateContacts" }
+      responses:
+        "200":
+          description: Обновлено
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/CandidateContacts" }
+
+  /me/visibility:
+    get:
+      operationId: getMyVisibility
+      responses:
+        "200":
+          description: Настройки видимости
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Visibility" }
+    put:
+      operationId: updateMyVisibility
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/Visibility" }
+      responses:
+        "200": { description: Обновлено }
+
+  /me/resumes:
+    get:
+      operationId: listResumes
+      responses:
+        "200":
+          description: Резюме
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/Resume" }
+    post:
+      operationId: createResume
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/ResumeInput" }
+      responses:
+        "201":
+          description: Создано
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Resume" }
+
+  /me/resumes/upload:
+    post:
+      operationId: uploadResumePDF
+      description: Загрузка PDF с автораспознаванием
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file: { type: string, format: binary }
+              required: [file]
+      responses:
+        "201":
+          description: Резюме создано, поле parsed содержит извлечённые данные
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Resume" }
+
+  /me/experiences:
+    get:
+      operationId: listExperiences
+      responses:
+        "200":
+          description: Опыт работы
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/Experience" }
+    post:
+      operationId: addExperience
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/ExperienceInput" }
+      responses:
+        "201":
+          description: Добавлено
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Experience" }
+
+  /me/technologies:
+    put:
+      operationId: replaceTechnologies
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items: { $ref: "#/components/schemas/CandidateTechnology" }
+      responses:
+        "200": { description: Обновлено }
+
+  /me/category:
+    get:
+      operationId: getMyCategory
+      responses:
+        "200":
+          description: Текущая категория/грейд и история
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/CategoryState" }
+
+  /me/fsp:
+    get:
+      operationId: getMyFSP
+      responses:
+        "200":
+          description: Привязка к ФСП ID и достижения (может быть пустым)
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/FSPState" }
+    put:
+      operationId: linkFSP
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties: { fspMemberId: { type: string } }
+              required: [fspMemberId]
+      responses:
+        "200": { description: Привязано }
+
+  # работодательский доступ (использует internal-токен)
+  /candidates/{userId}:
+    get:
+      operationId: getCandidateForEmployer
+      description: Возвращает карточку без контактов. Контакты появятся только после accepted.
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema: { type: string, format: uuid }
+        - in: query
+          name: revealContacts
+          description: Показывать ли контакты (только при accepted-приглашении/отклике)
+          schema: { type: boolean, default: false }
+      responses:
+        "200":
+          description: Карточка кандидата
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/CandidateCard" }
+        "404": { description: Не найдено }
+
+components:
+  securitySchemes:
+    bearerAuth: { type: http, scheme: bearer, bearerFormat: JWT }
+
+  schemas:
+    CandidateProfile:
+      type: object
+      properties:
+        userId: { type: string, format: uuid }
+        firstName: { type: [string, "null"] }
+        lastName: { type: [string, "null"] }
+        headline: { type: [string, "null"] }
+        about: { type: [string, "null"] }
+        location: { type: [string, "null"] }
+        yearsExperience: { type: [number, "null"], format: float }
+        categoryId: { type: [string, "null"], format: uuid }
+        gradeId: { type: [string, "null"], format: uuid }
+        specializationId: { type: [string, "null"], format: uuid }
+        fspMemberId: { type: [string, "null"] }
+        updatedAt: { type: string, format: date-time }
+      required: [userId, updatedAt]
+
+    UpdateProfileRequest:
+      type: object
+      properties:
+        firstName: { type: string }
+        lastName: { type: string }
+        headline: { type: string }
+        about: { type: string }
+        location: { type: string }
+        yearsExperience: { type: number }
+
+    CandidateContacts:
+      type: object
+      properties:
+        email: { type: string, format: email }
+        phone: { type: [string, "null"] }
+        telegram: { type: [string, "null"] }
+        github: { type: [string, "null"] }
+        linkedin: { type: [string, "null"] }
+        website: { type: [string, "null"], format: uri }
+
+    Visibility:
+      type: object
+      properties:
+        contacts: { type: boolean }
+        fsp: { type: boolean }
+        experience: { type: boolean }
+        resume: { type: boolean }
+
+    Resume:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        title: { type: string }
+        source: { type: string, enum: [manual, pdf_upload, generated] }
+        isPrimary: { type: boolean }
+        parsed: { type: [object, "null"], additionalProperties: true }
+        createdAt: { type: string, format: date-time }
+
+    ResumeInput:
+      type: object
+      properties:
+        title: { type: string }
+        content: { type: string }
+        isPrimary: { type: boolean, default: false }
+      required: [title, content]
+
+    Experience:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        company: { type: string }
+        position: { type: string }
+        startedAt: { type: string, format: date }
+        endedAt: { type: [string, "null"], format: date }
+        description: { type: [string, "null"] }
+      required: [id, company, position, startedAt]
+
+    ExperienceInput:
+      type: object
+      properties:
+        company: { type: string }
+        position: { type: string }
+        startedAt: { type: string, format: date }
+        endedAt: { type: [string, "null"], format: date }
+        description: { type: string }
+      required: [company, position, startedAt]
+
+    CandidateTechnology:
+      type: object
+      properties:
+        technologyId: { type: string, format: uuid }
+        level: { type: integer, minimum: 1, maximum: 5 }
+      required: [technologyId]
+
+    CategoryState:
+      type: object
+      properties:
+        categoryId: { type: [string, "null"], format: uuid }
+        gradeId: { type: [string, "null"], format: uuid }
+        specializationId: { type: [string, "null"], format: uuid }
+        history:
+          type: array
+          items:
+            type: object
+            properties:
+              categoryId: { type: string, format: uuid }
+              gradeId: { type: string, format: uuid }
+              reason: { type: string, enum: [initial_test, retake, manual] }
+              effectiveFrom: { type: string, format: date-time }
+              effectiveTo: { type: [string, "null"], format: date-time }
+
+    FSPState:
+      type: object
+      properties:
+        fspMemberId: { type: [string, "null"] }
+        linkedAt: { type: [string, "null"], format: date-time }
+        achievements:
+          type: array
+          items: { $ref: "#/components/schemas/FSPAchievement" }
+
+    FSPAchievement:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        externalId: { type: [string, "null"] }
+        eventName: { type: string }
+        eventDate: { type: [string, "null"], format: date }
+        place: { type: [integer, "null"] }
+        category: { type: [string, "null"] }
+        score: { type: [number, "null"] }
+        weight: { type: integer }
+
+    CandidateCard:
+      type: object
+      properties:
+        userId: { type: string, format: uuid }
+        displayName: { type: string }
+        headline: { type: [string, "null"] }
+        categoryId: { type: string, format: uuid }
+        gradeId: { type: string, format: uuid }
+        specializationId: { type: string, format: uuid }
+        yearsExperience: { type: [number, "null"] }
+        technologies:
+          type: array
+          items: { $ref: "#/components/schemas/CandidateTechnology" }
+        fsp:
+          type: object
+          properties:
+            hasFSP: { type: boolean }
+            achievementsCount: { type: integer }
+            bestPlace: { type: [integer, "null"] }
+        contacts:
+          description: null, если контакты не раскрыты
+          oneOf:
+            - $ref: "#/components/schemas/CandidateContacts"
+            - type: "null"

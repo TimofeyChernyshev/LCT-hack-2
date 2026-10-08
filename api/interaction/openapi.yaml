@@ -1,0 +1,218 @@
+openapi: 3.1.0
+info: { title: FSP Platform — Interaction Service, version: 1.0.0 }
+servers: [{ url: http://localhost:8086 }]
+security: [{ bearerAuth: [] }]
+
+paths:
+  /healthz:
+    get: { security: [], operationId: healthz, responses: { "200": { description: OK } } }
+
+  # --- сторона работодателя ---
+  /me/invitations:
+    post:
+      summary: Отправить приглашение кандидату
+      operationId: createInvitation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/CreateInvitationRequest" }
+      responses:
+        "201":
+          description: Отправлено
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Invitation" }
+    get:
+      operationId: listMyInvitationsAsEmployer
+      responses:
+        "200":
+          description: Приглашения, отправленные компанией
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/Invitation" }
+
+  /me/invitations/{id}/withdraw:
+    post:
+      operationId: withdrawInvitation
+      parameters:
+        - { in: path, name: id, required: true, schema: { type: string, format: uuid } }
+      responses:
+        "200":
+          description: Отозвано
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Invitation" }
+
+  # --- сторона кандидата ---
+  /me/invitations/incoming:
+    get:
+      operationId: listIncomingInvitations
+      responses:
+        "200":
+          description: Входящие приглашения
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/Invitation" }
+
+  /me/invitations/{id}/accept:
+    post:
+      operationId: acceptInvitation
+      description: Принятие раскрывает контакты работодателю
+      parameters:
+        - { in: path, name: id, required: true, schema: { type: string, format: uuid } }
+      responses:
+        "200":
+          description: Принято
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Invitation" }
+
+  /me/invitations/{id}/reject:
+    post:
+      operationId: rejectInvitation
+      parameters:
+        - { in: path, name: id, required: true, schema: { type: string, format: uuid } }
+      responses:
+        "200":
+          description: Отклонено
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Invitation" }
+
+  # --- отклики (доп. сценарий) ---
+  /me/applications:
+    post:
+      summary: Отклик кандидата на вакансию
+      operationId: createApplication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/CreateApplicationRequest" }
+      responses:
+        "201":
+          description: Отправлено
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Application" }
+    get:
+      operationId: listMyApplicationsAsCandidate
+      responses:
+        "200":
+          description: Мои отклики
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/Application" }
+
+  /me/vacancies/{vacancyId}/applications:
+    get:
+      operationId: listApplicationsForVacancy
+      parameters:
+        - { in: path, name: vacancyId, required: true, schema: { type: string, format: uuid } }
+      responses:
+        "200":
+          description: Отклики на вакансию
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/Application" }
+
+  /me/applications/{id}/accept:
+    post:
+      operationId: acceptApplication
+      parameters:
+        - { in: path, name: id, required: true, schema: { type: string, format: uuid } }
+      responses:
+        "200": { description: Принято }
+  /me/applications/{id}/reject:
+    post:
+      operationId: rejectApplication
+      parameters:
+        - { in: path, name: id, required: true, schema: { type: string, format: uuid } }
+      responses:
+        "200": { description: Отклонено }
+
+  # аудит раскрытия контактов
+  /internal/reveals:
+    post:
+      operationId: internalRecordReveal
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/RevealRecordInput" }
+      responses:
+        "201": { description: Записано }
+
+components:
+  securitySchemes:
+    bearerAuth: { type: http, scheme: bearer, bearerFormat: JWT }
+  schemas:
+    CreateInvitationRequest:
+      type: object
+      properties:
+        candidateUserId: { type: string, format: uuid }
+        vacancyId: { type: [string, "null"], format: uuid }
+        needId: { type: [string, "null"], format: uuid }
+        message: { type: string }
+        salaryMin: { type: integer, minimum: 0 }
+        salaryMax: { type: integer, minimum: 0 }
+        currency: { type: string, default: RUB }
+        contactChannel: { type: string, enum: [email, telegram, phone, platform] }
+      required: [candidateUserId, message, salaryMin, salaryMax, contactChannel]
+
+    CreateApplicationRequest:
+      type: object
+      properties:
+        vacancyId: { type: string, format: uuid }
+        coverLetter: { type: string }
+      required: [vacancyId]
+
+    Invitation:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        employerUserId: { type: string, format: uuid }
+        companyId: { type: string, format: uuid }
+        candidateUserId: { type: string, format: uuid }
+        vacancyId: { type: [string, "null"], format: uuid }
+        needId: { type: [string, "null"], format: uuid }
+        message: { type: string }
+        salaryMin: { type: integer }
+        salaryMax: { type: integer }
+        currency: { type: string }
+        contactChannel: { type: string }
+        status: { type: string, enum: [sent, viewed, accepted, rejected, withdrawn, expired] }
+        createdAt: { type: string, format: date-time }
+        statusUpdatedAt: { type: string, format: date-time }
+      required: [id, employerUserId, companyId, candidateUserId, message, salaryMin, salaryMax, currency, contactChannel, status, createdAt]
+
+    Application:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        candidateUserId: { type: string, format: uuid }
+        vacancyId: { type: string, format: uuid }
+        companyId: { type: string, format: uuid }
+        coverLetter: { type: [string, "null"] }
+        status: { type: string, enum: [sent, viewed, accepted, rejected, withdrawn] }
+        createdAt: { type: string, format: date-time }
+        statusUpdatedAt: { type: string, format: date-time }
+
+    RevealRecordInput:
+      type: object
+      properties:
+        candidateUserId: { type: string, format: uuid }
+        employerUserId: { type: string, format: uuid }
+        entityType: { type: string, enum: [invitation, application] }
+        entityId: { type: string, format: uuid }
+        reason: { type: string, enum: [invitation_accepted, application_sent] }
+      required: [candidateUserId, employerUserId, entityType, entityId, reason]

@@ -1,0 +1,280 @@
+openapi: 3.1.0
+info: { title: FSP Platform — Employer Service, version: 1.0.0 }
+servers: [{ url: http://localhost:8084 }]
+security: [{ bearerAuth: [] }]
+
+paths:
+  /healthz:
+    get: { security: [], operationId: healthz, responses: { "200": { description: OK } } }
+
+  /me/company:
+    get:
+      operationId: getMyCompany
+      responses:
+        "200":
+          description: Компания
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Company" }
+    put:
+      operationId: upsertMyCompany
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/CompanyInput" }
+      responses:
+        "200":
+          description: Обновлено
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Company" }
+
+  /me/needs:
+    get:
+      operationId: listMyNeeds
+      responses:
+        "200":
+          description: Потребности компании
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/Need" }
+    post:
+      operationId: createNeed
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/NeedInput" }
+      responses:
+        "201":
+          description: Создано
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Need" }
+
+  /me/needs/{id}:
+    patch:
+      operationId: updateNeed
+      parameters:
+        - { in: path, name: id, required: true, schema: { type: string, format: uuid } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/NeedInput" }
+      responses:
+        "200":
+          description: Обновлено
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Need" }
+    delete:
+      operationId: deleteNeed
+      parameters:
+        - { in: path, name: id, required: true, schema: { type: string, format: uuid } }
+      responses:
+        "204": { description: Удалено }
+
+  /me/needs/{id}/matches:
+    get:
+      operationId: getNeedMatches
+      description: Подборка кандидатов под потребность, с объяснением
+      parameters:
+        - { in: path, name: id, required: true, schema: { type: string, format: uuid } }
+        - { in: query, name: limit, schema: { type: integer, minimum: 1, maximum: 100, default: 20 } }
+        - { in: query, name: offset, schema: { type: integer, minimum: 0, default: 0 } }
+      responses:
+        "200":
+          description: Подборка
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items: { $ref: "#/components/schemas/MatchCard" }
+                  total: { type: integer }
+                required: [items, total]
+
+  /me/vacancies:
+    get:
+      operationId: listMyVacancies
+      responses:
+        "200":
+          description: Вакансии
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/Vacancy" }
+    post:
+      operationId: createVacancy
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/VacancyInput" }
+      responses:
+        "201":
+          description: Создана
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Vacancy" }
+
+  /me/vacancies/{id}:
+    patch:
+      operationId: updateVacancy
+      parameters:
+        - { in: path, name: id, required: true, schema: { type: string, format: uuid } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/VacancyInput" }
+      responses:
+        "200":
+          description: Обновлено
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Vacancy" }
+    delete:
+      operationId: deleteVacancy
+      parameters:
+        - { in: path, name: id, required: true, schema: { type: string, format: uuid } }
+      responses:
+        "204": { description: Удалено }
+
+  /me/vacancies/{id}/publish:
+    post:
+      operationId: publishVacancy
+      parameters:
+        - { in: path, name: id, required: true, schema: { type: string, format: uuid } }
+      responses:
+        "200":
+          description: Опубликовано
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Vacancy" }
+
+  # публичный листинг (доступен кандидату)
+  /vacancies:
+    get:
+      security: []
+      operationId: listPublicVacancies
+      parameters:
+        - { in: query, name: categoryId, schema: { type: string, format: uuid } }
+        - { in: query, name: gradeId, schema: { type: string, format: uuid } }
+        - { in: query, name: limit, schema: { type: integer, default: 20, maximum: 100 } }
+        - { in: query, name: offset, schema: { type: integer, default: 0 } }
+      responses:
+        "200":
+          description: Публичные вакансии
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/Vacancy" }
+
+  /vacancies/{id}:
+    get:
+      security: []
+      operationId: getPublicVacancy
+      parameters:
+        - { in: path, name: id, required: true, schema: { type: string, format: uuid } }
+      responses:
+        "200":
+          description: Вакансия
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Vacancy" }
+
+components:
+  securitySchemes:
+    bearerAuth: { type: http, scheme: bearer, bearerFormat: JWT }
+  schemas:
+    Company:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        name: { type: string }
+        description: { type: [string, "null"] }
+        industry: { type: [string, "null"] }
+        website: { type: [string, "null"], format: uri }
+        size: { type: [string, "null"] }
+      required: [id, name]
+    CompanyInput:
+      type: object
+      properties:
+        name: { type: string }
+        description: { type: string }
+        industry: { type: string }
+        website: { type: string, format: uri }
+        size: { type: string }
+      required: [name]
+    Need:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        title: { type: string }
+        description: { type: string }
+        categoryId: { type: [string, "null"], format: uuid }
+        specializationId: { type: [string, "null"], format: uuid }
+        gradeId: { type: [string, "null"], format: uuid }
+        stack: { type: array, items: { type: string, format: uuid } }
+        salaryMin: { type: integer }
+        salaryMax: { type: integer }
+        currency: { type: string, default: RUB }
+        workFormat: { type: [string, "null"], enum: [remote, hybrid, office, null] }
+        status: { type: string, enum: [draft, active, closed] }
+      required: [id, title, description, salaryMin, salaryMax, currency, status]
+    NeedInput:
+      type: object
+      properties:
+        title: { type: string }
+        description: { type: string }
+        categoryId: { type: string, format: uuid }
+        specializationId: { type: string, format: uuid }
+        gradeId: { type: string, format: uuid }
+        stack: { type: array, items: { type: string, format: uuid } }
+        salaryMin: { type: integer, minimum: 0 }
+        salaryMax: { type: integer, minimum: 0 }
+        workFormat: { type: string, enum: [remote, hybrid, office] }
+        status: { type: string, enum: [draft, active, closed] }
+      required: [title, description, salaryMin, salaryMax]
+    VacancyInput:
+      type: object
+      properties:
+        title: { type: string }
+        description: { type: string }
+        categoryId: { type: string, format: uuid }
+        stack: { type: array, items: { type: string, format: uuid } }
+        salaryMin: { type: integer, minimum: 0 }
+        salaryMax: { type: integer, minimum: 0 }
+        workFormat: { type: string, enum: [remote, hybrid, office] }
+      required: [title, description, salaryMin, salaryMax]
+    Vacancy:
+      allOf:
+        - $ref: "#/components/schemas/VacancyInput"
+        - type: object
+          properties:
+            id: { type: string, format: uuid }
+            companyId: { type: string, format: uuid }
+            status: { type: string, enum: [draft, published, archived] }
+            publishedAt: { type: [string, "null"], format: date-time }
+            createdAt: { type: string, format: date-time }
+    MatchCard:
+      type: object
+      properties:
+        candidateUserId: { type: string, format: uuid }
+        displayName: { type: string }
+        categoryId: { type: string, format: uuid }
+        gradeId: { type: string, format: uuid }
+        score: { type: number, format: float }
+        reasons:
+          type: array
+          items: { type: string, example: "grade_match" }
+        hasFSP: { type: boolean }

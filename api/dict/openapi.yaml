@@ -1,0 +1,174 @@
+openapi: 3.1.0
+info: { title: FSP Platform — Dictionary Service, version: 1.0.0 }
+servers: [{ url: http://localhost:8082 }]
+
+paths:
+  /healthz:
+    get:
+      operationId: healthz
+      responses:
+        "200": { description: OK }
+
+  /industries:
+    get:
+      operationId: listIndustries
+      responses:
+        "200":
+          description: Список отраслей
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/Industry" }
+
+  /specializations:
+    get:
+      operationId: listSpecializations
+      parameters:
+        - in: query
+          name: industryId
+          schema: { type: string, format: uuid }
+        - in: query
+          name: activeOnly
+          schema: { type: boolean, default: true }
+      responses:
+        "200":
+          description: Список специализаций
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/Specialization" }
+
+  /grades:
+    get:
+      operationId: listGrades
+      responses:
+        "200":
+          description: Список грейдов
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/Grade" }
+
+  /categories:
+    get:
+      operationId: listCategories
+      parameters:
+        - in: query
+          name: specializationId
+          schema: { type: string, format: uuid }
+        - in: query
+          name: gradeId
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: Список категорий
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/Category" }
+
+  /categories/{id}:
+    get:
+      operationId: getCategory
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: Категория
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Category" }
+        "404": { description: Не найдено }
+
+  /technologies:
+    get:
+      operationId: listTechnologies
+      parameters:
+        - in: query
+          name: category
+          schema: { type: string, example: language }
+      responses:
+        "200":
+          description: Список технологий
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/Technology" }
+
+  /internal/dictionaries/snapshot:
+    get:
+      operationId: snapshot
+      description: Полный снимок справочников (для кеша других сервисов)
+      responses:
+        "200":
+          description: Снимок
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Snapshot" }
+
+components:
+  schemas:
+    Industry:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        code: { type: string }
+        name: { type: string }
+      required: [id, code, name]
+
+    Specialization:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        industryId: { type: string, format: uuid }
+        code: { type: string }
+        name: { type: string }
+        description: { type: [string, "null"] }
+        isActive: { type: boolean }
+      required: [id, industryId, code, name, isActive]
+
+    Grade:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        code: { type: string }
+        name: { type: string }
+        rank: { type: integer, minimum: 1 }
+      required: [id, code, name, rank]
+
+    Category:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        specializationId: { type: string, format: uuid }
+        gradeId: { type: string, format: uuid }
+        slug: { type: string, example: backend_middle }
+        isActive: { type: boolean }
+      required: [id, specializationId, gradeId, slug, isActive]
+
+    Technology:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        code: { type: string }
+        name: { type: string }
+        category: { type: [string, "null"] }
+      required: [id, code, name]
+
+    Snapshot:
+      type: object
+      properties:
+        industries:      { type: array, items: { $ref: "#/components/schemas/Industry" } }
+        specializations: { type: array, items: { $ref: "#/components/schemas/Specialization" } }
+        grades:          { type: array, items: { $ref: "#/components/schemas/Grade" } }
+        categories:      { type: array, items: { $ref: "#/components/schemas/Category" } }
+        technologies:    { type: array, items: { $ref: "#/components/schemas/Technology" } }
+        version:         { type: string, format: date-time }

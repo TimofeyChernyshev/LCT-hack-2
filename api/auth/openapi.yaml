@@ -1,0 +1,327 @@
+openapi: 3.1.0
+info:
+  title: FSP Platform — Auth Service
+  version: 1.0.0
+  description: Регистрация, подтверждение email, логин, refresh, сброс пароля, внешние identity.
+servers:
+  - url: http://localhost:8081
+    description: Local dev
+tags:
+  - name: auth
+  - name: health
+
+paths:
+  /healthz:
+    get:
+      tags: [health]
+      summary: Liveness probe
+      operationId: healthz
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string, example: ok }
+                required: [status]
+
+  /auth/register:
+    post:
+      tags: [auth]
+      summary: Регистрация пользователя
+      operationId: register
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/RegisterRequest" }
+      responses:
+        "201":
+          description: Пользователь создан, письмо с подтверждением отправлено
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/User" }
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "409": { $ref: "#/components/responses/Conflict" }
+
+  /auth/confirm-email:
+    post:
+      tags: [auth]
+      summary: Подтверждение email по токену из письма
+      operationId: confirmEmail
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/TokenRequest" }
+      responses:
+        "204": { description: Email подтверждён }
+        "400": { $ref: "#/components/responses/BadRequest" }
+
+  /auth/resend-confirmation:
+    post:
+      tags: [auth]
+      summary: Повторная отправка письма с подтверждением
+      operationId: resendConfirmation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties: { email: { type: string, format: email } }
+              required: [email]
+      responses:
+        "202": { description: Принято }
+        "404": { $ref: "#/components/responses/NotFound" }
+
+  /auth/login:
+    post:
+      tags: [auth]
+      summary: Логин по email/паролю
+      operationId: login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/LoginRequest" }
+      responses:
+        "200":
+          description: Успешный вход
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/TokenPair" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+
+  /auth/refresh:
+    post:
+      tags: [auth]
+      summary: Обновление access-токена
+      operationId: refresh
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/RefreshRequest" }
+      responses:
+        "200":
+          description: Новая пара токенов
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/TokenPair" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+
+  /auth/logout:
+    post:
+      tags: [auth]
+      summary: Отзыв refresh-токена
+      operationId: logout
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/RefreshRequest" }
+      responses:
+        "204": { description: Сессия завершена }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+
+  /auth/forgot-password:
+    post:
+      tags: [auth]
+      summary: Запрос на сброс пароля
+      operationId: forgotPassword
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties: { email: { type: string, format: email } }
+              required: [email]
+      responses:
+        "202": { description: Принято (email всегда возвращает 202 для защиты от enumeration) }
+
+  /auth/reset-password:
+    post:
+      tags: [auth]
+      summary: Установка нового пароля по токену
+      operationId: resetPassword
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/ResetPasswordRequest" }
+      responses:
+        "204": { description: Пароль обновлён }
+        "400": { $ref: "#/components/responses/BadRequest" }
+
+  /auth/me:
+    get:
+      tags: [auth]
+      summary: Текущий пользователь
+      operationId: me
+      security: [{ bearerAuth: [] }]
+      responses:
+        "200":
+          description: Профиль пользователя
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/User" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+
+  /auth/external/{provider}/callback:
+    post:
+      tags: [auth]
+      summary: Callback внешнего identity-провайдера (задел под Keycloak/OIDC)
+      operationId: externalCallback
+      parameters:
+        - in: path
+          name: provider
+          required: true
+          schema: { type: string, example: keycloak }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/ExternalCallbackRequest" }
+      responses:
+        "200":
+          description: Успешный вход
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/TokenPair" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+
+  /internal/users/{userId}:
+    get:
+      tags: [auth]
+      summary: Внутренний эндпоинт — получить пользователя по ID (для других сервисов)
+      operationId: internalGetUser
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: Пользователь
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/User" }
+        "404": { $ref: "#/components/responses/NotFound" }
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  responses:
+    BadRequest:
+      description: Неверный запрос
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+    Unauthorized:
+      description: Не авторизован
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+    Forbidden:
+      description: Доступ запрещён
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+    NotFound:
+      description: Не найдено
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+    Conflict:
+      description: Конфликт (например, email уже занят)
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+
+  schemas:
+    Error:
+      type: object
+      properties:
+        code: { type: string, example: EMAIL_TAKEN }
+        message: { type: string, example: "email already registered" }
+      required: [code, message]
+
+    UserRole:
+      type: string
+      enum: [candidate, employer, admin]
+
+    UserStatus:
+      type: string
+      enum: [active, blocked, deleted]
+
+    User:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        email: { type: string, format: email }
+        role: { $ref: "#/components/schemas/UserRole" }
+        status: { $ref: "#/components/schemas/UserStatus" }
+        emailVerifiedAt: { type: [string, "null"], format: date-time }
+        createdAt: { type: string, format: date-time }
+      required: [id, email, role, status, createdAt]
+
+    RegisterRequest:
+      type: object
+      properties:
+        email: { type: string, format: email }
+        password: { type: string, minLength: 8, maxLength: 128 }
+        role: { $ref: "#/components/schemas/UserRole" }
+      required: [email, password, role]
+
+    LoginRequest:
+      type: object
+      properties:
+        email: { type: string, format: email }
+        password: { type: string }
+      required: [email, password]
+
+    TokenRequest:
+      type: object
+      properties:
+        token: { type: string }
+      required: [token]
+
+    RefreshRequest:
+      type: object
+      properties:
+        refreshToken: { type: string }
+      required: [refreshToken]
+
+    ResetPasswordRequest:
+      type: object
+      properties:
+        token: { type: string }
+        newPassword: { type: string, minLength: 8, maxLength: 128 }
+      required: [token, newPassword]
+
+    ExternalCallbackRequest:
+      type: object
+      properties:
+        code: { type: string }
+        redirectUri: { type: string, format: uri }
+      required: [code]
+
+    TokenPair:
+      type: object
+      properties:
+        accessToken: { type: string }
+        refreshToken: { type: string }
+        accessExpiresAt: { type: string, format: date-time }
+        refreshExpiresAt: { type: string, format: date-time }
+        user: { $ref: "#/components/schemas/User" }
+      required: [accessToken, refreshToken, accessExpiresAt, refreshExpiresAt, user]

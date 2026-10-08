@@ -1,0 +1,228 @@
+openapi: 3.1.0
+info: { title: FSP Platform — Testing Service, version: 1.0.0 }
+servers: [{ url: http://localhost:8085 }]
+security: [{ bearerAuth: [] }]
+
+paths:
+  /healthz:
+    get: { security: [], operationId: healthz, responses: { "200": { description: OK } } }
+
+  /me/sessions:
+    post:
+      summary: Старт тест-сессии на выбранную категорию
+      operationId: startSession
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/StartSessionRequest" }
+      responses:
+        "201":
+          description: Сессия создана
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Session" }
+    get:
+      operationId: listMySessions
+      responses:
+        "200":
+          description: Сессии
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/Session" }
+
+  /me/sessions/{id}:
+    get:
+      operationId: getSession
+      parameters:
+        - { in: path, name: id, required: true, schema: { type: string, format: uuid } }
+      responses:
+        "200":
+          description: Сессия с заданиями (без решений)
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/SessionWithItems" }
+
+  /me/sessions/{id}/answers:
+    post:
+      operationId: answerItem
+      parameters:
+        - { in: path, name: id, required: true, schema: { type: string, format: uuid } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/AnswerInput" }
+      responses:
+        "200":
+          description: Ответ принят
+        "409":
+          description: Задание уже отвечено или сессия закрыта
+
+  /me/sessions/{id}/submit:
+    post:
+      operationId: submitSession
+      parameters:
+        - { in: path, name: id, required: true, schema: { type: string, format: uuid } }
+      responses:
+        "200":
+          description: Результат и итоговая категория
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/SessionResult" }
+
+  /me/category-changes:
+    get:
+      summary: История смены грейда и остаток кулдауна
+      operationId: listGradeChanges
+      responses:
+        "200":
+          description: Список
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  canChangeAt: { type: [string, "null"], format: date-time }
+                  changes:
+                    type: array
+                    items: { $ref: "#/components/schemas/GradeChange" }
+
+  /me/periodic-tasks:
+    get:
+      operationId: listPeriodicTasks
+      responses:
+        "200":
+          description: Регулярные задачи для кандидата
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/PeriodicTask" }
+
+  /me/periodic-tasks/{id}/submit:
+    post:
+      operationId: submitPeriodicTask
+      parameters:
+        - { in: path, name: id, required: true, schema: { type: string, format: uuid } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties: { answer: { type: string } }
+              required: [answer]
+      responses:
+        "200": { description: Принято }
+
+  # админ/работодательское
+  /periodic-tasks:
+    post:
+      operationId: createPeriodicTask
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/PeriodicTaskInput" }
+      responses:
+        "201":
+          description: Создано
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PeriodicTask" }
+
+  /internal/users/{userId}/category:
+    get:
+      summary: Внутренний эндпоинт — текущая категория кандидата
+      operationId: internalGetCategory
+      parameters:
+        - { in: path, name: userId, required: true, schema: { type: string, format: uuid } }
+      responses:
+        "200":
+          description: Категория
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  categoryId: { type: string, format: uuid }
+                  gradeId: { type: string, format: uuid }
+                  testScore: { type: number }
+
+components:
+  securitySchemes:
+    bearerAuth: { type: http, scheme: bearer, bearerFormat: JWT }
+  schemas:
+    StartSessionRequest:
+      type: object
+      properties:
+        targetCategoryId: { type: string, format: uuid }
+      required: [targetCategoryId]
+    Session:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        targetCategoryId: { type: string, format: uuid }
+        status: { type: string, enum: [in_progress, submitted, evaluated, expired, cancelled] }
+        startedAt: { type: string, format: date-time }
+        finishedAt: { type: [string, "null"], format: date-time }
+      required: [id, targetCategoryId, status, startedAt]
+    SessionWithItems:
+      allOf:
+        - $ref: "#/components/schemas/Session"
+        - type: object
+          properties:
+            items:
+              type: array
+              items: { $ref: "#/components/schemas/SessionItem" }
+    SessionItem:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        position: { type: integer }
+        type: { type: string, enum: [single_choice, multi_choice, code, text, sql, regex] }
+        topic: { type: string }
+        body: { type: string }
+        status: { type: string, enum: [pending, answered, skipped] }
+      required: [id, position, type, topic, body, status]
+    AnswerInput:
+      type: object
+      properties:
+        itemId: { type: string, format: uuid }
+        answer: { description: Произвольный JSON-ответ }
+        skipped: { type: boolean, default: false }
+      required: [itemId]
+    SessionResult:
+      type: object
+      properties:
+        sessionId: { type: string, format: uuid }
+        score: { type: number }
+        abilityEstimate: { type: number }
+        resultingGradeId: { type: string, format: uuid }
+        resultingCategoryId: { type: string, format: uuid }
+        decision: { type: string, enum: [confirmed, downgrade_offered, upgrade_offered] }
+      required: [sessionId, score, resultingGradeId, resultingCategoryId, decision]
+    GradeChange:
+      type: object
+      properties:
+        fromGradeId: { type: [string, "null"], format: uuid }
+        toGradeId: { type: string, format: uuid }
+        reason: { type: string }
+        changedAt: { type: string, format: date-time }
+    PeriodicTaskInput:
+      type: object
+      properties:
+        categoryId: { type: string, format: uuid }
+        title: { type: string }
+        body: { type: string }
+      required: [categoryId, title, body]
+    PeriodicTask:
+      allOf:
+        - $ref: "#/components/schemas/PeriodicTaskInput"
+        - type: object
+          properties:
+            id: { type: string, format: uuid }
+            createdAt: { type: string, format: date-time }

@@ -1,0 +1,106 @@
+openapi: 3.1.0
+info: { title: FSP Platform — Search Service, version: 1.0.0 }
+servers: [{ url: http://localhost:8087 }]
+security: [{ bearerAuth: [] }]
+
+paths:
+  /healthz:
+    get: { security: [], operationId: healthz, responses: { "200": { description: OK } } }
+
+  /candidates:
+    get:
+      summary: Поиск по банку кандидатов
+      operationId: searchCandidates
+      parameters:
+        - { in: query, name: categoryId, schema: { type: string, format: uuid } }
+        - { in: query, name: specializationId, schema: { type: string, format: uuid } }
+        - { in: query, name: gradeId, schema: { type: string, format: uuid } }
+        - { in: query, name: stack, description: "Повторяющийся параметр — ID технологий", schema: { type: array, items: { type: string, format: uuid } }, style: form, explode: true }
+        - { in: query, name: hasFsp, schema: { type: boolean } }
+        - { in: query, name: minYearsExperience, schema: { type: number } }
+        - { in: query, name: location, schema: { type: string } }
+        - { in: query, name: limit, schema: { type: integer, default: 20, maximum: 100 } }
+        - { in: query, name: offset, schema: { type: integer, default: 0 } }
+        - { in: query, name: sort, schema: { type: string, enum: [relevance, testScore, fspWeight], default: relevance } }
+      responses:
+        "200":
+          description: Страница результатов с объяснением
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/SearchPage" }
+
+  /candidates/{userId}/explain:
+    get:
+      summary: Объяснение попадания кандидата в выдачу
+      operationId: explainCandidate
+      parameters:
+        - { in: path, name: userId, required: true, schema: { type: string, format: uuid } }
+      responses:
+        "200":
+          description: Причины и вклады
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ExplainResponse" }
+
+  /categories/{categoryId}/ranking:
+    get:
+      summary: Рейтинг внутри категории (для отладки и питча)
+      operationId: categoryRanking
+      parameters:
+        - { in: path, name: categoryId, required: true, schema: { type: string, format: uuid } }
+        - { in: query, name: limit, schema: { type: integer, default: 50, maximum: 200 } }
+      responses:
+        "200":
+          description: Список кандидатов, упорядоченный по силе профиля
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/SearchHit" }
+
+components:
+  securitySchemes:
+    bearerAuth: { type: http, scheme: bearer, bearerFormat: JWT }
+  schemas:
+    SearchHit:
+      type: object
+      properties:
+        userId: { type: string, format: uuid }
+        displayName: { type: string }
+        categoryId: { type: string, format: uuid }
+        gradeId: { type: string, format: uuid }
+        specializationId: { type: string, format: uuid }
+        testScore: { type: number }
+        fspAchievementsCount: { type: integer }
+        fspBestPlace: { type: [integer, "null"] }
+        fspWeightSum: { type: integer }
+        yearsExperience: { type: [number, "null"] }
+        score: { type: number }
+        reasons:
+          type: array
+          items: { type: string, example: stack_match }
+      required: [userId, categoryId, gradeId, specializationId, score, reasons]
+
+    SearchPage:
+      type: object
+      properties:
+        items: { type: array, items: { $ref: "#/components/schemas/SearchHit" } }
+        total: { type: integer }
+        limit: { type: integer }
+        offset: { type: integer }
+      required: [items, total, limit, offset]
+
+    ExplainResponse:
+      type: object
+      properties:
+        userId: { type: string, format: uuid }
+        finalScore: { type: number }
+        factors:
+          type: array
+          items:
+            type: object
+            properties:
+              name: { type: string, example: stack_match }
+              weight: { type: number }
+              contribution: { type: number }
+              detail: { type: string }
