@@ -1,5 +1,5 @@
-package: apiemployee
-output: internal/employee/infrastructure/http/api.gen.go
+package: apiemployer
+output: internal/employer/infrastructure/http/api.gen.go
 generate:
   models: true
   gin-server: true
