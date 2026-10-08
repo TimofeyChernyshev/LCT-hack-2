@@ -1,0 +1,8 @@
+package: apiinteraction
+output: internal/interaction/infrastructure/http/api.gen.go
+generate:
+  models: true
+  gin-server: true
+  embedded-spec: true
+output-options:
+  skip-prune: true
