@@ -238,6 +238,44 @@ paths:
             application/json:
               schema: { $ref: "#/components/schemas/User" }
         "404": { $ref: "#/components/responses/NotFound" }
+  /auth/consents:
+    get:
+      operationId: listConsents
+      security: [{ bearerAuth: [] }]
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/Consent" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+
+  /auth/consents/{type}/grant:
+    post:
+      operationId: grantConsent
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - in: path
+          name: type
+          required: true
+          schema: { type: string, enum: [pdn_processing, profile_publication] }
+      responses:
+        "204": { description: OK }
+        "400": { $ref: "#/components/responses/BadRequest" }
+
+  /auth/consents/{type}/revoke:
+    post:
+      operationId: revokeConsent
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - in: path
+          name: type
+          required: true
+          schema: { type: string, enum: [pdn_processing, profile_publication] }
+      responses:
+        "204": { description: OK }
 
 components:
   securitySchemes:
@@ -304,9 +342,21 @@ components:
       type: object
       properties:
         email: { type: string, format: email }
-        password: { type: string, minLength: 8, maxLength: 128 }
+        password: { type: string }
         role: { $ref: "#/components/schemas/UserRole" }
-      required: [email, password, role]
+        consentPdn: { type: boolean }
+        consentProfilePublication: { type: boolean }
+      required: [email, password, role, consentPdn, consentProfilePublication]
+
+    Consent:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        type: { type: string, enum: [pdn_processing, profile_publication] }
+        version: { type: string }
+        grantedAt: { type: string, format: date-time }
+        revokedAt: { type: [string, "null"], format: date-time }
+      required: [id, type, version, grantedAt]
 
     LoginRequest:
       type: object
