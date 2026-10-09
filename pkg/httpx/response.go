@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"log/slog"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
 type ErrorBody struct {
@@ -11,6 +13,7 @@ type ErrorBody struct {
 	Message string `json:"message"`
 }
 
+// WriteJSON — для net/http.
 func WriteJSON(w http.ResponseWriter, status int, v any) {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.WriteHeader(status)
@@ -22,6 +25,12 @@ func WriteJSON(w http.ResponseWriter, status int, v any) {
 	}
 }
 
+// WriteError — для net/http.
 func WriteError(w http.ResponseWriter, status int, code, msg string) {
 	WriteJSON(w, status, ErrorBody{Code: code, Message: msg})
+}
+
+// GinError — для gin.
+func GinError(c *gin.Context, status int, code, msg string) {
+	c.AbortWithStatusJSON(status, ErrorBody{Code: code, Message: msg})
 }

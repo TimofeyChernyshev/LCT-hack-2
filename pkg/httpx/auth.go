@@ -1,55 +1,37 @@
 package httpx
 
 import (
-	"context"
+	"errors"
 	"net/http"
 	"strings"
+
+	"github.com/gin-gonic/gin"
 
 	"github.com/TimofeyChernyshev/LCT-hack-2/pkg/jwtx"
 )
 
-type ctxUserKey struct{}
+var (
+	errMissingToken = errors.New("missing bearer token")
+	errInvalidToken = errors.New("invalid token")
+)
 
-type UserInfo struct {
-	ID            string
-	Role          string
-	Email         string
-	EmailVerified bool
-}
+// net/http
 
-// JWTAuth — валидация access-токена. Кладёт UserInfo в контекст.
 func JWTAuth(signer jwtx.Signer) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			auth := r.Header.Get("Authorization")
-			if !strings.HasPrefix(auth, "Bearer ") {
-				WriteError(w, http.StatusUnauthorized, "unauthorized", "missing bearer token")
-				return
-			}
-			tok := strings.TrimPrefix(auth, "Bearer ")
-			claims, err := signer.Parse(tok)
+			u, err := parseUser(signer, r.Header.Get("Authorization"))
 			if err != nil {
-				WriteError(w, http.StatusUnauthorized, "unauthorized", "invalid token")
+				WriteError(w, http.StatusUnauthorized, "unauthorized", err.Error())
 				return
 			}
-			u := UserInfo{
-				ID:            claims.Subject,
-				Role:          claims.Role,
-				Email:         claims.Email,
-				EmailVerified: claims.EmailVerified,
-			}
-			ctx := context.WithValue(r.Context(), ctxUserKey{}, u)
-			next.ServeHTTP(w, r.WithContext(ctx))
+			next.ServeHTTP(w, r.WithContext(WithUser(r.Context(), u)))
 		})
 	}
 }
 
-// RequireRole — RBAC. Пропускает только указанные роли.
 func RequireRole(roles ...string) func(http.Handler) http.Handler {
-	allowed := make(map[string]struct{}, len(roles))
-	for _, r := range roles {
-		allowed[r] = struct{}{}
-	}
+	allowed := roleSet(roles)
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			u, ok := UserFromContext(r.Context())
@@ -66,7 +48,6 @@ func RequireRole(roles ...string) func(http.Handler) http.Handler {
 	}
 }
 
-// RequireVerifiedEmail — блокирует действия до подтверждения email.
 func RequireVerifiedEmail(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		u, ok := UserFromContext(r.Context())
@@ -78,7 +59,70 @@ func RequireVerifiedEmail(next http.Handler) http.Handler {
 	})
 }
 
-func UserFromContext(ctx context.Context) (UserInfo, bool) {
-	u, ok := ctx.Value(ctxUserKey{}).(UserInfo)
-	return u, ok
+// gin
+
+func GinJWTAuth(signer jwtx.Signer) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		u, err := parseUser(signer, c.GetHeader("Authorization"))
+		if err != nil {
+			GinError(c, http.StatusUnauthorized, "unauthorized", err.Error())
+			return
+		}
+		ctx := WithUser(c.Request.Context(), u)
+		c.Request = c.Request.WithContext(ctx)
+		c.Next()
+	}
+}
+
+func GinRequireRole(roles ...string) gin.HandlerFunc {
+	allowed := roleSet(roles)
+	return func(c *gin.Context) {
+		u, ok := UserFromGin(c)
+		if !ok {
+			GinError(c, http.StatusUnauthorized, "unauthorized", "no user")
+			return
+		}
+		if _, ok := allowed[u.Role]; !ok {
+			GinError(c, http.StatusForbidden, "forbidden", "insufficient role")
+			return
+		}
+		c.Next()
+	}
+}
+
+func GinRequireVerifiedEmail() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		u, ok := UserFromGin(c)
+		if !ok || !u.EmailVerified {
+			GinError(c, http.StatusForbidden, "email_not_verified", "email not verified")
+			return
+		}
+		c.Next()
+	}
+}
+
+// shared
+
+func parseUser(signer jwtx.Signer, authHeader string) (UserInfo, error) {
+	if !strings.HasPrefix(authHeader, "Bearer ") {
+		return UserInfo{}, errMissingToken
+	}
+	claims, err := signer.Parse(strings.TrimPrefix(authHeader, "Bearer "))
+	if err != nil {
+		return UserInfo{}, errInvalidToken
+	}
+	return UserInfo{
+		ID:            claims.Subject,
+		Role:          claims.Role,
+		Email:         claims.Email,
+		EmailVerified: claims.EmailVerified,
+	}, nil
+}
+
+func roleSet(roles []string) map[string]struct{} {
+	m := make(map[string]struct{}, len(roles))
+	for _, r := range roles {
+		m[r] = struct{}{}
+	}
+	return m
 }

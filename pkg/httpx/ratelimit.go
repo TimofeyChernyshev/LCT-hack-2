@@ -5,9 +5,10 @@ import (
 	"net/http"
 	"sync"
 	"time"
+
+	"github.com/gin-gonic/gin"
 )
 
-// SimpleRateLimiter — token bucket per IP. Для MVP достаточно.
 type SimpleRateLimiter struct {
 	mu      sync.Mutex
 	rps     float64
@@ -21,17 +22,35 @@ type bucket struct {
 }
 
 func NewSimpleRateLimiter(rps float64, burst int) *SimpleRateLimiter {
+	if rps <= 0 {
+		rps = 20
+	}
+	if burst <= 0 {
+		burst = 40
+	}
 	return &SimpleRateLimiter{rps: rps, burst: burst, buckets: make(map[string]*bucket)}
 }
 
+// Middleware — для net/http.
 func (l *SimpleRateLimiter) Middleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if !l.allow(clientIP(r)) {
+		if !l.allow(clientIPNetHTTP(r)) {
 			WriteError(w, http.StatusTooManyRequests, "rate_limited", "too many requests")
 			return
 		}
 		next.ServeHTTP(w, r)
 	})
+}
+
+// GinMiddleware — для gin.
+func (l *SimpleRateLimiter) GinMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		if !l.allow(c.ClientIP()) {
+			GinError(c, http.StatusTooManyRequests, "rate_limited", "too many requests")
+			return
+		}
+		c.Next()
+	}
 }
 
 func (l *SimpleRateLimiter) allow(key string) bool {
@@ -44,7 +63,7 @@ func (l *SimpleRateLimiter) allow(key string) bool {
 		return true
 	}
 	elapsed := now.Sub(b.last).Seconds()
-	b.tokens = min(float64(l.burst), b.tokens+elapsed*l.rps)
+	b.tokens = minf(float64(l.burst), b.tokens+elapsed*l.rps)
 	b.last = now
 	if b.tokens < 1 {
 		return false
@@ -53,7 +72,7 @@ func (l *SimpleRateLimiter) allow(key string) bool {
 	return true
 }
 
-func clientIP(r *http.Request) string {
+func clientIPNetHTTP(r *http.Request) string {
 	if h := r.Header.Get("X-Forwarded-For"); h != "" {
 		return h
 	}
@@ -64,7 +83,7 @@ func clientIP(r *http.Request) string {
 	return ip
 }
 
-func min(a, b float64) float64 {
+func minf(a, b float64) float64 {
 	if a < b {
 		return a
 	}

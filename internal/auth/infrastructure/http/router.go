@@ -5,6 +5,7 @@ import (
 	"time"
 
 	apiauth "github.com/TimofeyChernyshev/LCT-hack-2/internal/auth/infrastructure/http/api"
+	"github.com/TimofeyChernyshev/LCT-hack-2/pkg/httpx"
 	"github.com/TimofeyChernyshev/LCT-hack-2/pkg/jwtx"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -28,9 +29,9 @@ func NewRouter(
 	}
 
 	r := gin.New()
-	r.Use(gin.Recovery())
-	r.Use(RequestID())
-	r.Use(Logger(logger))
+	r.Use(httpx.GinRecoverer())
+	r.Use(httpx.GinRequestID())
+	r.Use(httpx.GinLogger(logger))
 	r.Use(cors.New(cors.Config{
 		AllowOrigins:     cfg.CORSAllowedOrigins,
 		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
@@ -52,7 +53,7 @@ func NewRouter(
 
 	// Публичные маршруты + rate limiter.
 	public := r.Group("")
-	public.Use(RateLimiter(cfg.RateLimiterRPS, cfg.RateLimiterBurst))
+	public.Use(httpx.NewSimpleRateLimiter(cfg.RateLimiterRPS, cfg.RateLimiterBurst).GinMiddleware())
 	{
 		public.POST("/auth/register", wrapper.Register)
 		public.POST("/auth/confirm-email", wrapper.ConfirmEmail)
@@ -66,7 +67,7 @@ func NewRouter(
 
 	// Требуется аутентификация.
 	protected := r.Group("")
-	protected.Use(JWTAuth(signer))
+	protected.Use(httpx.GinJWTAuth(signer))
 	{
 		protected.POST("/auth/logout", wrapper.Logout)
 		protected.GET("/auth/me", wrapper.Me)
@@ -75,8 +76,8 @@ func NewRouter(
 
 	// Требуется подтверждённый email (на будущее — когда вернём consents).
 	verified := r.Group("")
-	verified.Use(JWTAuth(signer))
-	verified.Use(RequireVerifiedEmail())
+	verified.Use(httpx.GinJWTAuth(signer))
+	verified.Use(httpx.GinRequireVerifiedEmail())
 	{
 		verified.GET("/auth/consents", wrapper.ListConsents)
 		verified.POST("/auth/consents/:type/grant", wrapper.GrantConsent)
