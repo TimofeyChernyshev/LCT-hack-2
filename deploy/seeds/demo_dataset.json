@@ -1,0 +1,4509 @@
+{
+  "candidates": [
+    {
+      "id": "22222222-2222-2222-2222-000000001000",
+      "full_name": "Иванова Алиса",
+      "city": "г. Москва",
+      "specialization": "backend",
+      "specialization_id": "00000000-0000-0000-0000-000000000201",
+      "specialization_name": "Backend Go",
+      "grade": "junior",
+      "grade_id": "00000000-0000-0000-0000-000000000301",
+      "grade_name": "Junior",
+      "grade_rank": 2,
+      "category_id": "00000000-0000-0000-0000-000000000501",
+      "stack": [
+        "Go",
+        "PostgreSQL",
+        "Redis",
+        "Docker"
+      ],
+      "stack_ids": [
+        "00000000-0000-0000-0000-000000000401",
+        "00000000-0000-0000-0000-000000000402",
+        "00000000-0000-0000-0000-000000000403",
+        "00000000-0000-0000-0000-000000000407"
+      ],
+      "years_experience": 1.8,
+      "salary_expectation": 96000,
+      "theta": -0.5929627577665705,
+      "test_score": 45.0,
+      "has_fsp": true,
+      "fsp_member_id": "FSP-RU-77-10000",
+      "sports_rank": "Без разряда",
+      "fsp_rating": 1644,
+      "fsp_score": 40.7,
+      "fsp_achievements_count": 1,
+      "fsp_best_place": 12,
+      "fsp_weight_sum": 12,
+      "fsp_highlights": [
+        "участник студенческой лиги ФСП"
+      ],
+      "periodic_tasks": 1,
+      "last_active": "2026-09-24T17:50:40.971224",
+      "calculated_score": 53.7,
+      "reasons": [
+        "fsp_verified"
+      ],
+      "explanation": "Подтвержденный балл тестирования 45.0%, участник студенческой лиги ФСП, Без разряда."
+    },
+    {
+      "id": "22222222-2222-2222-2222-000000001001",
+      "full_name": "Виноградов Александр",
+      "city": "г. Екатеринбург",
+      "specialization": "backend",
+      "specialization_id": "00000000-0000-0000-0000-000000000201",
+      "specialization_name": "Backend Python",
+      "grade": "junior_plus",
+      "grade_id": "00000000-0000-0000-0000-000000000302",
+      "grade_name": "Junior+",
+      "grade_rank": 3,
+      "category_id": "00000000-0000-0000-0000-000000000502",
+      "stack": [
+        "Python",
+        "PostgreSQL",
+        "Redis",
+        "Docker"
+      ],
+      "stack_ids": [
+        "00000000-0000-0000-0000-000000000404",
+        "00000000-0000-0000-0000-000000000402",
+        "00000000-0000-0000-0000-000000000403",
+        "00000000-0000-0000-0000-000000000407"
+      ],
+      "years_experience": 1.8,
+      "salary_expectation": 134000,
+      "theta": -0.38081534146400875,
+      "test_score": 45.0,
+      "has_fsp": false,
+      "fsp_member_id": null,
+      "sports_rank": null,
+      "fsp_rating": 0,
+      "fsp_score": 0.0,
+      "fsp_achievements_count": 0,
+      "fsp_best_place": null,
+      "fsp_weight_sum": 0,
+      "fsp_highlights": [],
+      "periodic_tasks": 1,
+      "last_active": "2026-09-10T17:50:40.971266",
+      "calculated_score": 59.0,
+      "reasons": [
+        "no_fsp_candidate"
+      ],
+      "explanation": "Подтвержденный балл тестирования 45.0%, без истории соревнований ФСП (оценка по тестам и стеку)."
+    },
+    {
+      "id": "22222222-2222-2222-2222-000000001002",
+      "full_name": "Смирнов Кирилл",
+      "city": "г. Новосибирск",
+      "specialization": "frontend",
+      "specialization_id": "00000000-0000-0000-0000-000000000202",
+      "specialization_name": "Frontend React",
+      "grade": "junior",
+      "grade_id": "00000000-0000-0000-0000-000000000301",
+      "grade_name": "Junior",
+      "grade_rank": 2,
+      "category_id": "00000000-0000-0000-0000-000000000505",
+      "stack": [
+        "React",
+        "TypeScript",
+        "Docker"
+      ],
+      "stack_ids": [
+        "00000000-0000-0000-0000-000000000405",
+        "00000000-0000-0000-0000-000000000406",
+        "00000000-0000-0000-0000-000000000407"
+      ],
+      "years_experience": 1.8,
+      "salary_expectation": 138000,
+      "theta": -0.7249109268578239,
+      "test_score": 45.0,
+      "has_fsp": true,
+      "fsp_member_id": "FSP-RU-77-10002",
+      "sports_rank": "2-й спортивный разряд",
+      "fsp_rating": 1794,
+      "fsp_score": 55.1,
+      "fsp_achievements_count": 2,
+      "fsp_best_place": 5,
+      "fsp_weight_sum": 11,
+      "fsp_highlights": [
+        "участник студенческой лиги ФСП"
+      ],
+      "periodic_tasks": 0,
+      "last_active": "2026-08-23T17:50:40.971287",
+      "calculated_score": 56.8,
+      "reasons": [
+        "fsp_verified"
+      ],
+      "explanation": "Подтвержденный балл тестирования 45.0%, участник студенческой лиги ФСП, 2-й спортивный разряд."
+    },
+    {
+      "id": "22222222-2222-2222-2222-000000001003",
+      "full_name": "Виноградов Егор",
+      "city": "г. Санкт-Петербург",
+      "specialization": "mobile",
+      "specialization_id": "00000000-0000-0000-0000-000000000203",
+      "specialization_name": "Mobile Developer",
+      "grade": "junior_plus",
+      "grade_id": "00000000-0000-0000-0000-000000000302",
+      "grade_name": "Junior+",
+      "grade_rank": 3,
+      "category_id": "00000000-0000-0000-0000-000000000502",
+      "stack": [
+        "Kotlin"
+      ],
+      "stack_ids": [
+        "00000000-0000-0000-0000-000000000411"
+      ],
+      "years_experience": 2.2,
+      "salary_expectation": 114000,
+      "theta": -0.40385498696259003,
+      "test_score": 45.0,
+      "has_fsp": false,
+      "fsp_member_id": null,
+      "sports_rank": null,
+      "fsp_rating": 0,
+      "fsp_score": 0.0,
+      "fsp_achievements_count": 0,
+      "fsp_best_place": null,
+      "fsp_weight_sum": 0,
+      "fsp_highlights": [],
+      "periodic_tasks": 2,
+      "last_active": "2026-08-16T17:50:40.971299",
+      "calculated_score": 60.9,
+      "reasons": [
+        "no_fsp_candidate"
+      ],
+      "explanation": "Подтвержденный балл тестирования 45.0%, без истории соревнований ФСП (оценка по тестам и стеку)."
+    },
+    {
+      "id": "22222222-2222-2222-2222-000000001004",
+      "full_name": "Петрова Алиса",
+      "city": "г. Нижний Новгород",
+      "specialization": "data",
+      "specialization_id": "00000000-0000-0000-0000-000000000205",
+      "specialization_name": "Data / AI Developer",
+      "grade": "junior",
+      "grade_id": "00000000-0000-0000-0000-000000000301",
+      "grade_name": "Junior",
+      "grade_rank": 2,
+      "category_id": "00000000-0000-0000-0000-000000000502",
+      "stack": [
+        "Python",
+        "PostgreSQL",
+        "Redis"
+      ],
+      "stack_ids": [
+        "00000000-0000-0000-0000-000000000404",
+        "00000000-0000-0000-0000-000000000402",
+        "00000000-0000-0000-0000-000000000403"
+      ],
+      "years_experience": 1.6,
+      "salary_expectation": 104000,
+      "theta": -0.6344975385345136,
+      "test_score": 45.0,
+      "has_fsp": true,
+      "fsp_member_id": "FSP-RU-77-10004",
+      "sports_rank": "2-й спортивный разряд",
+      "fsp_rating": 1719,
+      "fsp_score": 51.3,
+      "fsp_achievements_count": 2,
+      "fsp_best_place": 5,
+      "fsp_weight_sum": 12,
+      "fsp_highlights": [
+        "участник студенческой лиги ФСП"
+      ],
+      "periodic_tasks": 2,
+      "last_active": "2026-09-28T17:50:40.971313",
+      "calculated_score": 60.0,
+      "reasons": [
+        "fsp_verified"
+      ],
+      "explanation": "Подтвержденный балл тестирования 45.0%, участник студенческой лиги ФСП, 2-й спортивный разряд."
+    },
+    {
+      "id": "22222222-2222-2222-2222-000000001005",
+      "full_name": "Соловьев Владимир",
+      "city": "г. Екатеринбург",
+      "specialization": "backend",
+      "specialization_id": "00000000-0000-0000-0000-000000000201",
+      "specialization_name": "Backend Python",
+      "grade": "junior_plus",
+      "grade_id": "00000000-0000-0000-0000-000000000302",
+      "grade_name": "Junior+",
+      "grade_rank": 3,
+      "category_id": "00000000-0000-0000-0000-000000000502",
+      "stack": [
+        "Python",
+        "PostgreSQL",
+        "Redis",
+        "Docker"
+      ],
+      "stack_ids": [
+        "00000000-0000-0000-0000-000000000404",
+        "00000000-0000-0000-0000-000000000402",
+        "00000000-0000-0000-0000-000000000403",
+        "00000000-0000-0000-0000-000000000407"
+      ],
+      "years_experience": 1.7,
+      "salary_expectation": 134000,
+      "theta": -0.7175599111826129,
+      "test_score": 45.0,
+      "has_fsp": false,
+      "fsp_member_id": null,
+      "sports_rank": null,
+      "fsp_rating": 0,
+      "fsp_score": 0.0,
+      "fsp_achievements_count": 0,
+      "fsp_best_place": null,
+      "fsp_weight_sum": 0,
+      "fsp_highlights": [],
+      "periodic_tasks": 0,
+      "last_active": "2026-08-31T17:50:40.971322",
+      "calculated_score": 57.2,
+      "reasons": [
+        "no_fsp_candidate"
+      ],
+      "explanation": "Подтвержденный балл тестирования 45.0%, без истории соревнований ФСП (оценка по тестам и стеку)."
+    },
+    {
+      "id": "22222222-2222-2222-2222-000000001006",
+      "full_name": "Виноградов Алексей",
+      "city": "г. Воронеж",
+      "specialization": "backend",
+      "specialization_id": "00000000-0000-0000-0000-000000000201",
+      "specialization_name": "Backend Go",
+      "grade": "junior",
+      "grade_id": "00000000-0000-0000-0000-000000000301",
+      "grade_name": "Junior",
+      "grade_rank": 2,
+      "category_id": "00000000-0000-0000-0000-000000000501",
+      "stack": [
+        "Go",
+        "PostgreSQL",
+        "Redis",
+        "Docker"
+      ],
+      "stack_ids": [
+        "00000000-0000-0000-0000-000000000401",
+        "00000000-0000-0000-0000-000000000402",
+        "00000000-0000-0000-0000-000000000403",
+        "00000000-0000-0000-0000-000000000407"
+      ],
+      "years_experience": 1.1,
+      "salary_expectation": 149000,
+      "theta": -0.908429111242992,
+      "test_score": 45.0,
+      "has_fsp": true,
+      "fsp_member_id": "FSP-RU-77-10006",
+      "sports_rank": "Без разряда",
+      "fsp_rating": 1712,
+      "fsp_score": 45.7,
+      "fsp_achievements_count": 1,
+      "fsp_best_place": 12,
+      "fsp_weight_sum": 11,
+      "fsp_highlights": [
+        "участник студенческой лиги ФСП"
+      ],
+      "periodic_tasks": 0,
+      "last_active": "2026-08-18T17:50:40.971334",
+      "calculated_score": 54.0,
+      "reasons": [
+        "fsp_verified"
+      ],
+      "explanation": "Подтвержденный балл тестирования 45.0%, участник студенческой лиги ФСП, Без разряда."
+    },
+    {
+      "id": "22222222-2222-2222-2222-000000001007",
+      "full_name": "Васильев Артем",
+      "city": "г. Казань",
+      "specialization": "frontend",
+      "specialization_id": "00000000-0000-0000-0000-000000000202",
+      "specialization_name": "Frontend Vue",
+      "grade": "junior_plus",
+      "grade_id": "00000000-0000-0000-0000-000000000302",
+      "grade_name": "Junior+",
+      "grade_rank": 3,
+      "category_id": "00000000-0000-0000-0000-000000000502",
+      "stack": [
+        "Vue",
+        "TypeScript"
+      ],
+      "stack_ids": [
+        "00000000-0000-0000-0000-000000000409",
+        "00000000-0000-0000-0000-000000000406"
+      ],
+      "years_experience": 0.9,
+      "salary_expectation": 148000,
+      "theta": -0.5254610702178176,
+      "test_score": 45.0,
+      "has_fsp": false,
+      "fsp_member_id": null,
+      "sports_rank": null,
+      "fsp_rating": 0,
+      "fsp_score": 0.0,
+      "fsp_achievements_count": 0,
+      "fsp_best_place": null,
+      "fsp_weight_sum": 0,
+      "fsp_highlights": [],
+      "periodic_tasks": 2,
+      "last_active": "2026-09-25T17:50:40.971342",
+      "calculated_score": 63.9,
+      "reasons": [
+        "no_fsp_candidate"
+      ],
+      "explanation": "Подтвержденный балл тестирования 45.0%, без истории соревнований ФСП (оценка по тестам и стеку)."
+    },
+    {
+      "id": "22222222-2222-2222-2222-000000001008",
+      "full_name": "Новикова Алиса",
+      "city": "г. Самара",
+      "specialization": "mobile",
+      "specialization_id": "00000000-0000-0000-0000-000000000203",
+      "specialization_name": "Mobile Developer",
+      "grade": "junior",
+      "grade_id": "00000000-0000-0000-0000-000000000301",
+      "grade_name": "Junior",
+      "grade_rank": 2,
+      "category_id": "00000000-0000-0000-0000-000000000502",
+      "stack": [
+        "Swift"
+      ],
+      "stack_ids": [
+        "00000000-0000-0000-0000-000000000412"
+      ],
+      "years_experience": 2.0,
+      "salary_expectation": 98000,
+      "theta": -0.7384901384663467,
+      "test_score": 45.0,
+      "has_fsp": false,
+      "fsp_member_id": null,
+      "sports_rank": null,
+      "fsp_rating": 0,
+      "fsp_score": 0.0,
+      "fsp_achievements_count": 0,
+      "fsp_best_place": null,
+      "fsp_weight_sum": 0,
+      "fsp_highlights": [],
+      "periodic_tasks": 2,
+      "last_active": "2026-08-22T17:50:40.971351",
+      "calculated_score": 60.9,
+      "reasons": [
+        "no_fsp_candidate"
+      ],
+      "explanation": "Подтвержденный балл тестирования 45.0%, без истории соревнований ФСП (оценка по тестам и стеку)."
+    },
+    {
+      "id": "22222222-2222-2222-2222-000000001009",
+      "full_name": "Богданов Роман",
+      "city": "г. Самара",
+      "specialization": "data",
+      "specialization_id": "00000000-0000-0000-0000-000000000205",
+      "specialization_name": "Data / AI Developer",
+      "grade": "junior_plus",
+      "grade_id": "00000000-0000-0000-0000-000000000302",
+      "grade_name": "Junior+",
+      "grade_rank": 3,
+      "category_id": "00000000-0000-0000-0000-000000000502",
+      "stack": [
+        "Python",
+        "PostgreSQL",
+        "Redis"
+      ],
+      "stack_ids": [
+        "00000000-0000-0000-0000-000000000404",
+        "00000000-0000-0000-0000-000000000402",
+        "00000000-0000-0000-0000-000000000403"
+      ],
+      "years_experience": 1.3,
+      "salary_expectation": 98000,
+      "theta": -0.7736493389068595,
+      "test_score": 45.0,
+      "has_fsp": true,
+      "fsp_member_id": "FSP-RU-77-10009",
+      "sports_rank": "2-й спортивный разряд",
+      "fsp_rating": 1624,
+      "fsp_score": 44.0,
+      "fsp_achievements_count": 3,
+      "fsp_best_place": 5,
+      "fsp_weight_sum": 8,
+      "fsp_highlights": [
+        "участник студенческой лиги ФСП"
+      ],
+      "periodic_tasks": 3,
+      "last_active": "2026-08-31T17:50:40.971361",
+      "calculated_score": 57.0,
+      "reasons": [
+        "fsp_verified",
+        "active_solver"
+      ],
+      "explanation": "Подтвержденный балл тестирования 45.0%, участник студенческой лиги ФСП, 2-й спортивный разряд."
+    },
+    {
+      "id": "22222222-2222-2222-2222-000000001010",
+      "full_name": "Васильев Максим",
+      "city": "г. Самара",
+      "specialization": "backend",
+      "specialization_id": "00000000-0000-0000-0000-000000000201",
+      "specialization_name": "Backend Go",
+      "grade": "junior",
+      "grade_id": "00000000-0000-0000-0000-000000000301",
+      "grade_name": "Junior",
+      "grade_rank": 2,
+      "category_id": "00000000-0000-0000-0000-000000000501",
+      "stack": [
+        "Go",
+        "PostgreSQL",
+        "Redis",
+        "Docker"
+      ],
+      "stack_ids": [
+        "00000000-0000-0000-0000-000000000401",
+        "00000000-0000-0000-0000-000000000402",
+        "00000000-0000-0000-0000-000000000403",
+        "00000000-0000-0000-0000-000000000407"
+      ],
+      "years_experience": 1.6,
+      "salary_expectation": 125000,
+      "theta": -0.8982914747352888,
+      "test_score": 45.0,
+      "has_fsp": false,
+      "fsp_member_id": null,
+      "sports_rank": null,
+      "fsp_rating": 0,
+      "fsp_score": 0.0,
+      "fsp_achievements_count": 0,
+      "fsp_best_place": null,
+      "fsp_weight_sum": 0,
+      "fsp_highlights": [],
+      "periodic_tasks": 0,
+      "last_active": "2026-08-26T17:50:40.971368",
+      "calculated_score": 57.2,
+      "reasons": [
+        "no_fsp_candidate"
+      ],
+      "explanation": "Подтвержденный балл тестирования 45.0%, без истории соревнований ФСП (оценка по тестам и стеку)."
+    },
+    {
+      "id": "22222222-2222-2222-2222-000000001011",
+      "full_name": "Виноградов Сергей",
+      "city": "г. Казань",
+      "specialization": "backend",
+      "specialization_id": "00000000-0000-0000-0000-000000000201",
+      "specialization_name": "Backend Python",
+      "grade": "junior_plus",
+      "grade_id": "00000000-0000-0000-0000-000000000302",
+      "grade_name": "Junior+",
+      "grade_rank": 3,
+      "category_id": "00000000-0000-0000-0000-000000000502",
+      "stack": [
+        "Python",
+        "PostgreSQL",
+        "Redis",
+        "Docker"
+      ],
+      "stack_ids": [
+        "00000000-0000-0000-0000-000000000404",
+        "00000000-0000-0000-0000-000000000402",
+        "00000000-0000-0000-0000-000000000403",
+        "00000000-0000-0000-0000-000000000407"
+      ],
+      "years_experience": 1.9,
+      "salary_expectation": 111000,
+      "theta": -0.5393008511317076,
+      "test_score": 45.0,
+      "has_fsp": true,
+      "fsp_member_id": "FSP-RU-77-10011",
+      "sports_rank": "3-й спортивный разряд",
+      "fsp_rating": 1680,
+      "fsp_score": 61.9,
+      "fsp_achievements_count": 3,
+      "fsp_best_place": 8,
+      "fsp_weight_sum": 6,
+      "fsp_highlights": [
+        "участник студенческой лиги ФСП"
+      ],
+      "periodic_tasks": 2,
+      "last_active": "2026-09-06T17:50:40.971378",
+      "calculated_score": 61.2,
+      "reasons": [
+        "fsp_verified"
+      ],
+      "explanation": "Подтвержденный балл тестирования 45.0%, участник студенческой лиги ФСП, 3-й спортивный разряд."
+    },
+    {
+      "id": "22222222-2222-2222-2222-000000001012",
+      "full_name": "Кузнецова Юлия",
+      "city": "г. Ростов-на-Дону",
+      "specialization": "frontend",
+      "specialization_id": "00000000-0000-0000-0000-000000000202",
+      "specialization_name": "Frontend React",
+      "grade": "junior",
+      "grade_id": "00000000-0000-0000-0000-000000000301",
+      "grade_name": "Junior",
+      "grade_rank": 2,
+      "category_id": "00000000-0000-0000-0000-000000000505",
+      "stack": [
+        "React",
+        "TypeScript",
+        "Docker"
+      ],
+      "stack_ids": [
+        "00000000-0000-0000-0000-000000000405",
+        "00000000-0000-0000-0000-000000000406",
+        "00000000-0000-0000-0000-000000000407"
+      ],
+      "years_experience": 2.1,
+      "salary_expectation": 130000,
+      "theta": -0.36865438888380525,
+      "test_score": 45.0,
+      "has_fsp": false,
+      "fsp_member_id": null,
+      "sports_rank": null,
+      "fsp_rating": 0,
+      "fsp_score": 0.0,
+      "fsp_achievements_count": 0,
+      "fsp_best_place": null,
+      "fsp_weight_sum": 0,
+      "fsp_highlights": [],
+      "periodic_tasks": 1,
+      "last_active": "2026-09-29T17:50:40.971386",
+      "calculated_score": 62.0,
+      "reasons": [
+        "no_fsp_candidate"
+      ],
+      "explanation": "Подтвержденный балл тестирования 45.0%, без истории соревнований ФСП (оценка по тестам и стеку)."
+    },
+    {
+      "id": "22222222-2222-2222-2222-000000001013",
+      "full_name": "Лебедев Владимир",
+      "city": "г. Ростов-на-Дону",
+      "specialization": "mobile",
+      "specialization_id": "00000000-0000-0000-0000-000000000203",
+      "specialization_name": "Mobile Developer",
+      "grade": "junior_plus",
+      "grade_id": "00000000-0000-0000-0000-000000000302",
+      "grade_name": "Junior+",
+      "grade_rank": 3,
+      "category_id": "00000000-0000-0000-0000-000000000502",
+      "stack": [
+        "Kotlin"
+      ],
+      "stack_ids": [
+        "00000000-0000-0000-0000-000000000411"
+      ],
+      "years_experience": 2.1,
+      "salary_expectation": 149000,
+      "theta": -0.8447550334522322,
+      "test_score": 45.0,
+      "has_fsp": true,
+      "fsp_member_id": "FSP-RU-77-10013",
+      "sports_rank": "2-й спортивный разряд",
+      "fsp_rating": 1906,
+      "fsp_score": 42.8,
+      "fsp_achievements_count": 1,
+      "fsp_best_place": 8,
+      "fsp_weight_sum": 13,
+      "fsp_highlights": [
+        "участник студенческой лиги ФСП"
+      ],
+      "periodic_tasks": 2,
+      "last_active": "2026-08-13T17:50:40.971395",
+      "calculated_score": 55.5,
+      "reasons": [
+        "fsp_verified"
+      ],
+      "explanation": "Подтвержденный балл тестирования 45.0%, участник студенческой лиги ФСП, 2-й спортивный разряд."
+    },
+    {
+      "id": "22222222-2222-2222-2222-000000001014",
+      "full_name": "Новиков Никита",
+      "city": "г. Москва",
+      "specialization": "data",
+      "specialization_id": "00000000-0000-0000-0000-000000000205",
+      "specialization_name": "Data / AI Developer",
+      "grade": "junior",
+      "grade_id": "00000000-0000-0000-0000-000000000301",
+      "grade_name": "Junior",
+      "grade_rank": 2,
+      "category_id": "00000000-0000-0000-0000-000000000502",
+      "stack": [
+        "Python",
+        "PostgreSQL",
+        "Redis"
+      ],
+      "stack_ids": [
+        "00000000-0000-0000-0000-000000000404",
+        "00000000-0000-0000-0000-000000000402",
+        "00000000-0000-0000-0000-000000000403"
+      ],
+      "years_experience": 1.1,
+      "salary_expectation": 136000,
+      "theta": -0.7477242897281625,
+      "test_score": 45.0,
+      "has_fsp": false,
+      "fsp_member_id": null,
+      "sports_rank": null,
+      "fsp_rating": 0,
+      "fsp_score": 0.0,
+      "fsp_achievements_count": 0,
+      "fsp_best_place": null,
+      "fsp_weight_sum": 0,
+      "fsp_highlights": [],
+      "periodic_tasks": 0,
+      "last_active": "2026-08-21T17:50:40.971403",
+      "calculated_score": 57.2,
+      "reasons": [
+        "no_fsp_candidate"
+      ],
+      "explanation": "Подтвержденный балл тестирования 45.0%, без истории соревнований ФСП (оценка по тестам и стеку)."
+    },
+    {
+      "id": "22222222-2222-2222-2222-000000001015",
+      "full_name": "Соколов Андрей",
+      "city": "г. Пермь",
+      "specialization": "backend",
+      "specialization_id": "00000000-0000-0000-0000-000000000201",
+      "specialization_name": "Backend Python",
+      "grade": "junior_plus",
+      "grade_id": "00000000-0000-0000-0000-000000000302",
+      "grade_name": "Junior+",
+      "grade_rank": 3,
+      "category_id": "00000000-0000-0000-0000-000000000502",
+      "stack": [
+        "Python",
+        "PostgreSQL",
+        "Redis",
+        "Docker"
+      ],
+      "stack_ids": [
+        "00000000-0000-0000-0000-000000000404",
+        "00000000-0000-0000-0000-000000000402",
+        "00000000-0000-0000-0000-000000000403",
+        "00000000-0000-0000-0000-000000000407"
+      ],
+      "years_experience": 1.5,
+      "salary_expectation": 125000,
+      "theta": -0.6665402873453306,
+      "test_score": 45.0,
+      "has_fsp": true,
+      "fsp_member_id": "FSP-RU-77-10015",
+      "sports_rank": "Без разряда",
+      "fsp_rating": 1910,
+      "fsp_score": 58.9,
+      "fsp_achievements_count": 3,
+      "fsp_best_place": 8,
+      "fsp_weight_sum": 9,
+      "fsp_highlights": [
+        "участник студенческой лиги ФСП"
+      ],
+      "periodic_tasks": 1,
+      "last_active": "2026-08-24T17:50:40.971412",
+      "calculated_score": 59.1,
+      "reasons": [
+        "fsp_verified"
+      ],
+      "explanation": "Подтвержденный балл тестирования 45.0%, участник студенческой лиги ФСП, Без разряда."
+    },
+    {
+      "id": "22222222-2222-2222-2222-000000001016",
+      "full_name": "Козлова Екатерина",
+      "city": "г. Пермь",
+      "specialization": "backend",
+      "specialization_id": "00000000-0000-0000-0000-000000000201",
+      "specialization_name": "Backend Go",
+      "grade": "junior",
+      "grade_id": "00000000-0000-0000-0000-000000000301",
+      "grade_name": "Junior",
+      "grade_rank": 2,
+      "category_id": "00000000-0000-0000-0000-000000000501",
+      "stack": [
+        "Go",
+        "PostgreSQL",
+        "Redis",
+        "Docker"
+      ],
+      "stack_ids": [
+        "00000000-0000-0000-0000-000000000401",
+        "00000000-0000-0000-0000-000000000402",
+        "00000000-0000-0000-0000-000000000403",
+        "00000000-0000-0000-0000-000000000407"
+      ],
+      "years_experience": 1.7,
+      "salary_expectation": 97000,
+      "theta": -1.0468979516243544,
+      "test_score": 45.0,
+      "has_fsp": false,
+      "fsp_member_id": null,
+      "sports_rank": null,
+      "fsp_rating": 0,
+      "fsp_score": 0.0,
+      "fsp_achievements_count": 0,
+      "fsp_best_place": null,
+      "fsp_weight_sum": 0,
+      "fsp_highlights": [],
+      "periodic_tasks": 0,
+      "last_active": "2026-09-17T17:50:40.971420",
+      "calculated_score": 57.2,
+      "reasons": [
+        "no_fsp_candidate"
+      ],
+      "explanation": "Подтвержденный балл тестирования 45.0%, без истории соревнований ФСП (оценка по тестам и стеку)."
+    },
+    {
+      "id": "22222222-2222-2222-2222-000000001017",
+      "full_name": "Богданов Александр",
+      "city": "г. Ростов-на-Дону",
+      "specialization": "frontend",
+      "specialization_id": "00000000-0000-0000-0000-000000000202",
+      "specialization_name": "Frontend Vue",
+      "grade": "junior_plus",
+      "grade_id": "00000000-0000-0000-0000-000000000302",
+      "grade_name": "Junior+",
+      "grade_rank": 3,
+      "category_id": "00000000-0000-0000-0000-000000000502",
+      "stack": [
+        "Vue",
+        "TypeScript"
+      ],
+      "stack_ids": [
+        "00000000-0000-0000-0000-000000000409",
+        "00000000-0000-0000-0000-000000000406"
+      ],
+      "years_experience": 1.1,
+      "salary_expectation": 104000,
+      "theta": -0.416859840203384,
+      "test_score": 45.0,
+      "has_fsp": false,
+      "fsp_member_id": null,
+      "sports_rank": null,
+      "fsp_rating": 0,
+      "fsp_score": 0.0,
+      "fsp_achievements_count": 0,
+      "fsp_best_place": null,
+      "fsp_weight_sum": 0,
+      "fsp_highlights": [],
+      "periodic_tasks": 0,
+      "last_active": "2026-09-24T17:50:40.971427",
+      "calculated_score": 57.2,
+      "reasons": [
+        "no_fsp_candidate"
+      ],
+      "explanation": "Подтвержденный балл тестирования 45.0%, без истории соревнований ФСП (оценка по тестам и стеку)."
+    },
+    {
+      "id": "22222222-2222-2222-2222-000000001018",
+      "full_name": "Иванов Максим",
+      "city": "г. Нижний Новгород",
+      "specialization": "mobile",
+      "specialization_id": "00000000-0000-0000-0000-000000000203",
+      "specialization_name": "Mobile Developer",
+      "grade": "junior",
+      "grade_id": "00000000-0000-0000-0000-000000000301",
+      "grade_name": "Junior",
+      "grade_rank": 2,
+      "category_id": "00000000-0000-0000-0000-000000000502",
+      "stack": [
+        "Swift"
+      ],
+      "stack_ids": [
+        "00000000-0000-0000-0000-000000000412"
+      ],
+      "years_experience": 0.9,
+      "salary_expectation": 103000,
+      "theta": -0.5552131849667881,
+      "test_score": 45.0,
+      "has_fsp": true,
+      "fsp_member_id": "FSP-RU-77-10018",
+      "sports_rank": "Без разряда",
+      "fsp_rating": 1892,
+      "fsp_score": 59.6,
+      "fsp_achievements_count": 1,
+      "fsp_best_place": 12,
+      "fsp_weight_sum": 13,
+      "fsp_highlights": [
+        "участник студенческой лиги ФСП"
+      ],
+      "periodic_tasks": 3,
+      "last_active": "2026-09-26T17:50:40.971437",
+      "calculated_score": 63.7,
+      "reasons": [
+        "fsp_verified",
+        "active_solver"
+      ],
+      "explanation": "Подтвержденный балл тестирования 45.0%, участник студенческой лиги ФСП, Без разряда."
+    },
+    {
+      "id": "22222222-2222-2222-2222-000000001019",
+      "full_name": "Попов Сергей",
+      "city": "г. Пермь",
+      "specialization": "data",
+      "specialization_id": "00000000-0000-0000-0000-000000000205",
+      "specialization_name": "Data / AI Developer",
+      "grade": "junior_plus",
+      "grade_id": "00000000-0000-0000-0000-000000000302",
+      "grade_name": "Junior+",
+      "grade_rank": 3,
+      "category_id": "00000000-0000-0000-0000-000000000502",
+      "stack": [
+        "Python",
+        "PostgreSQL",
+        "Redis"
+      ],
+      "stack_ids": [
+        "00000000-0000-0000-0000-000000000404",
+        "00000000-0000-0000-0000-000000000402",
+        "00000000-0000-0000-0000-000000000403"
+      ],
+      "years_experience": 1.4,
+      "salary_expectation": 117000,
+      "theta": -0.006892532625145886,
+      "test_score": 49.4,
+      "has_fsp": false,
+      "fsp_member_id": null,
+      "sports_rank": null,
+      "fsp_rating": 0,
+      "fsp_score": 0.0,
+      "fsp_achievements_count": 0,
+      "fsp_best_place": null,
+      "fsp_weight_sum": 0,
+      "fsp_highlights": [],
+      "periodic_tasks": 0,
+      "last_active": "2026-08-26T17:50:40.971444",
+      "calculated_score": 59.2,
+      "reasons": [
+        "no_fsp_candidate"
+      ],
+      "explanation": "Подтвержденный балл тестирования 49.4%, без истории соревнований ФСП (оценка по тестам и стеку)."
+    },
+    {
+      "id": "22222222-2222-2222-2222-000000001020",
+      "full_name": "Волкова Алиса",
+      "city": "г. Санкт-Петербург",
+      "specialization": "backend",
+      "specialization_id": "00000000-0000-0000-0000-000000000201",
+      "specialization_name": "Backend Go",
+      "grade": "middle",
+      "grade_id": "00000000-0000-0000-0000-000000000303",
+      "grade_name": "Middle",
+      "grade_rank": 4,
+      "category_id": "00000000-0000-0000-0000-000000000502",
+      "stack": [
+        "Go",
+        "PostgreSQL",
+        "Redis",
+        "Docker"
+      ],
+      "stack_ids": [
+        "00000000-0000-0000-0000-000000000401",
+        "00000000-0000-0000-0000-000000000402",
+        "00000000-0000-0000-0000-000000000403",
+        "00000000-0000-0000-0000-000000000407"
+      ],
+      "years_experience": 2.6,
+      "salary_expectation": 193000,
+      "theta": 0.3897260430401412,
+      "test_score": 60.5,
+      "has_fsp": true,
+      "fsp_member_id": "FSP-RU-77-10020",
+      "sports_rank": "КМС",
+      "fsp_rating": 2047,
+      "fsp_score": 71.1,
+      "fsp_achievements_count": 4,
+      "fsp_best_place": 5,
+      "fsp_weight_sum": 16,
+      "fsp_highlights": [
+        "призёр Всероссийского хакатона ФСП"
+      ],
+      "periodic_tasks": 3,
+      "last_active": "2026-09-23T17:50:40.971455",
+      "calculated_score": 70.6,
+      "reasons": [
+        "fsp_verified",
+        "fsp_ranked",
+        "active_solver"
+      ],
+      "explanation": "Подтвержденный балл тестирования 60.5%, призёр Всероссийского хакатона ФСП, КМС."
+    },
+    {
+      "id": "22222222-2222-2222-2222-000000001021",
+      "full_name": "Павлов Максим",
+      "city": "г. Ростов-на-Дону",
+      "specialization": "backend",
+      "specialization_id": "00000000-0000-0000-0000-000000000201",
+      "specialization_name": "Backend Python",
+      "grade": "middle_plus",
+      "grade_id": "00000000-0000-0000-0000-000000000304",
+      "grade_name": "Middle+",
+      "grade_rank": 5,
+      "category_id": "00000000-0000-0000-0000-000000000502",
+      "stack": [
+        "Python",
+        "PostgreSQL",
+        "Redis",
+        "Docker"
+      ],
+      "stack_ids": [
+        "00000000-0000-0000-0000-000000000404",
+        "00000000-0000-0000-0000-000000000402",
+        "00000000-0000-0000-0000-000000000403",
+        "00000000-0000-0000-0000-000000000407"
+      ],
+      "years_experience": 2.7,
+      "salary_expectation": 263000,
+      "theta": -0.30053958318912455,
+      "test_score": 45.0,
+      "has_fsp": false,
+      "fsp_member_id": null,
+      "sports_rank": null,
+      "fsp_rating": 0,
+      "fsp_score": 0.0,
+      "fsp_achievements_count": 0,
+      "fsp_best_place": null,
+      "fsp_weight_sum": 0,
+      "fsp_highlights": [],
+      "periodic_tasks": 0,
+      "last_active": "2026-10-03T17:50:40.971464",
+      "calculated_score": 60.2,
+      "reasons": [
+        "no_fsp_candidate"
+      ],
+      "explanation": "Подтвержденный балл тестирования 45.0%, без истории соревнований ФСП (оценка по тестам и стеку)."
+    },
+    {
+      "id": "22222222-2222-2222-2222-000000001022",
+      "full_name": "Лебедев Михаил",
+      "city": "г. Самара",
+      "specialization": "frontend",
+      "specialization_id": "00000000-0000-0000-0000-000000000202",
+      "specialization_name": "Frontend React",
+      "grade": "middle",
+      "grade_id": "00000000-0000-0000-0000-000000000303",
+      "grade_name": "Middle",
+      "grade_rank": 4,
+      "category_id": "00000000-0000-0000-0000-000000000506",
+      "stack": [
+        "React",
+        "TypeScript",
+        "Docker"
+      ],
+      "stack_ids": [
+        "00000000-0000-0000-0000-000000000405",
+        "00000000-0000-0000-0000-000000000406",
+        "00000000-0000-0000-0000-000000000407"
+      ],
+      "years_experience": 3.6,
+      "salary_expectation": 187000,
+      "theta": 0.602886510496832,
+      "test_score": 66.0,
+      "has_fsp": true,
+      "fsp_member_id": "FSP-RU-77-10022",
+      "sports_rank": "КМС",
+      "fsp_rating": 1951,
+      "fsp_score": 72.8,
+      "fsp_achievements_count": 4,
+      "fsp_best_place": 5,
+      "fsp_weight_sum": 18,
+      "fsp_highlights": [
+        "призёр Всероссийского хакатона ФСП"
+      ],
+      "periodic_tasks": 3,
+      "last_active": "2026-09-29T17:50:40.971474",
+      "calculated_score": 75.0,
+      "reasons": [
+        "fsp_verified",
+        "fsp_ranked",
+        "active_solver"
+      ],
+      "explanation": "Подтвержденный балл тестирования 66.0%, призёр Всероссийского хакатона ФСП, КМС."
+    },
+    {
+      "id": "22222222-2222-2222-2222-000000001023",
+      "full_name": "Петров Иван",
+      "city": "г. Екатеринбург",
+      "specialization": "mobile",
+      "specialization_id": "00000000-0000-0000-0000-000000000203",
+      "specialization_name": "Mobile Developer",
+      "grade": "middle_plus",
+      "grade_id": "00000000-0000-0000-0000-000000000304",
+      "grade_name": "Middle+",
+      "grade_rank": 5,
+      "category_id": "00000000-0000-0000-0000-000000000502",
+      "stack": [
+        "Kotlin"
+      ],
+      "stack_ids": [
+        "00000000-0000-0000-0000-000000000411"
+      ],
+      "years_experience": 4.7,
+      "salary_expectation": 254000,
+      "theta": 0.9438485670820316,
+      "test_score": 76.6,
+      "has_fsp": false,
+      "fsp_member_id": null,
+      "sports_rank": null,
+      "fsp_rating": 0,
+      "fsp_score": 0.0,
+      "fsp_achievements_count": 0,
+      "fsp_best_place": null,
+      "fsp_weight_sum": 0,
+      "fsp_highlights": [],
+      "periodic_tasks": 1,
+      "last_active": "2026-08-22T17:50:40.971482",
+      "calculated_score": 73.3,
+      "reasons": [
+        "no_fsp_candidate"
+      ],
+      "explanation": "Подтвержденный балл тестирования 76.6%, без истории соревнований ФСП (оценка по тестам и стеку)."
+    },
+    {
+      "id": "22222222-2222-2222-2222-000000001024",
+      "full_name": "Смирнова Дарья",
+      "city": "г. Москва",
+      "specialization": "data",
+      "specialization_id": "00000000-0000-0000-0000-000000000205",
+      "specialization_name": "Data / AI Developer",
+      "grade": "middle",
+      "grade_id": "00000000-0000-0000-0000-000000000303",
+      "grade_name": "Middle",
+      "grade_rank": 4,
+      "category_id": "00000000-0000-0000-0000-000000000510",
+      "stack": [
+        "Python",
+        "PostgreSQL",
+        "Redis"
+      ],
+      "stack_ids": [
+        "00000000-0000-0000-0000-000000000404",
+        "00000000-0000-0000-0000-000000000402",
+        "00000000-0000-0000-0000-000000000403"
+      ],
+      "years_experience": 3.8,
+      "salary_expectation": 200000,
+      "theta": -0.38062245341875156,
+      "test_score": 45.0,
+      "has_fsp": true,
+      "fsp_member_id": "FSP-RU-77-10024",
+      "sports_rank": "КМС",
+      "fsp_rating": 2210,
+      "fsp_score": 78.1,
+      "fsp_achievements_count": 3,
+      "fsp_best_place": 2,
+      "fsp_weight_sum": 16,
+      "fsp_highlights": [
+        "призёр Всероссийского хакатона ФСП"
+      ],
+      "periodic_tasks": 1,
+      "last_active": "2026-09-13T17:50:40.971495",
+      "calculated_score": 64.9,
+      "reasons": [
+        "fsp_verified",
+        "fsp_medalist",
+        "fsp_ranked"
+      ],
+      "explanation": "Подтвержденный балл тестирования 45.0%, призёр Всероссийского хакатона ФСП, КМС."
+    },
+    {
+      "id": "22222222-2222-2222-2222-000000001025",
+      "full_name": "Богданов Сергей",
+      "city": "г. Екатеринбург",
+      "specialization": "backend",
+      "specialization_id": "00000000-0000-0000-0000-000000000201",
+      "specialization_name": "Backend Python",
+      "grade": "middle_plus",
+      "grade_id": "00000000-0000-0000-0000-000000000304",
+      "grade_name": "Middle+",
+      "grade_rank": 5,
+      "category_id": "00000000-0000-0000-0000-000000000502",
+      "stack": [
+        "Python",
+        "PostgreSQL",
+        "Redis",
+        "Docker"
+      ],
+      "stack_ids": [
+        "00000000-0000-0000-0000-000000000404",
+        "00000000-0000-0000-0000-000000000402",
+        "00000000-0000-0000-0000-000000000403",
+        "00000000-0000-0000-0000-000000000407"
+      ],
+      "years_experience": 3.8,
+      "salary_expectation": 185000,
+      "theta": 0.48422681974032966,
+      "test_score": 64.6,
+      "has_fsp": false,
+      "fsp_member_id": null,
+      "sports_rank": null,
+      "fsp_rating": 0,
+      "fsp_score": 0.0,
+      "fsp_achievements_count": 0,
+      "fsp_best_place": null,
+      "fsp_weight_sum": 0,
+      "fsp_highlights": [],
+      "periodic_tasks": 3,
+      "last_active": "2026-08-27T17:50:40.971505",
+      "calculated_score": 71.5,
+      "reasons": [
+        "no_fsp_candidate",
+        "active_solver"
+      ],
+      "explanation": "Подтвержденный балл тестирования 64.6%, без истории соревнований ФСП (оценка по тестам и стеку)."
+    },
+    {
+      "id": "22222222-2222-2222-2222-000000001026",
+      "full_name": "Морозов Артем",
+      "city": "г. Екатеринбург",
+      "specialization": "backend",
+      "specialization_id": "00000000-0000-0000-0000-000000000201",
+      "specialization_name": "Backend Go",
+      "grade": "middle",
+      "grade_id": "00000000-0000-0000-0000-000000000303",
+      "grade_name": "Middle",
+      "grade_rank": 4,
+      "category_id": "00000000-0000-0000-0000-000000000502",
+      "stack": [
+        "Go",
+        "PostgreSQL",
+        "Redis",
+        "Docker"
+      ],
+      "stack_ids": [
+        "00000000-0000-0000-0000-000000000401",
+        "00000000-0000-0000-0000-000000000402",
+        "00000000-0000-0000-0000-000000000403",
+        "00000000-0000-0000-0000-000000000407"
+      ],
+      "years_experience": 4.0,
+      "salary_expectation": 196000,
+      "theta": 0.3612349391724279,
+      "test_score": 61.4,
+      "has_fsp": false,
+      "fsp_member_id": null,
+      "sports_rank": null,
+      "fsp_rating": 0,
+      "fsp_score": 0.0,
+      "fsp_achievements_count": 0,
+      "fsp_best_place": null,
+      "fsp_weight_sum": 0,
+      "fsp_highlights": [],
+      "periodic_tasks": 2,
+      "last_active": "2026-09-09T17:50:40.971513",
+      "calculated_score": 68.2,
+      "reasons": [
+        "no_fsp_candidate"
+      ],
+      "explanation": "Подтвержденный балл тестирования 61.4%, без истории соревнований ФСП (оценка по тестам и стеку)."
+    },
+    {
+      "id": "22222222-2222-2222-2222-000000001027",
+      "full_name": "Кузнецов Артем",
+      "city": "г. Москва",
+      "specialization": "frontend",
+      "specialization_id": "00000000-0000-0000-0000-000000000202",
+      "specialization_name": "Frontend Vue",
+      "grade": "middle_plus",
+      "grade_id": "00000000-0000-0000-0000-000000000304",
+      "grade_name": "Middle+",
+      "grade_rank": 5,
+      "category_id": "00000000-0000-0000-0000-000000000502",
+      "stack": [
+        "Vue",
+        "TypeScript"
+      ],
+      "stack_ids": [
+        "00000000-0000-0000-0000-000000000409",
+        "00000000-0000-0000-0000-000000000406"
+      ],
+      "years_experience": 3.6,
+      "salary_expectation": 252000,
+      "theta": 0.8252327540016868,
+      "test_score": 74.9,
+      "has_fsp": true,
+      "fsp_member_id": "FSP-RU-77-10027",
+      "sports_rank": "1-й спортивный разряд",
+      "fsp_rating": 1987,
+      "fsp_score": 70.3,
+      "fsp_achievements_count": 4,
+      "fsp_best_place": 3,
+      "fsp_weight_sum": 22,
+      "fsp_highlights": [
+        "призёр Всероссийского хакатона ФСП"
+      ],
+      "periodic_tasks": 2,
+      "last_active": "2026-08-13T17:50:40.971524",
+      "calculated_score": 74.2,
+      "reasons": [
+        "fsp_verified",
+        "fsp_medalist",
+        "fsp_ranked"
+      ],
+      "explanation": "Подтвержденный балл тестирования 74.9%, призёр Всероссийского хакатона ФСП, 1-й спортивный разряд."
+    },
+    {
+      "id": "22222222-2222-2222-2222-000000001028",
+      "full_name": "Павлова Елена",
+      "city": "г. Екатеринбург",
+      "specialization": "mobile",
+      "specialization_id": "00000000-0000-0000-0000-000000000203",
+      "specialization_name": "Mobile Developer",
+      "grade": "middle",
+      "grade_id": "00000000-0000-0000-0000-000000000303",
+      "grade_name": "Middle",
+      "grade_rank": 4,
+      "category_id": "00000000-0000-0000-0000-000000000508",
+      "stack": [
+        "Swift"
+      ],
+      "stack_ids": [
+        "00000000-0000-0000-0000-000000000412"
+      ],
+      "years_experience": 3.3,
+      "salary_expectation": 270000,
+      "theta": 0.9669067223089759,
+      "test_score": 75.3,
+      "has_fsp": false,
+      "fsp_member_id": null,
+      "sports_rank": null,
+      "fsp_rating": 0,
+      "fsp_score": 0.0,
+      "fsp_achievements_count": 0,
+      "fsp_best_place": null,
+      "fsp_weight_sum": 0,
+      "fsp_highlights": [],
+      "periodic_tasks": 7,
+      "last_active": "2026-08-28T17:50:40.971533",
+      "calculated_score": 82.9,
+      "reasons": [
+        "no_fsp_candidate",
+        "active_solver"
+      ],
+      "explanation": "Подтвержденный балл тестирования 75.3%, без истории соревнований ФСП (оценка по тестам и стеку)."
+    },
+    {
+      "id": "22222222-2222-2222-2222-000000001029",
+      "full_name": "Виноградов Александр",
+      "city": "г. Казань",
+      "specialization": "data",
+      "specialization_id": "00000000-0000-0000-0000-000000000205",
+      "specialization_name": "Data / AI Developer",
+      "grade": "middle_plus",
+      "grade_id": "00000000-0000-0000-0000-000000000304",
+      "grade_name": "Middle+",
+      "grade_rank": 5,
+      "category_id": "00000000-0000-0000-0000-000000000502",
+      "stack": [
+        "Python",
+        "PostgreSQL",
+        "Redis"
+      ],
+      "stack_ids": [
+        "00000000-0000-0000-0000-000000000404",
+        "00000000-0000-0000-0000-000000000402",
+        "00000000-0000-0000-0000-000000000403"
+      ],
+      "years_experience": 4.6,
+      "salary_expectation": 193000,
+      "theta": 1.2132055627042164,
+      "test_score": 82.8,
+      "has_fsp": true,
+      "fsp_member_id": "FSP-RU-77-10029",
+      "sports_rank": "1-й спортивный разряд",
+      "fsp_rating": 2018,
+      "fsp_score": 80.6,
+      "fsp_achievements_count": 3,
+      "fsp_best_place": 4,
+      "fsp_weight_sum": 15,
+      "fsp_highlights": [
+        "призёр Всероссийского хакатона ФСП"
+      ],
+      "periodic_tasks": 2,
+      "last_active": "2026-09-21T17:50:40.971542",
+      "calculated_score": 80.1,
+      "reasons": [
+        "high_test_score",
+        "fsp_verified",
+        "fsp_ranked"
+      ],
+      "explanation": "Подтвержденный балл тестирования 82.8%, призёр Всероссийского хакатона ФСП, 1-й спортивный разряд."
+    },
+    {
+      "id": "22222222-2222-2222-2222-000000001030",
+      "full_name": "Воробьев Никита",
+      "city": "г. Екатеринбург",
+      "specialization": "backend",
+      "specialization_id": "00000000-0000-0000-0000-000000000201",
+      "specialization_name": "Backend Go",
+      "grade": "middle",
+      "grade_id": "00000000-0000-0000-0000-000000000303",
+      "grade_name": "Middle",
+      "grade_rank": 4,
+      "category_id": "00000000-0000-0000-0000-000000000502",
+      "stack": [
+        "Go",
+        "PostgreSQL",
+        "Redis",
+        "Docker"
+      ],
+      "stack_ids": [
+        "00000000-0000-0000-0000-000000000401",
+        "00000000-0000-0000-0000-000000000402",
+        "00000000-0000-0000-0000-000000000403",
+        "00000000-0000-0000-0000-000000000407"
+      ],
+      "years_experience": 4.2,
+      "salary_expectation": 213000,
+      "theta": 0.6834551623704512,
+      "test_score": 69.4,
+      "has_fsp": false,
+      "fsp_member_id": null,
+      "sports_rank": null,
+      "fsp_rating": 0,
+      "fsp_score": 0.0,
+      "fsp_achievements_count": 0,
+      "fsp_best_place": null,
+      "fsp_weight_sum": 0,
+      "fsp_highlights": [],
+      "periodic_tasks": 2,
+      "last_active": "2026-08-12T17:50:40.971550",
+      "calculated_score": 71.8,
+      "reasons": [
+        "no_fsp_candidate"
+      ],
+      "explanation": "Подтвержденный балл тестирования 69.4%, без истории соревнований ФСП (оценка по тестам и стеку)."
+    },
+    {
+      "id": "22222222-2222-2222-2222-000000001031",
+      "full_name": "Кузнецов Дмитрий",
+      "city": "г. Пермь",
+      "specialization": "backend",
+      "specialization_id": "00000000-0000-0000-0000-000000000201",
+      "specialization_name": "Backend Python",
+      "grade": "middle_plus",
+      "grade_id": "00000000-0000-0000-0000-000000000304",
+      "grade_name": "Middle+",
+      "grade_rank": 5,
+      "category_id": "00000000-0000-0000-0000-000000000502",
+      "stack": [
+        "Python",
+        "PostgreSQL",
+        "Redis",
+        "Docker"
+      ],
+      "stack_ids": [
+        "00000000-0000-0000-0000-000000000404",
+        "00000000-0000-0000-0000-000000000402",
+        "00000000-0000-0000-0000-000000000403",
+        "00000000-0000-0000-0000-000000000407"
+      ],
+      "years_experience": 3.5,
+      "salary_expectation": 215000,
+      "theta": 1.1112953395497889,
+      "test_score": 77.3,
+      "has_fsp": true,
+      "fsp_member_id": "FSP-RU-77-10031",
+      "sports_rank": "1-й спортивный разряд",
+      "fsp_rating": 2120,
+      "fsp_score": 70.7,
+      "fsp_achievements_count": 4,
+      "fsp_best_place": 3,
+      "fsp_weight_sum": 24,
+      "fsp_highlights": [
+        "призёр Всероссийского хакатона ФСП"
+      ],
+      "periodic_tasks": 4,
+      "last_active": "2026-09-03T17:50:40.971559",
+      "calculated_score": 77.6,
+      "reasons": [
+        "fsp_verified",
+        "fsp_medalist",
+        "fsp_ranked",
+        "active_solver"
+      ],
+      "explanation": "Подтвержденный балл тестирования 77.3%, призёр Всероссийского хакатона ФСП, 1-й спортивный разряд."
+    },
+    {
+      "id": "22222222-2222-2222-2222-000000001032",
+      "full_name": "Козлова София",
+      "city": "г. Ростов-на-Дону",
+      "specialization": "frontend",
+      "specialization_id": "00000000-0000-0000-0000-000000000202",
+      "specialization_name": "Frontend React",
+      "grade": "middle",
+      "grade_id": "00000000-0000-0000-0000-000000000303",
+      "grade_name": "Middle",
+      "grade_rank": 4,
+      "category_id": "00000000-0000-0000-0000-000000000506",
+      "stack": [
+        "React",
+        "TypeScript",
+        "Docker"
+      ],
+      "stack_ids": [
+        "00000000-0000-0000-0000-000000000405",
+        "00000000-0000-0000-0000-000000000406",
+        "00000000-0000-0000-0000-000000000407"
+      ],
+      "years_experience": 2.5,
+      "salary_expectation": 199000,
+      "theta": 1.3301054094947855,
+      "test_score": 83.3,
+      "has_fsp": false,
+      "fsp_member_id": null,
+      "sports_rank": null,
+      "fsp_rating": 0,
+      "fsp_score": 0.0,
+      "fsp_achievements_count": 0,
+      "fsp_best_place": null,
+      "fsp_weight_sum": 0,
+      "fsp_highlights": [],
+      "periodic_tasks": 7,
+      "last_active": "2026-09-15T17:50:40.971569",
+      "calculated_score": 86.5,
+      "reasons": [
+        "high_test_score",
+        "no_fsp_candidate",
+        "active_solver"
+      ],
+      "explanation": "Подтвержденный балл тестирования 83.3%, без истории соревнований ФСП (оценка по тестам и стеку)."
+    },
+    {
+      "id": "22222222-2222-2222-2222-000000001033",
+      "full_name": "Зайцев Андрей",
+      "city": "г. Новосибирск",
+      "specialization": "mobile",
+      "specialization_id": "00000000-0000-0000-0000-000000000203",
+      "specialization_name": "Mobile Developer",
+      "grade": "middle_plus",
+      "grade_id": "00000000-0000-0000-0000-000000000304",
+      "grade_name": "Middle+",
+      "grade_rank": 5,
+      "category_id": "00000000-0000-0000-0000-000000000502",
+      "stack": [
+        "Kotlin"
+      ],
+      "stack_ids": [
+        "00000000-0000-0000-0000-000000000411"
+      ],
+      "years_experience": 2.6,
+      "salary_expectation": 226000,
+      "theta": 0.9245631938510187,
+      "test_score": 76.8,
+      "has_fsp": true,
+      "fsp_member_id": "FSP-RU-77-10033",
+      "sports_rank": "1-й спортивный разряд",
+      "fsp_rating": 1970,
+      "fsp_score": 72.2,
+      "fsp_achievements_count": 5,
+      "fsp_best_place": 4,
+      "fsp_weight_sum": 17,
+      "fsp_highlights": [
+        "призёр Всероссийского хакатона ФСП"
+      ],
+      "periodic_tasks": 1,
+      "last_active": "2026-09-16T17:50:40.971579",
+      "calculated_score": 74.2,
+      "reasons": [
+        "fsp_verified",
+        "fsp_ranked"
+      ],
+      "explanation": "Подтвержденный балл тестирования 76.8%, призёр Всероссийского хакатона ФСП, 1-й спортивный разряд."
+    },
+    {
+      "id": "22222222-2222-2222-2222-000000001034",
+      "full_name": "Воробьев Роман",
+      "city": "г. Воронеж",
+      "specialization": "data",
+      "specialization_id": "00000000-0000-0000-0000-000000000205",
+      "specialization_name": "Data / AI Developer",
+      "grade": "middle",
+      "grade_id": "00000000-0000-0000-0000-000000000303",
+      "grade_name": "Middle",
+      "grade_rank": 4,
+      "category_id": "00000000-0000-0000-0000-000000000510",
+      "stack": [
+        "Python",
+        "PostgreSQL",
+        "Redis"
+      ],
+      "stack_ids": [
+        "00000000-0000-0000-0000-000000000404",
+        "00000000-0000-0000-0000-000000000402",
+        "00000000-0000-0000-0000-000000000403"
+      ],
+      "years_experience": 2.9,
+      "salary_expectation": 202000,
+      "theta": 1.313968898799815,
+      "test_score": 84.4,
+      "has_fsp": false,
+      "fsp_member_id": null,
+      "sports_rank": null,
+      "fsp_rating": 0,
+      "fsp_score": 0.0,
+      "fsp_achievements_count": 0,
+      "fsp_best_place": null,
+      "fsp_weight_sum": 0,
+      "fsp_highlights": [],
+      "periodic_tasks": 1,
+      "last_active": "2026-09-27T17:50:40.971587",
+      "calculated_score": 79.8,
+      "reasons": [
+        "high_test_score",
+        "no_fsp_candidate"
+      ],
+      "explanation": "Подтвержденный балл тестирования 84.4%, без истории соревнований ФСП (оценка по тестам и стеку)."
+    },
+    {
+      "id": "22222222-2222-2222-2222-000000001035",
+      "full_name": "Зайцев Артем",
+      "city": "г. Пермь",
+      "specialization": "backend",
+      "specialization_id": "00000000-0000-0000-0000-000000000201",
+      "specialization_name": "Backend Python",
+      "grade": "middle_plus",
+      "grade_id": "00000000-0000-0000-0000-000000000304",
+      "grade_name": "Middle+",
+      "grade_rank": 5,
+      "category_id": "00000000-0000-0000-0000-000000000502",
+      "stack": [
+        "Python",
+        "PostgreSQL",
+        "Redis",
+        "Docker"
+      ],
+      "stack_ids": [
+        "00000000-0000-0000-0000-000000000404",
+        "00000000-0000-0000-0000-000000000402",
+        "00000000-0000-0000-0000-000000000403",
+        "00000000-0000-0000-0000-000000000407"
+      ],
+      "years_experience": 4.5,
+      "salary_expectation": 211000,
+      "theta": 0.11623177917454919,
+      "test_score": 52.5,
+      "has_fsp": false,
+      "fsp_member_id": null,
+      "sports_rank": null,
+      "fsp_rating": 0,
+      "fsp_score": 0.0,
+      "fsp_achievements_count": 0,
+      "fsp_best_place": null,
+      "fsp_weight_sum": 0,
+      "fsp_highlights": [],
+      "periodic_tasks": 0,
+      "last_active": "2026-09-14T17:50:40.971594",
+      "calculated_score": 60.6,
+      "reasons": [
+        "no_fsp_candidate"
+      ],
+      "explanation": "Подтвержденный балл тестирования 52.5%, без истории соревнований ФСП (оценка по тестам и стеку)."
+    },
+    {
+      "id": "22222222-2222-2222-2222-000000001036",
+      "full_name": "Зайцева Анна",
+      "city": "г. Томск",
+      "specialization": "backend",
+      "specialization_id": "00000000-0000-0000-0000-000000000201",
+      "specialization_name": "Backend Go",
+      "grade": "middle",
+      "grade_id": "00000000-0000-0000-0000-000000000303",
+      "grade_name": "Middle",
+      "grade_rank": 4,
+      "category_id": "00000000-0000-0000-0000-000000000502",
+      "stack": [
+        "Go",
+        "PostgreSQL",
+        "Redis",
+        "Docker"
+      ],
+      "stack_ids": [
+        "00000000-0000-0000-0000-000000000401",
+        "00000000-0000-0000-0000-000000000402",
+        "00000000-0000-0000-0000-000000000403",
+        "00000000-0000-0000-0000-000000000407"
+      ],
+      "years_experience": 3.0,
+      "salary_expectation": 219000,
+      "theta": 0.7030502900175157,
+      "test_score": 71.2,
+      "has_fsp": true,
+      "fsp_member_id": "FSP-RU-77-10036",
+      "sports_rank": "КМС",
+      "fsp_rating": 2066,
+      "fsp_score": 71.3,
+      "fsp_achievements_count": 5,
+      "fsp_best_place": 3,
+      "fsp_weight_sum": 14,
+      "fsp_highlights": [
+        "призёр Всероссийского хакатона ФСП"
+      ],
+      "periodic_tasks": 2,
+      "last_active": "2026-09-21T17:50:40.971604",
+      "calculated_score": 73.2,
+      "reasons": [
+        "fsp_verified",
+        "fsp_medalist",
+        "fsp_ranked"
+      ],
+      "explanation": "Подтвержденный балл тестирования 71.2%, призёр Всероссийского хакатона ФСП, КМС."
+    },
+    {
+      "id": "22222222-2222-2222-2222-000000001037",
+      "full_name": "Морозов Максим",
+      "city": "г. Нижний Новгород",
+      "specialization": "frontend",
+      "specialization_id": "00000000-0000-0000-0000-000000000202",
+      "specialization_name": "Frontend Vue",
+      "grade": "middle_plus",
+      "grade_id": "00000000-0000-0000-0000-000000000304",
+      "grade_name": "Middle+",
+      "grade_rank": 5,
+      "category_id": "00000000-0000-0000-0000-000000000502",
+      "stack": [
+        "Vue",
+        "TypeScript"
+      ],
+      "stack_ids": [
+        "00000000-0000-0000-0000-000000000409",
+        "00000000-0000-0000-0000-000000000406"
+      ],
+      "years_experience": 4.0,
+      "salary_expectation": 231000,
+      "theta": 0.043323466687175516,
+      "test_score": 52.0,
+      "has_fsp": false,
+      "fsp_member_id": null,
+      "sports_rank": null,
+      "fsp_rating": 0,
+      "fsp_score": 0.0,
+      "fsp_achievements_count": 0,
+      "fsp_best_place": null,
+      "fsp_weight_sum": 0,
+      "fsp_highlights": [],
+      "periodic_tasks": 2,
+      "last_active": "2026-10-07T17:50:40.971611",
+      "calculated_score": 67.0,
+      "reasons": [
+        "no_fsp_candidate"
+      ],
+      "explanation": "Подтвержденный балл тестирования 52.0%, без истории соревнований ФСП (оценка по тестам и стеку)."
+    },
+    {
+      "id": "22222222-2222-2222-2222-000000001038",
+      "full_name": "Морозов Сергей",
+      "city": "г. Новосибирск",
+      "specialization": "mobile",
+      "specialization_id": "00000000-0000-0000-0000-000000000203",
+      "specialization_name": "Mobile Developer",
+      "grade": "middle",
+      "grade_id": "00000000-0000-0000-0000-000000000303",
+      "grade_name": "Middle",
+      "grade_rank": 4,
+      "category_id": "00000000-0000-0000-0000-000000000508",
+      "stack": [
+        "Swift"
+      ],
+      "stack_ids": [
+        "00000000-0000-0000-0000-000000000412"
+      ],
+      "years_experience": 3.8,
+      "salary_expectation": 256000,
+      "theta": 0.6250206719390687,
+      "test_score": 67.7,
+      "has_fsp": true,
+      "fsp_member_id": "FSP-RU-77-10038",
+      "sports_rank": "КМС",
+      "fsp_rating": 2323,
+      "fsp_score": 84.7,
+      "fsp_achievements_count": 5,
+      "fsp_best_place": 4,
+      "fsp_weight_sum": 20,
+      "fsp_highlights": [
+        "призёр Всероссийского хакатона ФСП"
+      ],
+      "periodic_tasks": 0,
+      "last_active": "2026-09-14T17:50:40.971621",
+      "calculated_score": 73.6,
+      "reasons": [
+        "fsp_verified",
+        "fsp_ranked"
+      ],
+      "explanation": "Подтвержденный балл тестирования 67.7%, призёр Всероссийского хакатона ФСП, КМС."
+    },
+    {
+      "id": "22222222-2222-2222-2222-000000001039",
+      "full_name": "Морозов Иван",
+      "city": "г. Москва",
+      "specialization": "data",
+      "specialization_id": "00000000-0000-0000-0000-000000000205",
+      "specialization_name": "Data / AI Developer",
+      "grade": "middle_plus",
+      "grade_id": "00000000-0000-0000-0000-000000000304",
+      "grade_name": "Middle+",
+      "grade_rank": 5,
+      "category_id": "00000000-0000-0000-0000-000000000502",
+      "stack": [
+        "Python",
+        "PostgreSQL",
+        "Redis"
+      ],
+      "stack_ids": [
+        "00000000-0000-0000-0000-000000000404",
+        "00000000-0000-0000-0000-000000000402",
+        "00000000-0000-0000-0000-000000000403"
+      ],
+      "years_experience": 4.1,
+      "salary_expectation": 180000,
+      "theta": 0.48703230613055026,
+      "test_score": 64.3,
+      "has_fsp": false,
+      "fsp_member_id": null,
+      "sports_rank": null,
+      "fsp_rating": 0,
+      "fsp_score": 0.0,
+      "fsp_achievements_count": 0,
+      "fsp_best_place": null,
+      "fsp_weight_sum": 0,
+      "fsp_highlights": [],
+      "periodic_tasks": 1,
+      "last_active": "2026-09-15T17:50:40.971628",
+      "calculated_score": 67.7,
+      "reasons": [
+        "no_fsp_candidate"
+      ],
+      "explanation": "Подтвержденный балл тестирования 64.3%, без истории соревнований ФСП (оценка по тестам и стеку)."
+    },
+    {
+      "id": "22222222-2222-2222-2222-000000001040",
+      "full_name": "Иванова Анастасия",
+      "city": "г. Пермь",
+      "specialization": "backend",
+      "specialization_id": "00000000-0000-0000-0000-000000000201",
+      "specialization_name": "Backend Go",
+      "grade": "middle",
+      "grade_id": "00000000-0000-0000-0000-000000000303",
+      "grade_name": "Middle",
+      "grade_rank": 4,
+      "category_id": "00000000-0000-0000-0000-000000000502",
+      "stack": [
+        "Go",
+        "PostgreSQL",
+        "Redis",
+        "Docker"
+      ],
+      "stack_ids": [
+        "00000000-0000-0000-0000-000000000401",
+        "00000000-0000-0000-0000-000000000402",
+        "00000000-0000-0000-0000-000000000403",
+        "00000000-0000-0000-0000-000000000407"
+      ],
+      "years_experience": 4.6,
+      "salary_expectation": 195000,
+      "theta": 0.025029481210338933,
+      "test_score": 51.6,
+      "has_fsp": true,
+      "fsp_member_id": "FSP-RU-77-10040",
+      "sports_rank": "КМС",
+      "fsp_rating": 2103,
+      "fsp_score": 73.5,
+      "fsp_achievements_count": 4,
+      "fsp_best_place": 4,
+      "fsp_weight_sum": 24,
+      "fsp_highlights": [
+        "призёр Всероссийского хакатона ФСП"
+      ],
+      "periodic_tasks": 2,
+      "last_active": "2026-09-03T17:50:40.971637",
+      "calculated_score": 67.0,
+      "reasons": [
+        "fsp_verified",
+        "fsp_ranked"
+      ],
+      "explanation": "Подтвержденный балл тестирования 51.6%, призёр Всероссийского хакатона ФСП, КМС."
+    },
+    {
+      "id": "22222222-2222-2222-2222-000000001041",
+      "full_name": "Козлов Андрей",
+      "city": "г. Самара",
+      "specialization": "backend",
+      "specialization_id": "00000000-0000-0000-0000-000000000201",
+      "specialization_name": "Backend Python",
+      "grade": "middle_plus",
+      "grade_id": "00000000-0000-0000-0000-000000000304",
+      "grade_name": "Middle+",
+      "grade_rank": 5,
+      "category_id": "00000000-0000-0000-0000-000000000502",
+      "stack": [
+        "Python",
+        "PostgreSQL",
+        "Redis",
+        "Docker"
+      ],
+      "stack_ids": [
+        "00000000-0000-0000-0000-000000000404",
+        "00000000-0000-0000-0000-000000000402",
+        "00000000-0000-0000-0000-000000000403",
+        "00000000-0000-0000-0000-000000000407"
+      ],
+      "years_experience": 4.0,
+      "salary_expectation": 228000,
+      "theta": 0.03591354601448693,
+      "test_score": 51.8,
+      "has_fsp": false,
+      "fsp_member_id": null,
+      "sports_rank": null,
+      "fsp_rating": 0,
+      "fsp_score": 0.0,
+      "fsp_achievements_count": 0,
+      "fsp_best_place": null,
+      "fsp_weight_sum": 0,
+      "fsp_highlights": [],
+      "periodic_tasks": 1,
+      "last_active": "2026-08-30T17:50:40.971645",
+      "calculated_score": 62.1,
+      "reasons": [
+        "no_fsp_candidate"
+      ],
+      "explanation": "Подтвержденный балл тестирования 51.8%, без истории соревнований ФСП (оценка по тестам и стеку)."
+    },
+    {
+      "id": "22222222-2222-2222-2222-000000001042",
+      "full_name": "Васильев Никита",
+      "city": "г. Ростов-на-Дону",
+      "specialization": "frontend",
+      "specialization_id": "00000000-0000-0000-0000-000000000202",
+      "specialization_name": "Frontend React",
+      "grade": "middle",
+      "grade_id": "00000000-0000-0000-0000-000000000303",
+      "grade_name": "Middle",
+      "grade_rank": 4,
+      "category_id": "00000000-0000-0000-0000-000000000506",
+      "stack": [
+        "React",
+        "TypeScript",
+        "Docker"
+      ],
+      "stack_ids": [
+        "00000000-0000-0000-0000-000000000405",
+        "00000000-0000-0000-0000-000000000406",
+        "00000000-0000-0000-0000-000000000407"
+      ],
+      "years_experience": 4.4,
+      "salary_expectation": 280000,
+      "theta": 0.3973446461194957,
+      "test_score": 62.0,
+      "has_fsp": true,
+      "fsp_member_id": "FSP-RU-77-10042",
+      "sports_rank": "КМС",
+      "fsp_rating": 2285,
+      "fsp_score": 75.5,
+      "fsp_achievements_count": 4,
+      "fsp_best_place": 4,
+      "fsp_weight_sum": 21,
+      "fsp_highlights": [
+        "призёр Всероссийского хакатона ФСП"
+      ],
+      "periodic_tasks": 1,
+      "last_active": "2026-09-06T17:50:40.971654",
+      "calculated_score": 70.0,
+      "reasons": [
+        "fsp_verified",
+        "fsp_ranked"
+      ],
+      "explanation": "Подтвержденный балл тестирования 62.0%, призёр Всероссийского хакатона ФСП, КМС."
+    },
+    {
+      "id": "22222222-2222-2222-2222-000000001043",
+      "full_name": "Лебедев Илья",
+      "city": "г. Пермь",
+      "specialization": "mobile",
+      "specialization_id": "00000000-0000-0000-0000-000000000203",
+      "specialization_name": "Mobile Developer",
+      "grade": "middle_plus",
+      "grade_id": "00000000-0000-0000-0000-000000000304",
+      "grade_name": "Middle+",
+      "grade_rank": 5,
+      "category_id": "00000000-0000-0000-0000-000000000502",
+      "stack": [
+        "Kotlin"
+      ],
+      "stack_ids": [
+        "00000000-0000-0000-0000-000000000411"
+      ],
+      "years_experience": 2.7,
+      "salary_expectation": 245000,
+      "theta": 0.7915871895921611,
+      "test_score": 72.8,
+      "has_fsp": false,
+      "fsp_member_id": null,
+      "sports_rank": null,
+      "fsp_rating": 0,
+      "fsp_score": 0.0,
+      "fsp_achievements_count": 0,
+      "fsp_best_place": null,
+      "fsp_weight_sum": 0,
+      "fsp_highlights": [],
+      "periodic_tasks": 2,
+      "last_active": "2026-10-03T17:50:40.971662",
+      "calculated_score": 76.4,
+      "reasons": [
+        "no_fsp_candidate"
+      ],
+      "explanation": "Подтвержденный балл тестирования 72.8%, без истории соревнований ФСП (оценка по тестам и стеку)."
+    },
+    {
+      "id": "22222222-2222-2222-2222-000000001044",
+      "full_name": "Попова Юлия",
+      "city": "г. Пермь",
+      "specialization": "data",
+      "specialization_id": "00000000-0000-0000-0000-000000000205",
+      "specialization_name": "Data / AI Developer",
+      "grade": "middle",
+      "grade_id": "00000000-0000-0000-0000-000000000303",
+      "grade_name": "Middle",
+      "grade_rank": 4,
+      "category_id": "00000000-0000-0000-0000-000000000510",
+      "stack": [
+        "Python",
+        "PostgreSQL",
+        "Redis"
+      ],
+      "stack_ids": [
+        "00000000-0000-0000-0000-000000000404",
+        "00000000-0000-0000-0000-000000000402",
+        "00000000-0000-0000-0000-000000000403"
+      ],
+      "years_experience": 3.2,
+      "salary_expectation": 185000,
+      "theta": 0.5884131234785688,
+      "test_score": 65.9,
+      "has_fsp": false,
+      "fsp_member_id": null,
+      "sports_rank": null,
+      "fsp_rating": 0,
+      "fsp_score": 0.0,
+      "fsp_achievements_count": 0,
+      "fsp_best_place": null,
+      "fsp_weight_sum": 0,
+      "fsp_highlights": [],
+      "periodic_tasks": 3,
+      "last_active": "2026-08-30T17:50:40.971669",
+      "calculated_score": 72.1,
+      "reasons": [
+        "no_fsp_candidate",
+        "active_solver"
+      ],
+      "explanation": "Подтвержденный балл тестирования 65.9%, без истории соревнований ФСП (оценка по тестам и стеку)."
+    },
+    {
+      "id": "22222222-2222-2222-2222-000000001045",
+      "full_name": "Павлов Максим",
+      "city": "г. Самара",
+      "specialization": "backend",
+      "specialization_id": "00000000-0000-0000-0000-000000000201",
+      "specialization_name": "Backend Python",
+      "grade": "middle_plus",
+      "grade_id": "00000000-0000-0000-0000-000000000304",
+      "grade_name": "Middle+",
+      "grade_rank": 5,
+      "category_id": "00000000-0000-0000-0000-000000000502",
+      "stack": [
+        "Python",
+        "PostgreSQL",
+        "Redis",
+        "Docker"
+      ],
+      "stack_ids": [
+        "00000000-0000-0000-0000-000000000404",
+        "00000000-0000-0000-0000-000000000402",
+        "00000000-0000-0000-0000-000000000403",
+        "00000000-0000-0000-0000-000000000407"
+      ],
+      "years_experience": 4.5,
+      "salary_expectation": 253000,
+      "theta": 0.261788990225853,
+      "test_score": 56.6,
+      "has_fsp": true,
+      "fsp_member_id": "FSP-RU-77-10045",
+      "sports_rank": "1-й спортивный разряд",
+      "fsp_rating": 2306,
+      "fsp_score": 72.1,
+      "fsp_achievements_count": 4,
+      "fsp_best_place": 5,
+      "fsp_weight_sum": 21,
+      "fsp_highlights": [
+        "призёр Всероссийского хакатона ФСП"
+      ],
+      "periodic_tasks": 0,
+      "last_active": "2026-08-12T17:50:40.971679",
+      "calculated_score": 65.9,
+      "reasons": [
+        "fsp_verified",
+        "fsp_ranked"
+      ],
+      "explanation": "Подтвержденный балл тестирования 56.6%, призёр Всероссийского хакатона ФСП, 1-й спортивный разряд."
+    },
+    {
+      "id": "22222222-2222-2222-2222-000000001046",
+      "full_name": "Зайцев Сергей",
+      "city": "г. Екатеринбург",
+      "specialization": "backend",
+      "specialization_id": "00000000-0000-0000-0000-000000000201",
+      "specialization_name": "Backend Go",
+      "grade": "middle",
+      "grade_id": "00000000-0000-0000-0000-000000000303",
+      "grade_name": "Middle",
+      "grade_rank": 4,
+      "category_id": "00000000-0000-0000-0000-000000000502",
+      "stack": [
+        "Go",
+        "PostgreSQL",
+        "Redis",
+        "Docker"
+      ],
+      "stack_ids": [
+        "00000000-0000-0000-0000-000000000401",
+        "00000000-0000-0000-0000-000000000402",
+        "00000000-0000-0000-0000-000000000403",
+        "00000000-0000-0000-0000-000000000407"
+      ],
+      "years_experience": 2.9,
+      "salary_expectation": 186000,
+      "theta": 1.024784100927079,
+      "test_score": 77.6,
+      "has_fsp": false,
+      "fsp_member_id": null,
+      "sports_rank": null,
+      "fsp_rating": 0,
+      "fsp_score": 0.0,
+      "fsp_achievements_count": 0,
+      "fsp_best_place": null,
+      "fsp_weight_sum": 0,
+      "fsp_highlights": [],
+      "periodic_tasks": 7,
+      "last_active": "2026-10-01T17:50:40.971687",
+      "calculated_score": 83.9,
+      "reasons": [
+        "no_fsp_candidate",
+        "active_solver"
+      ],
+      "explanation": "Подтвержденный балл тестирования 77.6%, без истории соревнований ФСП (оценка по тестам и стеку)."
+    },
+    {
+      "id": "22222222-2222-2222-2222-000000001047",
+      "full_name": "Соколов Егор",
+      "city": "г. Томск",
+      "specialization": "frontend",
+      "specialization_id": "00000000-0000-0000-0000-000000000202",
+      "specialization_name": "Frontend Vue",
+      "grade": "middle_plus",
+      "grade_id": "00000000-0000-0000-0000-000000000304",
+      "grade_name": "Middle+",
+      "grade_rank": 5,
+      "category_id": "00000000-0000-0000-0000-000000000502",
+      "stack": [
+        "Vue",
+        "TypeScript"
+      ],
+      "stack_ids": [
+        "00000000-0000-0000-0000-000000000409",
+        "00000000-0000-0000-0000-000000000406"
+      ],
+      "years_experience": 4.0,
+      "salary_expectation": 251000,
+      "theta": 0.3580856926825332,
+      "test_score": 61.0,
+      "has_fsp": true,
+      "fsp_member_id": "FSP-RU-77-10047",
+      "sports_rank": "1-й спортивный разряд",
+      "fsp_rating": 2336,
+      "fsp_score": 83.2,
+      "fsp_achievements_count": 5,
+      "fsp_best_place": 5,
+      "fsp_weight_sum": 23,
+      "fsp_highlights": [
+        "призёр Всероссийского хакатона ФСП"
+      ],
+      "periodic_tasks": 3,
+      "last_active": "2026-08-16T17:50:40.971696",
+      "calculated_score": 74.4,
+      "reasons": [
+        "fsp_verified",
+        "fsp_ranked",
+        "active_solver"
+      ],
+      "explanation": "Подтвержденный балл тестирования 61.0%, призёр Всероссийского хакатона ФСП, 1-й спортивный разряд."
+    },
+    {
+      "id": "22222222-2222-2222-2222-000000001048",
+      "full_name": "Новикова Ксения",
+      "city": "г. Новосибирск",
+      "specialization": "mobile",
+      "specialization_id": "00000000-0000-0000-0000-000000000203",
+      "specialization_name": "Mobile Developer",
+      "grade": "middle",
+      "grade_id": "00000000-0000-0000-0000-000000000303",
+      "grade_name": "Middle",
+      "grade_rank": 4,
+      "category_id": "00000000-0000-0000-0000-000000000508",
+      "stack": [
+        "Swift"
+      ],
+      "stack_ids": [
+        "00000000-0000-0000-0000-000000000412"
+      ],
+      "years_experience": 4.2,
+      "salary_expectation": 211000,
+      "theta": 0.15582765290961875,
+      "test_score": 56.0,
+      "has_fsp": false,
+      "fsp_member_id": null,
+      "sports_rank": null,
+      "fsp_rating": 0,
+      "fsp_score": 0.0,
+      "fsp_achievements_count": 0,
+      "fsp_best_place": null,
+      "fsp_weight_sum": 0,
+      "fsp_highlights": [],
+      "periodic_tasks": 2,
+      "last_active": "2026-08-20T17:50:40.971704",
+      "calculated_score": 65.8,
+      "reasons": [
+        "no_fsp_candidate"
+      ],
+      "explanation": "Подтвержденный балл тестирования 56.0%, без истории соревнований ФСП (оценка по тестам и стеку)."
+    },
+    {
+      "id": "22222222-2222-2222-2222-000000001049",
+      "full_name": "Новиков Илья",
+      "city": "г. Казань",
+      "specialization": "data",
+      "specialization_id": "00000000-0000-0000-0000-000000000205",
+      "specialization_name": "Data / AI Developer",
+      "grade": "middle_plus",
+      "grade_id": "00000000-0000-0000-0000-000000000304",
+      "grade_name": "Middle+",
+      "grade_rank": 5,
+      "category_id": "00000000-0000-0000-0000-000000000502",
+      "stack": [
+        "Python",
+        "PostgreSQL",
+        "Redis"
+      ],
+      "stack_ids": [
+        "00000000-0000-0000-0000-000000000404",
+        "00000000-0000-0000-0000-000000000402",
+        "00000000-0000-0000-0000-000000000403"
+      ],
+      "years_experience": 3.5,
+      "salary_expectation": 271000,
+      "theta": 0.5552334704310942,
+      "test_score": 65.2,
+      "has_fsp": true,
+      "fsp_member_id": "FSP-RU-77-10049",
+      "sports_rank": "1-й спортивный разряд",
+      "fsp_rating": 2089,
+      "fsp_score": 69.4,
+      "fsp_achievements_count": 5,
+      "fsp_best_place": 4,
+      "fsp_weight_sum": 19,
+      "fsp_highlights": [
+        "призёр Всероссийского хакатона ФСП"
+      ],
+      "periodic_tasks": 1,
+      "last_active": "2026-09-24T17:50:40.971712",
+      "calculated_score": 69.3,
+      "reasons": [
+        "fsp_verified",
+        "fsp_ranked"
+      ],
+      "explanation": "Подтвержденный балл тестирования 65.2%, призёр Всероссийского хакатона ФСП, 1-й спортивный разряд."
+    },
+    {
+      "id": "22222222-2222-2222-2222-000000001050",
+      "full_name": "Соколов Павел",
+      "city": "г. Воронеж",
+      "specialization": "backend",
+      "specialization_id": "00000000-0000-0000-0000-000000000201",
+      "specialization_name": "Backend Go",
+      "grade": "middle",
+      "grade_id": "00000000-0000-0000-0000-000000000303",
+      "grade_name": "Middle",
+      "grade_rank": 4,
+      "category_id": "00000000-0000-0000-0000-000000000502",
+      "stack": [
+        "Go",
+        "PostgreSQL",
+        "Redis",
+        "Docker"
+      ],
+      "stack_ids": [
+        "00000000-0000-0000-0000-000000000401",
+        "00000000-0000-0000-0000-000000000402",
+        "00000000-0000-0000-0000-000000000403",
+        "00000000-0000-0000-0000-000000000407"
+      ],
+      "years_experience": 3.0,
+      "salary_expectation": 239000,
+      "theta": 0.15295257751066,
+      "test_score": 54.2,
+      "has_fsp": false,
+      "fsp_member_id": null,
+      "sports_rank": null,
+      "fsp_rating": 0,
+      "fsp_score": 0.0,
+      "fsp_achievements_count": 0,
+      "fsp_best_place": null,
+      "fsp_weight_sum": 0,
+      "fsp_highlights": [],
+      "periodic_tasks": 1,
+      "last_active": "2026-08-16T17:50:40.971720",
+      "calculated_score": 63.2,
+      "reasons": [
+        "no_fsp_candidate"
+      ],
+      "explanation": "Подтвержденный балл тестирования 54.2%, без истории соревнований ФСП (оценка по тестам и стеку)."
+    },
+    {
+      "id": "22222222-2222-2222-2222-000000001051",
+      "full_name": "Васильев Роман",
+      "city": "г. Уфа",
+      "specialization": "backend",
+      "specialization_id": "00000000-0000-0000-0000-000000000201",
+      "specialization_name": "Backend Python",
+      "grade": "middle_plus",
+      "grade_id": "00000000-0000-0000-0000-000000000304",
+      "grade_name": "Middle+",
+      "grade_rank": 5,
+      "category_id": "00000000-0000-0000-0000-000000000502",
+      "stack": [
+        "Python",
+        "PostgreSQL",
+        "Redis",
+        "Docker"
+      ],
+      "stack_ids": [
+        "00000000-0000-0000-0000-000000000404",
+        "00000000-0000-0000-0000-000000000402",
+        "00000000-0000-0000-0000-000000000403",
+        "00000000-0000-0000-0000-000000000407"
+      ],
+      "years_experience": 4.7,
+      "salary_expectation": 182000,
+      "theta": 0.7056322759492549,
+      "test_score": 71.4,
+      "has_fsp": true,
+      "fsp_member_id": "FSP-RU-77-10051",
+      "sports_rank": "1-й спортивный разряд",
+      "fsp_rating": 2341,
+      "fsp_score": 84.0,
+      "fsp_achievements_count": 3,
+      "fsp_best_place": 5,
+      "fsp_weight_sum": 21,
+      "fsp_highlights": [
+        "призёр Всероссийского хакатона ФСП"
+      ],
+      "periodic_tasks": 2,
+      "last_active": "2026-08-21T17:50:40.971728",
+      "calculated_score": 77.1,
+      "reasons": [
+        "fsp_verified",
+        "fsp_ranked"
+      ],
+      "explanation": "Подтвержденный балл тестирования 71.4%, призёр Всероссийского хакатона ФСП, 1-й спортивный разряд."
+    },
+    {
+      "id": "22222222-2222-2222-2222-000000001052",
+      "full_name": "Зайцева Анастасия",
+      "city": "г. Самара",
+      "specialization": "frontend",
+      "specialization_id": "00000000-0000-0000-0000-000000000202",
+      "specialization_name": "Frontend React",
+      "grade": "middle",
+      "grade_id": "00000000-0000-0000-0000-000000000303",
+      "grade_name": "Middle",
+      "grade_rank": 4,
+      "category_id": "00000000-0000-0000-0000-000000000506",
+      "stack": [
+        "React",
+        "TypeScript",
+        "Docker"
+      ],
+      "stack_ids": [
+        "00000000-0000-0000-0000-000000000405",
+        "00000000-0000-0000-0000-000000000406",
+        "00000000-0000-0000-0000-000000000407"
+      ],
+      "years_experience": 3.7,
+      "salary_expectation": 208000,
+      "theta": 0.4221892191515209,
+      "test_score": 62.4,
+      "has_fsp": false,
+      "fsp_member_id": null,
+      "sports_rank": null,
+      "fsp_rating": 0,
+      "fsp_score": 0.0,
+      "fsp_achievements_count": 0,
+      "fsp_best_place": null,
+      "fsp_weight_sum": 0,
+      "fsp_highlights": [],
+      "periodic_tasks": 2,
+      "last_active": "2026-09-11T17:50:40.971736",
+      "calculated_score": 68.7,
+      "reasons": [
+        "no_fsp_candidate"
+      ],
+      "explanation": "Подтвержденный балл тестирования 62.4%, без истории соревнований ФСП (оценка по тестам и стеку)."
+    },
+    {
+      "id": "22222222-2222-2222-2222-000000001053",
+      "full_name": "Смирнов Илья",
+      "city": "г. Самара",
+      "specialization": "mobile",
+      "specialization_id": "00000000-0000-0000-0000-000000000203",
+      "specialization_name": "Mobile Developer",
+      "grade": "middle_plus",
+      "grade_id": "00000000-0000-0000-0000-000000000304",
+      "grade_name": "Middle+",
+      "grade_rank": 5,
+      "category_id": "00000000-0000-0000-0000-000000000502",
+      "stack": [
+        "Kotlin"
+      ],
+      "stack_ids": [
+        "00000000-0000-0000-0000-000000000411"
+      ],
+      "years_experience": 3.3,
+      "salary_expectation": 266000,
+      "theta": -0.30343075060497304,
+      "test_score": 45.0,
+      "has_fsp": false,
+      "fsp_member_id": null,
+      "sports_rank": null,
+      "fsp_rating": 0,
+      "fsp_score": 0.0,
+      "fsp_achievements_count": 0,
+      "fsp_best_place": null,
+      "fsp_weight_sum": 0,
+      "fsp_highlights": [],
+      "periodic_tasks": 1,
+      "last_active": "2026-08-16T17:50:40.971743",
+      "calculated_score": 59.0,
+      "reasons": [
+        "no_fsp_candidate"
+      ],
+      "explanation": "Подтвержденный балл тестирования 45.0%, без истории соревнований ФСП (оценка по тестам и стеку)."
+    },
+    {
+      "id": "22222222-2222-2222-2222-000000001054",
+      "full_name": "Соколов Егор",
+      "city": "г. Уфа",
+      "specialization": "data",
+      "specialization_id": "00000000-0000-0000-0000-000000000205",
+      "specialization_name": "Data / AI Developer",
+      "grade": "middle",
+      "grade_id": "00000000-0000-0000-0000-000000000303",
+      "grade_name": "Middle",
+      "grade_rank": 4,
+      "category_id": "00000000-0000-0000-0000-000000000510",
+      "stack": [
+        "Python",
+        "PostgreSQL",
+        "Redis"
+      ],
+      "stack_ids": [
+        "00000000-0000-0000-0000-000000000404",
+        "00000000-0000-0000-0000-000000000402",
+        "00000000-0000-0000-0000-000000000403"
+      ],
+      "years_experience": 3.7,
+      "salary_expectation": 264000,
+      "theta": 1.002359435711286,
+      "test_score": 75.0,
+      "has_fsp": true,
+      "fsp_member_id": "FSP-RU-77-10054",
+      "sports_rank": "КМС",
+      "fsp_rating": 2279,
+      "fsp_score": 71.1,
+      "fsp_achievements_count": 4,
+      "fsp_best_place": 5,
+      "fsp_weight_sum": 16,
+      "fsp_highlights": [
+        "призёр Всероссийского хакатона ФСП"
+      ],
+      "periodic_tasks": 2,
+      "last_active": "2026-09-14T17:50:40.971752",
+      "calculated_score": 74.5,
+      "reasons": [
+        "fsp_verified",
+        "fsp_ranked"
+      ],
+      "explanation": "Подтвержденный балл тестирования 75.0%, призёр Всероссийского хакатона ФСП, КМС."
+    },
+    {
+      "id": "22222222-2222-2222-2222-000000001055",
+      "full_name": "Козлов Артем",
+      "city": "г. Томск",
+      "specialization": "backend",
+      "specialization_id": "00000000-0000-0000-0000-000000000201",
+      "specialization_name": "Backend Python",
+      "grade": "senior",
+      "grade_id": "00000000-0000-0000-0000-000000000305",
+      "grade_name": "Senior",
+      "grade_rank": 6,
+      "category_id": "00000000-0000-0000-0000-000000000503",
+      "stack": [
+        "Python",
+        "PostgreSQL",
+        "Redis",
+        "Docker"
+      ],
+      "stack_ids": [
+        "00000000-0000-0000-0000-000000000404",
+        "00000000-0000-0000-0000-000000000402",
+        "00000000-0000-0000-0000-000000000403",
+        "00000000-0000-0000-0000-000000000407"
+      ],
+      "years_experience": 6.0,
+      "salary_expectation": 397000,
+      "theta": 1.3043776079156275,
+      "test_score": 81.8,
+      "has_fsp": false,
+      "fsp_member_id": null,
+      "sports_rank": null,
+      "fsp_rating": 0,
+      "fsp_score": 0.0,
+      "fsp_achievements_count": 0,
+      "fsp_best_place": null,
+      "fsp_weight_sum": 0,
+      "fsp_highlights": [],
+      "periodic_tasks": 7,
+      "last_active": "2026-09-12T17:50:40.971760",
+      "calculated_score": 85.8,
+      "reasons": [
+        "high_test_score",
+        "no_fsp_candidate",
+        "active_solver"
+      ],
+      "explanation": "Подтвержденный балл тестирования 81.8%, без истории соревнований ФСП (оценка по тестам и стеку)."
+    },
+    {
+      "id": "22222222-2222-2222-2222-000000001056",
+      "full_name": "Зайцева Екатерина",
+      "city": "г. Санкт-Петербург",
+      "specialization": "backend",
+      "specialization_id": "00000000-0000-0000-0000-000000000201",
+      "specialization_name": "Backend Go",
+      "grade": "senior",
+      "grade_id": "00000000-0000-0000-0000-000000000305",
+      "grade_name": "Senior",
+      "grade_rank": 6,
+      "category_id": "00000000-0000-0000-0000-000000000503",
+      "stack": [
+        "Go",
+        "PostgreSQL",
+        "Redis",
+        "Docker"
+      ],
+      "stack_ids": [
+        "00000000-0000-0000-0000-000000000401",
+        "00000000-0000-0000-0000-000000000402",
+        "00000000-0000-0000-0000-000000000403",
+        "00000000-0000-0000-0000-000000000407"
+      ],
+      "years_experience": 6.4,
+      "salary_expectation": 389000,
+      "theta": 1.5991979037849116,
+      "test_score": 86.1,
+      "has_fsp": true,
+      "fsp_member_id": "FSP-RU-77-10056",
+      "sports_rank": "КМС",
+      "fsp_rating": 1985,
+      "fsp_score": 71.4,
+      "fsp_achievements_count": 3,
+      "fsp_best_place": 2,
+      "fsp_weight_sum": 14,
+      "fsp_highlights": [
+        "призёр Всероссийского хакатона ФСП"
+      ],
+      "periodic_tasks": 1,
+      "last_active": "2026-08-30T17:50:40.971770",
+      "calculated_score": 77.3,
+      "reasons": [
+        "high_test_score",
+        "fsp_verified",
+        "fsp_medalist",
+        "fsp_ranked"
+      ],
+      "explanation": "Подтвержденный балл тестирования 86.1%, призёр Всероссийского хакатона ФСП, КМС."
+    },
+    {
+      "id": "22222222-2222-2222-2222-000000001057",
+      "full_name": "Новиков Андрей",
+      "city": "г. Новосибирск",
+      "specialization": "frontend",
+      "specialization_id": "00000000-0000-0000-0000-000000000202",
+      "specialization_name": "Frontend Vue",
+      "grade": "senior",
+      "grade_id": "00000000-0000-0000-0000-000000000305",
+      "grade_name": "Senior",
+      "grade_rank": 6,
+      "category_id": "00000000-0000-0000-0000-000000000507",
+      "stack": [
+        "Vue",
+        "TypeScript"
+      ],
+      "stack_ids": [
+        "00000000-0000-0000-0000-000000000409",
+        "00000000-0000-0000-0000-000000000406"
+      ],
+      "years_experience": 6.4,
+      "salary_expectation": 329000,
+      "theta": 1.4691699430693004,
+      "test_score": 85.6,
+      "has_fsp": false,
+      "fsp_member_id": null,
+      "sports_rank": null,
+      "fsp_rating": 0,
+      "fsp_score": 0.0,
+      "fsp_achievements_count": 0,
+      "fsp_best_place": null,
+      "fsp_weight_sum": 0,
+      "fsp_highlights": [],
+      "periodic_tasks": 2,
+      "last_active": "2026-09-09T17:50:40.971778",
+      "calculated_score": 79.1,
+      "reasons": [
+        "high_test_score",
+        "no_fsp_candidate"
+      ],
+      "explanation": "Подтвержденный балл тестирования 85.6%, без истории соревнований ФСП (оценка по тестам и стеку)."
+    },
+    {
+      "id": "22222222-2222-2222-2222-000000001058",
+      "full_name": "Соловьев Кирилл",
+      "city": "г. Новосибирск",
+      "specialization": "mobile",
+      "specialization_id": "00000000-0000-0000-0000-000000000203",
+      "specialization_name": "Mobile Developer",
+      "grade": "senior",
+      "grade_id": "00000000-0000-0000-0000-000000000305",
+      "grade_name": "Senior",
+      "grade_rank": 6,
+      "category_id": "00000000-0000-0000-0000-000000000502",
+      "stack": [
+        "Swift"
+      ],
+      "stack_ids": [
+        "00000000-0000-0000-0000-000000000412"
+      ],
+      "years_experience": 6.8,
+      "salary_expectation": 341000,
+      "theta": 2.220311379794823,
+      "test_score": 95.3,
+      "has_fsp": true,
+      "fsp_member_id": "FSP-RU-77-10058",
+      "sports_rank": "КМС",
+      "fsp_rating": 2005,
+      "fsp_score": 79.5,
+      "fsp_achievements_count": 5,
+      "fsp_best_place": 2,
+      "fsp_weight_sum": 18,
+      "fsp_highlights": [
+        "призёр Всероссийского хакатона ФСП"
+      ],
+      "periodic_tasks": 4,
+      "last_active": "2026-09-13T17:50:40.971787",
+      "calculated_score": 86.5,
+      "reasons": [
+        "top_test_performer",
+        "fsp_verified",
+        "fsp_medalist",
+        "fsp_ranked",
+        "active_solver"
+      ],
+      "explanation": "Топ-5% по тесту Mobile Developer (95.3%), призёр Всероссийского хакатона ФСП, КМС."
+    },
+    {
+      "id": "22222222-2222-2222-2222-000000001059",
+      "full_name": "Кузнецов Иван",
+      "city": "г. Уфа",
+      "specialization": "data",
+      "specialization_id": "00000000-0000-0000-0000-000000000205",
+      "specialization_name": "Data / AI Developer",
+      "grade": "senior",
+      "grade_id": "00000000-0000-0000-0000-000000000305",
+      "grade_name": "Senior",
+      "grade_rank": 6,
+      "category_id": "00000000-0000-0000-0000-000000000502",
+      "stack": [
+        "Python",
+        "PostgreSQL",
+        "Redis"
+      ],
+      "stack_ids": [
+        "00000000-0000-0000-0000-000000000404",
+        "00000000-0000-0000-0000-000000000402",
+        "00000000-0000-0000-0000-000000000403"
+      ],
+      "years_experience": 7.1,
+      "salary_expectation": 460000,
+      "theta": 1.4561568860769236,
+      "test_score": 84.1,
+      "has_fsp": false,
+      "fsp_member_id": null,
+      "sports_rank": null,
+      "fsp_rating": 0,
+      "fsp_score": 0.0,
+      "fsp_achievements_count": 0,
+      "fsp_best_place": null,
+      "fsp_weight_sum": 0,
+      "fsp_highlights": [],
+      "periodic_tasks": 6,
+      "last_active": "2026-08-20T17:50:40.971795",
+      "calculated_score": 85.6,
+      "reasons": [
+        "high_test_score",
+        "no_fsp_candidate",
+        "active_solver"
+      ],
+      "explanation": "Подтвержденный балл тестирования 84.1%, без истории соревнований ФСП (оценка по тестам и стеку)."
+    },
+    {
+      "id": "22222222-2222-2222-2222-000000001060",
+      "full_name": "Зайцева Екатерина",
+      "city": "г. Пермь",
+      "specialization": "backend",
+      "specialization_id": "00000000-0000-0000-0000-000000000201",
+      "specialization_name": "Backend Go",
+      "grade": "senior",
+      "grade_id": "00000000-0000-0000-0000-000000000305",
+      "grade_name": "Senior",
+      "grade_rank": 6,
+      "category_id": "00000000-0000-0000-0000-000000000503",
+      "stack": [
+        "Go",
+        "PostgreSQL",
+        "Redis",
+        "Docker"
+      ],
+      "stack_ids": [
+        "00000000-0000-0000-0000-000000000401",
+        "00000000-0000-0000-0000-000000000402",
+        "00000000-0000-0000-0000-000000000403",
+        "00000000-0000-0000-0000-000000000407"
+      ],
+      "years_experience": 6.8,
+      "salary_expectation": 310000,
+      "theta": 2.4323380658533336,
+      "test_score": 94.3,
+      "has_fsp": true,
+      "fsp_member_id": "FSP-RU-77-10060",
+      "sports_rank": "Мастер спорта",
+      "fsp_rating": 2459,
+      "fsp_score": 85.8,
+      "fsp_achievements_count": 6,
+      "fsp_best_place": 1,
+      "fsp_weight_sum": 34,
+      "fsp_highlights": [
+        "победитель Чемпионата России ФСП 2024"
+      ],
+      "periodic_tasks": 6,
+      "last_active": "2026-09-17T17:50:40.971805",
+      "calculated_score": 90.4,
+      "reasons": [
+        "top_test_performer",
+        "fsp_verified",
+        "fsp_champion",
+        "fsp_master",
+        "active_solver"
+      ],
+      "explanation": "Топ-5% по тесту Backend Go (94.3%), победитель Чемпионата России ФСП 2024, Мастер спорта."
+    },
+    {
+      "id": "22222222-2222-2222-2222-000000001061",
+      "full_name": "Зайцев Александр",
+      "city": "г. Томск",
+      "specialization": "backend",
+      "specialization_id": "00000000-0000-0000-0000-000000000201",
+      "specialization_name": "Backend Python",
+      "grade": "senior",
+      "grade_id": "00000000-0000-0000-0000-000000000305",
+      "grade_name": "Senior",
+      "grade_rank": 6,
+      "category_id": "00000000-0000-0000-0000-000000000503",
+      "stack": [
+        "Python",
+        "PostgreSQL",
+        "Redis",
+        "Docker"
+      ],
+      "stack_ids": [
+        "00000000-0000-0000-0000-000000000404",
+        "00000000-0000-0000-0000-000000000402",
+        "00000000-0000-0000-0000-000000000403",
+        "00000000-0000-0000-0000-000000000407"
+      ],
+      "years_experience": 5.3,
+      "salary_expectation": 392000,
+      "theta": 2.3920661062229063,
+      "test_score": 95.2,
+      "has_fsp": false,
+      "fsp_member_id": null,
+      "sports_rank": null,
+      "fsp_rating": 0,
+      "fsp_score": 0.0,
+      "fsp_achievements_count": 0,
+      "fsp_best_place": null,
+      "fsp_weight_sum": 0,
+      "fsp_highlights": [],
+      "periodic_tasks": 7,
+      "last_active": "2026-09-09T17:50:40.971813",
+      "calculated_score": 91.8,
+      "reasons": [
+        "top_test_performer",
+        "no_fsp_candidate",
+        "active_solver"
+      ],
+      "explanation": "Топ-5% по тесту Backend Python (95.2%), без истории соревнований ФСП (оценка по тестам и стеку)."
+    },
+    {
+      "id": "22222222-2222-2222-2222-000000001062",
+      "full_name": "Зайцев Андрей",
+      "city": "г. Новосибирск",
+      "specialization": "frontend",
+      "specialization_id": "00000000-0000-0000-0000-000000000202",
+      "specialization_name": "Frontend React",
+      "grade": "senior",
+      "grade_id": "00000000-0000-0000-0000-000000000305",
+      "grade_name": "Senior",
+      "grade_rank": 6,
+      "category_id": "00000000-0000-0000-0000-000000000507",
+      "stack": [
+        "React",
+        "TypeScript",
+        "Docker"
+      ],
+      "stack_ids": [
+        "00000000-0000-0000-0000-000000000405",
+        "00000000-0000-0000-0000-000000000406",
+        "00000000-0000-0000-0000-000000000407"
+      ],
+      "years_experience": 7.2,
+      "salary_expectation": 437000,
+      "theta": 1.909961929185507,
+      "test_score": 91.9,
+      "has_fsp": false,
+      "fsp_member_id": null,
+      "sports_rank": null,
+      "fsp_rating": 0,
+      "fsp_score": 0.0,
+      "fsp_achievements_count": 0,
+      "fsp_best_place": null,
+      "fsp_weight_sum": 0,
+      "fsp_highlights": [],
+      "periodic_tasks": 4,
+      "last_active": "2026-09-11T17:50:40.971821",
+      "calculated_score": 85.6,
+      "reasons": [
+        "top_test_performer",
+        "no_fsp_candidate",
+        "active_solver"
+      ],
+      "explanation": "Топ-5% по тесту Frontend React (91.9%), без истории соревнований ФСП (оценка по тестам и стеку)."
+    },
+    {
+      "id": "22222222-2222-2222-2222-000000001063",
+      "full_name": "Волков Кирилл",
+      "city": "г. Екатеринбург",
+      "specialization": "mobile",
+      "specialization_id": "00000000-0000-0000-0000-000000000203",
+      "specialization_name": "Mobile Developer",
+      "grade": "senior",
+      "grade_id": "00000000-0000-0000-0000-000000000305",
+      "grade_name": "Senior",
+      "grade_rank": 6,
+      "category_id": "00000000-0000-0000-0000-000000000502",
+      "stack": [
+        "Kotlin"
+      ],
+      "stack_ids": [
+        "00000000-0000-0000-0000-000000000411"
+      ],
+      "years_experience": 7.5,
+      "salary_expectation": 322000,
+      "theta": 1.5316833709320934,
+      "test_score": 85.4,
+      "has_fsp": true,
+      "fsp_member_id": "FSP-RU-77-10063",
+      "sports_rank": "Мастер спорта",
+      "fsp_rating": 2465,
+      "fsp_score": 91.3,
+      "fsp_achievements_count": 7,
+      "fsp_best_place": 2,
+      "fsp_weight_sum": 27,
+      "fsp_highlights": [
+        "серебряный призёр Кубка ФСП 2025"
+      ],
+      "periodic_tasks": 6,
+      "last_active": "2026-09-14T17:50:40.971830",
+      "calculated_score": 89.0,
+      "reasons": [
+        "high_test_score",
+        "fsp_verified",
+        "fsp_medalist",
+        "fsp_master",
+        "active_solver"
+      ],
+      "explanation": "Подтвержденный балл тестирования 85.4%, серебряный призёр Кубка ФСП 2025, Мастер спорта."
+    },
+    {
+      "id": "22222222-2222-2222-2222-000000001064",
+      "full_name": "Смирнова Дарья",
+      "city": "г. Томск",
+      "specialization": "data",
+      "specialization_id": "00000000-0000-0000-0000-000000000205",
+      "specialization_name": "Data / AI Developer",
+      "grade": "senior",
+      "grade_id": "00000000-0000-0000-0000-000000000305",
+      "grade_name": "Senior",
+      "grade_rank": 6,
+      "category_id": "00000000-0000-0000-0000-000000000502",
+      "stack": [
+        "Python",
+        "PostgreSQL",
+        "Redis"
+      ],
+      "stack_ids": [
+        "00000000-0000-0000-0000-000000000404",
+        "00000000-0000-0000-0000-000000000402",
+        "00000000-0000-0000-0000-000000000403"
+      ],
+      "years_experience": 7.6,
+      "salary_expectation": 366000,
+      "theta": 1.7147068179028113,
+      "test_score": 88.0,
+      "has_fsp": false,
+      "fsp_member_id": null,
+      "sports_rank": null,
+      "fsp_rating": 0,
+      "fsp_score": 0.0,
+      "fsp_achievements_count": 0,
+      "fsp_best_place": null,
+      "fsp_weight_sum": 0,
+      "fsp_highlights": [],
+      "periodic_tasks": 5,
+      "last_active": "2026-08-25T17:50:40.971838",
+      "calculated_score": 85.6,
+      "reasons": [
+        "high_test_score",
+        "no_fsp_candidate",
+        "active_solver"
+      ],
+      "explanation": "Подтвержденный балл тестирования 88.0%, без истории соревнований ФСП (оценка по тестам и стеку)."
+    },
+    {
+      "id": "22222222-2222-2222-2222-000000001065",
+      "full_name": "Виноградов Кирилл",
+      "city": "г. Москва",
+      "specialization": "backend",
+      "specialization_id": "00000000-0000-0000-0000-000000000201",
+      "specialization_name": "Backend Python",
+      "grade": "senior",
+      "grade_id": "00000000-0000-0000-0000-000000000305",
+      "grade_name": "Senior",
+      "grade_rank": 6,
+      "category_id": "00000000-0000-0000-0000-000000000503",
+      "stack": [
+        "Python",
+        "PostgreSQL",
+        "Redis",
+        "Docker"
+      ],
+      "stack_ids": [
+        "00000000-0000-0000-0000-000000000404",
+        "00000000-0000-0000-0000-000000000402",
+        "00000000-0000-0000-0000-000000000403",
+        "00000000-0000-0000-0000-000000000407"
+      ],
+      "years_experience": 6.5,
+      "salary_expectation": 348000,
+      "theta": 1.8512634479420382,
+      "test_score": 88.6,
+      "has_fsp": true,
+      "fsp_member_id": "FSP-RU-77-10065",
+      "sports_rank": "1-й спортивный разряд",
+      "fsp_rating": 2318,
+      "fsp_score": 80.9,
+      "fsp_achievements_count": 5,
+      "fsp_best_place": 5,
+      "fsp_weight_sum": 21,
+      "fsp_highlights": [
+        "призёр Всероссийского хакатона ФСП"
+      ],
+      "periodic_tasks": 6,
+      "last_active": "2026-09-08T17:50:40.971847",
+      "calculated_score": 87.0,
+      "reasons": [
+        "high_test_score",
+        "fsp_verified",
+        "fsp_ranked",
+        "active_solver"
+      ],
+      "explanation": "Подтвержденный балл тестирования 88.6%, призёр Всероссийского хакатона ФСП, 1-й спортивный разряд."
+    },
+    {
+      "id": "22222222-2222-2222-2222-000000001066",
+      "full_name": "Павлов Илья",
+      "city": "г. Москва",
+      "specialization": "backend",
+      "specialization_id": "00000000-0000-0000-0000-000000000201",
+      "specialization_name": "Backend Go",
+      "grade": "senior",
+      "grade_id": "00000000-0000-0000-0000-000000000305",
+      "grade_name": "Senior",
+      "grade_rank": 6,
+      "category_id": "00000000-0000-0000-0000-000000000503",
+      "stack": [
+        "Go",
+        "PostgreSQL",
+        "Redis",
+        "Docker"
+      ],
+      "stack_ids": [
+        "00000000-0000-0000-0000-000000000401",
+        "00000000-0000-0000-0000-000000000402",
+        "00000000-0000-0000-0000-000000000403",
+        "00000000-0000-0000-0000-000000000407"
+      ],
+      "years_experience": 5.3,
+      "salary_expectation": 378000,
+      "theta": 1.7089437039498039,
+      "test_score": 89.3,
+      "has_fsp": false,
+      "fsp_member_id": null,
+      "sports_rank": null,
+      "fsp_rating": 0,
+      "fsp_score": 0.0,
+      "fsp_achievements_count": 0,
+      "fsp_best_place": null,
+      "fsp_weight_sum": 0,
+      "fsp_highlights": [],
+      "periodic_tasks": 3,
+      "last_active": "2026-09-08T17:50:40.971854",
+      "calculated_score": 82.6,
+      "reasons": [
+        "high_test_score",
+        "no_fsp_candidate",
+        "active_solver"
+      ],
+      "explanation": "Подтвержденный балл тестирования 89.3%, без истории соревнований ФСП (оценка по тестам и стеку)."
+    },
+    {
+      "id": "22222222-2222-2222-2222-000000001067",
+      "full_name": "Зайцев Владимир",
+      "city": "г. Воронеж",
+      "specialization": "frontend",
+      "specialization_id": "00000000-0000-0000-0000-000000000202",
+      "specialization_name": "Frontend Vue",
+      "grade": "senior",
+      "grade_id": "00000000-0000-0000-0000-000000000305",
+      "grade_name": "Senior",
+      "grade_rank": 6,
+      "category_id": "00000000-0000-0000-0000-000000000507",
+      "stack": [
+        "Vue",
+        "TypeScript"
+      ],
+      "stack_ids": [
+        "00000000-0000-0000-0000-000000000409",
+        "00000000-0000-0000-0000-000000000406"
+      ],
+      "years_experience": 6.7,
+      "salary_expectation": 390000,
+      "theta": 2.2039536133765347,
+      "test_score": 94.2,
+      "has_fsp": true,
+      "fsp_member_id": "FSP-RU-77-10067",
+      "sports_rank": "1-й спортивный разряд",
+      "fsp_rating": 2088,
+      "fsp_score": 70.1,
+      "fsp_achievements_count": 3,
+      "fsp_best_place": 4,
+      "fsp_weight_sum": 18,
+      "fsp_highlights": [
+        "призёр Всероссийского хакатона ФСП"
+      ],
+      "periodic_tasks": 2,
+      "last_active": "2026-09-18T17:50:40.971864",
+      "calculated_score": 80.9,
+      "reasons": [
+        "top_test_performer",
+        "fsp_verified",
+        "fsp_ranked"
+      ],
+      "explanation": "Топ-5% по тесту Frontend Vue (94.2%), призёр Всероссийского хакатона ФСП, 1-й спортивный разряд."
+    },
+    {
+      "id": "22222222-2222-2222-2222-000000001068",
+      "full_name": "Соловьева Елена",
+      "city": "г. Ростов-на-Дону",
+      "specialization": "mobile",
+      "specialization_id": "00000000-0000-0000-0000-000000000203",
+      "specialization_name": "Mobile Developer",
+      "grade": "senior",
+      "grade_id": "00000000-0000-0000-0000-000000000305",
+      "grade_name": "Senior",
+      "grade_rank": 6,
+      "category_id": "00000000-0000-0000-0000-000000000502",
+      "stack": [
+        "Swift"
+      ],
+      "stack_ids": [
+        "00000000-0000-0000-0000-000000000412"
+      ],
+      "years_experience": 7.9,
+      "salary_expectation": 423000,
+      "theta": 1.5042258503605512,
+      "test_score": 85.0,
+      "has_fsp": false,
+      "fsp_member_id": null,
+      "sports_rank": null,
+      "fsp_rating": 0,
+      "fsp_score": 0.0,
+      "fsp_achievements_count": 0,
+      "fsp_best_place": null,
+      "fsp_weight_sum": 0,
+      "fsp_highlights": [],
+      "periodic_tasks": 5,
+      "last_active": "2026-08-21T17:50:40.971873",
+      "calculated_score": 84.2,
+      "reasons": [
+        "high_test_score",
+        "no_fsp_candidate",
+        "active_solver"
+      ],
+      "explanation": "Подтвержденный балл тестирования 85.0%, без истории соревнований ФСП (оценка по тестам и стеку)."
+    },
+    {
+      "id": "22222222-2222-2222-2222-000000001069",
+      "full_name": "Попов Никита",
+      "city": "г. Екатеринбург",
+      "specialization": "data",
+      "specialization_id": "00000000-0000-0000-0000-000000000205",
+      "specialization_name": "Data / AI Developer",
+      "grade": "senior",
+      "grade_id": "00000000-0000-0000-0000-000000000305",
+      "grade_name": "Senior",
+      "grade_rank": 6,
+      "category_id": "00000000-0000-0000-0000-000000000502",
+      "stack": [
+        "Python",
+        "PostgreSQL",
+        "Redis"
+      ],
+      "stack_ids": [
+        "00000000-0000-0000-0000-000000000404",
+        "00000000-0000-0000-0000-000000000402",
+        "00000000-0000-0000-0000-000000000403"
+      ],
+      "years_experience": 5.9,
+      "salary_expectation": 392000,
+      "theta": 1.3573739470703445,
+      "test_score": 82.3,
+      "has_fsp": true,
+      "fsp_member_id": "FSP-RU-77-10069",
+      "sports_rank": "Мастер спорта",
+      "fsp_rating": 2353,
+      "fsp_score": 88.0,
+      "fsp_achievements_count": 5,
+      "fsp_best_place": 2,
+      "fsp_weight_sum": 35,
+      "fsp_highlights": [
+        "серебряный призёр Кубка ФСП 2025"
+      ],
+      "periodic_tasks": 1,
+      "last_active": "2026-09-03T17:50:40.971882",
+      "calculated_score": 80.9,
+      "reasons": [
+        "high_test_score",
+        "fsp_verified",
+        "fsp_medalist",
+        "fsp_master"
+      ],
+      "explanation": "Подтвержденный балл тестирования 82.3%, серебряный призёр Кубка ФСП 2025, Мастер спорта."
+    },
+    {
+      "id": "22222222-2222-2222-2222-000000001070",
+      "full_name": "Соколов Никита",
+      "city": "г. Пермь",
+      "specialization": "backend",
+      "specialization_id": "00000000-0000-0000-0000-000000000201",
+      "specialization_name": "Backend Go",
+      "grade": "senior",
+      "grade_id": "00000000-0000-0000-0000-000000000305",
+      "grade_name": "Senior",
+      "grade_rank": 6,
+      "category_id": "00000000-0000-0000-0000-000000000503",
+      "stack": [
+        "Go",
+        "PostgreSQL",
+        "Redis",
+        "Docker"
+      ],
+      "stack_ids": [
+        "00000000-0000-0000-0000-000000000401",
+        "00000000-0000-0000-0000-000000000402",
+        "00000000-0000-0000-0000-000000000403",
+        "00000000-0000-0000-0000-000000000407"
+      ],
+      "years_experience": 7.6,
+      "salary_expectation": 446000,
+      "theta": 0.7891534096680074,
+      "test_score": 71.2,
+      "has_fsp": false,
+      "fsp_member_id": null,
+      "sports_rank": null,
+      "fsp_rating": 0,
+      "fsp_score": 0.0,
+      "fsp_achievements_count": 0,
+      "fsp_best_place": null,
+      "fsp_weight_sum": 0,
+      "fsp_highlights": [],
+      "periodic_tasks": 3,
+      "last_active": "2026-09-10T17:50:40.971889",
+      "calculated_score": 74.4,
+      "reasons": [
+        "no_fsp_candidate",
+        "active_solver"
+      ],
+      "explanation": "Подтвержденный балл тестирования 71.2%, без истории соревнований ФСП (оценка по тестам и стеку)."
+    },
+    {
+      "id": "22222222-2222-2222-2222-000000001071",
+      "full_name": "Лебедев Артем",
+      "city": "г. Москва",
+      "specialization": "backend",
+      "specialization_id": "00000000-0000-0000-0000-000000000201",
+      "specialization_name": "Backend Python",
+      "grade": "senior",
+      "grade_id": "00000000-0000-0000-0000-000000000305",
+      "grade_name": "Senior",
+      "grade_rank": 6,
+      "category_id": "00000000-0000-0000-0000-000000000503",
+      "stack": [
+        "Python",
+        "PostgreSQL",
+        "Redis",
+        "Docker"
+      ],
+      "stack_ids": [
+        "00000000-0000-0000-0000-000000000404",
+        "00000000-0000-0000-0000-000000000402",
+        "00000000-0000-0000-0000-000000000403",
+        "00000000-0000-0000-0000-000000000407"
+      ],
+      "years_experience": 5.8,
+      "salary_expectation": 422000,
+      "theta": 1.6465212540800633,
+      "test_score": 86.3,
+      "has_fsp": false,
+      "fsp_member_id": null,
+      "sports_rank": null,
+      "fsp_rating": 0,
+      "fsp_score": 0.0,
+      "fsp_achievements_count": 0,
+      "fsp_best_place": null,
+      "fsp_weight_sum": 0,
+      "fsp_highlights": [],
+      "periodic_tasks": 1,
+      "last_active": "2026-09-13T17:50:40.971896",
+      "calculated_score": 77.6,
+      "reasons": [
+        "high_test_score",
+        "no_fsp_candidate"
+      ],
+      "explanation": "Подтвержденный балл тестирования 86.3%, без истории соревнований ФСП (оценка по тестам и стеку)."
+    },
+    {
+      "id": "22222222-2222-2222-2222-000000001072",
+      "full_name": "Иванова Полина",
+      "city": "г. Уфа",
+      "specialization": "frontend",
+      "specialization_id": "00000000-0000-0000-0000-000000000202",
+      "specialization_name": "Frontend React",
+      "grade": "senior",
+      "grade_id": "00000000-0000-0000-0000-000000000305",
+      "grade_name": "Senior",
+      "grade_rank": 6,
+      "category_id": "00000000-0000-0000-0000-000000000507",
+      "stack": [
+        "React",
+        "TypeScript",
+        "Docker"
+      ],
+      "stack_ids": [
+        "00000000-0000-0000-0000-000000000405",
+        "00000000-0000-0000-0000-000000000406",
+        "00000000-0000-0000-0000-000000000407"
+      ],
+      "years_experience": 6.9,
+      "salary_expectation": 444000,
+      "theta": 1.8146075061412952,
+      "test_score": 91.6,
+      "has_fsp": true,
+      "fsp_member_id": "FSP-RU-77-10072",
+      "sports_rank": "Мастер спорта",
+      "fsp_rating": 2371,
+      "fsp_score": 91.1,
+      "fsp_achievements_count": 4,
+      "fsp_best_place": 1,
+      "fsp_weight_sum": 27,
+      "fsp_highlights": [
+        "победитель Чемпионата России ФСП 2024"
+      ],
+      "periodic_tasks": 4,
+      "last_active": "2026-08-31T17:50:40.971905",
+      "calculated_score": 88.7,
+      "reasons": [
+        "top_test_performer",
+        "fsp_verified",
+        "fsp_champion",
+        "fsp_master",
+        "active_solver"
+      ],
+      "explanation": "Топ-5% по тесту Frontend React (91.6%), победитель Чемпионата России ФСП 2024, Мастер спорта."
+    },
+    {
+      "id": "22222222-2222-2222-2222-000000001073",
+      "full_name": "Голубев Михаил",
+      "city": "г. Самара",
+      "specialization": "mobile",
+      "specialization_id": "00000000-0000-0000-0000-000000000203",
+      "specialization_name": "Mobile Developer",
+      "grade": "senior",
+      "grade_id": "00000000-0000-0000-0000-000000000305",
+      "grade_name": "Senior",
+      "grade_rank": 6,
+      "category_id": "00000000-0000-0000-0000-000000000502",
+      "stack": [
+        "Kotlin"
+      ],
+      "stack_ids": [
+        "00000000-0000-0000-0000-000000000411"
+      ],
+      "years_experience": 6.4,
+      "salary_expectation": 413000,
+      "theta": 1.6751513965239144,
+      "test_score": 87.4,
+      "has_fsp": false,
+      "fsp_member_id": null,
+      "sports_rank": null,
+      "fsp_rating": 0,
+      "fsp_score": 0.0,
+      "fsp_achievements_count": 0,
+      "fsp_best_place": null,
+      "fsp_weight_sum": 0,
+      "fsp_highlights": [],
+      "periodic_tasks": 5,
+      "last_active": "2026-09-11T17:50:40.971913",
+      "calculated_score": 85.3,
+      "reasons": [
+        "high_test_score",
+        "no_fsp_candidate",
+        "active_solver"
+      ],
+      "explanation": "Подтвержденный балл тестирования 87.4%, без истории соревнований ФСП (оценка по тестам и стеку)."
+    },
+    {
+      "id": "22222222-2222-2222-2222-000000001074",
+      "full_name": "Богданов Никита",
+      "city": "г. Уфа",
+      "specialization": "data",
+      "specialization_id": "00000000-0000-0000-0000-000000000205",
+      "specialization_name": "Data / AI Developer",
+      "grade": "senior",
+      "grade_id": "00000000-0000-0000-0000-000000000305",
+      "grade_name": "Senior",
+      "grade_rank": 6,
+      "category_id": "00000000-0000-0000-0000-000000000502",
+      "stack": [
+        "Python",
+        "PostgreSQL",
+        "Redis"
+      ],
+      "stack_ids": [
+        "00000000-0000-0000-0000-000000000404",
+        "00000000-0000-0000-0000-000000000402",
+        "00000000-0000-0000-0000-000000000403"
+      ],
+      "years_experience": 5.2,
+      "salary_expectation": 353000,
+      "theta": 1.7771599159908988,
+      "test_score": 89.9,
+      "has_fsp": true,
+      "fsp_member_id": "FSP-RU-77-10074",
+      "sports_rank": "КМС",
+      "fsp_rating": 2085,
+      "fsp_score": 71.0,
+      "fsp_achievements_count": 3,
+      "fsp_best_place": 2,
+      "fsp_weight_sum": 16,
+      "fsp_highlights": [
+        "призёр Всероссийского хакатона ФСП"
+      ],
+      "periodic_tasks": 1,
+      "last_active": "2026-09-28T17:50:40.971924",
+      "calculated_score": 80.5,
+      "reasons": [
+        "high_test_score",
+        "fsp_verified",
+        "fsp_medalist",
+        "fsp_ranked"
+      ],
+      "explanation": "Подтвержденный балл тестирования 89.9%, призёр Всероссийского хакатона ФСП, КМС."
+    },
+    {
+      "id": "22222222-2222-2222-2222-000000001075",
+      "full_name": "Зайцев Александр",
+      "city": "г. Томск",
+      "specialization": "backend",
+      "specialization_id": "00000000-0000-0000-0000-000000000201",
+      "specialization_name": "Backend Python",
+      "grade": "lead",
+      "grade_id": "00000000-0000-0000-0000-000000000306",
+      "grade_name": "Lead",
+      "grade_rank": 7,
+      "category_id": "00000000-0000-0000-0000-000000000504",
+      "stack": [
+        "Python",
+        "PostgreSQL",
+        "Redis",
+        "Docker"
+      ],
+      "stack_ids": [
+        "00000000-0000-0000-0000-000000000404",
+        "00000000-0000-0000-0000-000000000402",
+        "00000000-0000-0000-0000-000000000403",
+        "00000000-0000-0000-0000-000000000407"
+      ],
+      "years_experience": 10.8,
+      "salary_expectation": 570000,
+      "theta": 2.0603118442252866,
+      "test_score": 91.4,
+      "has_fsp": false,
+      "fsp_member_id": null,
+      "sports_rank": null,
+      "fsp_rating": 0,
+      "fsp_score": 0.0,
+      "fsp_achievements_count": 0,
+      "fsp_best_place": null,
+      "fsp_weight_sum": 0,
+      "fsp_highlights": [],
+      "periodic_tasks": 2,
+      "last_active": "2026-09-20T17:50:40.971932",
+      "calculated_score": 81.7,
+      "reasons": [
+        "top_test_performer",
+        "no_fsp_candidate"
+      ],
+      "explanation": "Топ-5% по тесту Backend Python (91.4%), без истории соревнований ФСП (оценка по тестам и стеку)."
+    },
+    {
+      "id": "22222222-2222-2222-2222-000000001076",
+      "full_name": "Соколова София",
+      "city": "г. Воронеж",
+      "specialization": "backend",
+      "specialization_id": "00000000-0000-0000-0000-000000000201",
+      "specialization_name": "Backend Go",
+      "grade": "lead",
+      "grade_id": "00000000-0000-0000-0000-000000000306",
+      "grade_name": "Lead",
+      "grade_rank": 7,
+      "category_id": "00000000-0000-0000-0000-000000000504",
+      "stack": [
+        "Go",
+        "PostgreSQL",
+        "Redis",
+        "Docker"
+      ],
+      "stack_ids": [
+        "00000000-0000-0000-0000-000000000401",
+        "00000000-0000-0000-0000-000000000402",
+        "00000000-0000-0000-0000-000000000403",
+        "00000000-0000-0000-0000-000000000407"
+      ],
+      "years_experience": 11.4,
+      "salary_expectation": 517000,
+      "theta": 2.3300985739548135,
+      "test_score": 95.4,
+      "has_fsp": true,
+      "fsp_member_id": "FSP-RU-77-10076",
+      "sports_rank": "Без разряда",
+      "fsp_rating": 1901,
+      "fsp_score": 42.9,
+      "fsp_achievements_count": 2,
+      "fsp_best_place": 12,
+      "fsp_weight_sum": 9,
+      "fsp_highlights": [
+        "участник студенческой лиги ФСП"
+      ],
+      "periodic_tasks": 2,
+      "last_active": "2026-08-28T17:50:40.971941",
+      "calculated_score": 73.2,
+      "reasons": [
+        "top_test_performer",
+        "fsp_verified"
+      ],
+      "explanation": "Топ-5% по тесту Backend Go (95.4%), участник студенческой лиги ФСП, Без разряда."
+    },
+    {
+      "id": "22222222-2222-2222-2222-000000001077",
+      "full_name": "Морозов Андрей",
+      "city": "г. Новосибирск",
+      "specialization": "frontend",
+      "specialization_id": "00000000-0000-0000-0000-000000000202",
+      "specialization_name": "Frontend Vue",
+      "grade": "lead",
+      "grade_id": "00000000-0000-0000-0000-000000000306",
+      "grade_name": "Lead",
+      "grade_rank": 7,
+      "category_id": "00000000-0000-0000-0000-000000000502",
+      "stack": [
+        "Vue",
+        "TypeScript"
+      ],
+      "stack_ids": [
+        "00000000-0000-0000-0000-000000000409",
+        "00000000-0000-0000-0000-000000000406"
+      ],
+      "years_experience": 8.3,
+      "salary_expectation": 492000,
+      "theta": 2.2103668226557875,
+      "test_score": 94.6,
+      "has_fsp": false,
+      "fsp_member_id": null,
+      "sports_rank": null,
+      "fsp_rating": 0,
+      "fsp_score": 0.0,
+      "fsp_achievements_count": 0,
+      "fsp_best_place": null,
+      "fsp_weight_sum": 0,
+      "fsp_highlights": [],
+      "periodic_tasks": 5,
+      "last_active": "2026-08-22T17:50:40.971951",
+      "calculated_score": 88.6,
+      "reasons": [
+        "top_test_performer",
+        "no_fsp_candidate",
+        "active_solver"
+      ],
+      "explanation": "Топ-5% по тесту Frontend Vue (94.6%), без истории соревнований ФСП (оценка по тестам и стеку)."
+    },
+    {
+      "id": "22222222-2222-2222-2222-000000001078",
+      "full_name": "Павлов Никита",
+      "city": "г. Санкт-Петербург",
+      "specialization": "mobile",
+      "specialization_id": "00000000-0000-0000-0000-000000000203",
+      "specialization_name": "Mobile Developer",
+      "grade": "lead",
+      "grade_id": "00000000-0000-0000-0000-000000000306",
+      "grade_name": "Lead",
+      "grade_rank": 7,
+      "category_id": "00000000-0000-0000-0000-000000000502",
+      "stack": [
+        "Swift"
+      ],
+      "stack_ids": [
+        "00000000-0000-0000-0000-000000000412"
+      ],
+      "years_experience": 9.9,
+      "salary_expectation": 519000,
+      "theta": 1.9815851129450275,
+      "test_score": 91.5,
+      "has_fsp": true,
+      "fsp_member_id": "FSP-RU-77-10078",
+      "sports_rank": "Мастер спорта",
+      "fsp_rating": 2476,
+      "fsp_score": 91.6,
+      "fsp_achievements_count": 4,
+      "fsp_best_place": 1,
+      "fsp_weight_sum": 31,
+      "fsp_highlights": [
+        "победитель Чемпионата России ФСП 2024"
+      ],
+      "periodic_tasks": 4,
+      "last_active": "2026-08-22T17:50:40.971960",
+      "calculated_score": 88.8,
+      "reasons": [
+        "top_test_performer",
+        "fsp_verified",
+        "fsp_champion",
+        "fsp_master",
+        "active_solver"
+      ],
+      "explanation": "Топ-5% по тесту Mobile Developer (91.5%), победитель Чемпионата России ФСП 2024, Мастер спорта."
+    },
+    {
+      "id": "22222222-2222-2222-2222-000000001079",
+      "full_name": "Воробьев Артем",
+      "city": "г. Казань",
+      "specialization": "data",
+      "specialization_id": "00000000-0000-0000-0000-000000000205",
+      "specialization_name": "Data / AI Developer",
+      "grade": "lead",
+      "grade_id": "00000000-0000-0000-0000-000000000306",
+      "grade_name": "Lead",
+      "grade_rank": 7,
+      "category_id": "00000000-0000-0000-0000-000000000502",
+      "stack": [
+        "Python",
+        "PostgreSQL",
+        "Redis"
+      ],
+      "stack_ids": [
+        "00000000-0000-0000-0000-000000000404",
+        "00000000-0000-0000-0000-000000000402",
+        "00000000-0000-0000-0000-000000000403"
+      ],
+      "years_experience": 8.1,
+      "salary_expectation": 508000,
+      "theta": 2.4348979718960653,
+      "test_score": 96.7,
+      "has_fsp": false,
+      "fsp_member_id": null,
+      "sports_rank": null,
+      "fsp_rating": 0,
+      "fsp_score": 0.0,
+      "fsp_achievements_count": 0,
+      "fsp_best_place": null,
+      "fsp_weight_sum": 0,
+      "fsp_highlights": [],
+      "periodic_tasks": 7,
+      "last_active": "2026-08-14T17:50:40.971968",
+      "calculated_score": 92.5,
+      "reasons": [
+        "top_test_performer",
+        "no_fsp_candidate",
+        "active_solver"
+      ],
+      "explanation": "Топ-5% по тесту Data / AI Developer (96.7%), без истории соревнований ФСП (оценка по тестам и стеку)."
+    }
+  ],
+  "employers": [
+    {
+      "id": "33333333-3333-3333-3333-000000001000",
+      "owner_user_id": "44444444-4444-4444-4444-000000001000",
+      "name": "Яндекс Финтех",
+      "industry": "Финтех / Платежи",
+      "size": "1000+",
+      "description": "Разработка высоконагруженных платежных сервисов и банковских продуктов.",
+      "vacancies": [
+        {
+          "id": "55555555-5555-5555-5555-000000001000",
+          "title": "Senior Go Developer",
+          "specialization": "backend",
+          "specialization_id": "00000000-0000-0000-0000-000000000201",
+          "grade": "senior",
+          "grade_id": "00000000-0000-0000-0000-000000000305",
+          "stack": [
+            "Go",
+            "PostgreSQL",
+            "Redis"
+          ],
+          "stack_ids": [
+            "00000000-0000-0000-0000-000000000401",
+            "00000000-0000-0000-0000-000000000402",
+            "00000000-0000-0000-0000-000000000403"
+          ],
+          "salary_min": 320000,
+          "salary_max": 480000,
+          "currency": "RUB",
+          "work_format": "remote"
+        }
+      ]
+    },
+    {
+      "id": "33333333-3333-3333-3333-000000001001",
+      "owner_user_id": "44444444-4444-4444-4444-000000001001",
+      "name": "Т-Банк (Тинькофф)",
+      "industry": "Банки / Финтех",
+      "size": "1000+",
+      "description": "Экосистема финансовых и лайфстайл сервисов для миллионов пользователей.",
+      "vacancies": [
+        {
+          "id": "55555555-5555-5555-5555-000000001001",
+          "title": "Middle Python Backend Engineer",
+          "specialization": "backend",
+          "specialization_id": "00000000-0000-0000-0000-000000000201",
+          "grade": "middle",
+          "grade_id": "00000000-0000-0000-0000-000000000303",
+          "stack": [
+            "Python",
+            "PostgreSQL",
+            "Docker"
+          ],
+          "stack_ids": [
+            "00000000-0000-0000-0000-000000000404",
+            "00000000-0000-0000-0000-000000000402",
+            "00000000-0000-0000-0000-000000000407"
+          ],
+          "salary_min": 200000,
+          "salary_max": 280000,
+          "currency": "RUB",
+          "work_format": "hybrid"
+        }
+      ]
+    },
+    {
+      "id": "33333333-3333-3333-3333-000000001002",
+      "owner_user_id": "44444444-4444-4444-4444-000000001002",
+      "name": "СберТех",
+      "industry": "Корпоративные платформы",
+      "size": "1000+",
+      "description": "Инновационная облачная платформа цифровизации для банковского сектора.",
+      "vacancies": [
+        {
+          "id": "55555555-5555-5555-5555-000000001002",
+          "title": "Frontend React / TypeScript Developer",
+          "specialization": "frontend",
+          "specialization_id": "00000000-0000-0000-0000-000000000202",
+          "grade": "middle",
+          "grade_id": "00000000-0000-0000-0000-000000000303",
+          "stack": [
+            "React",
+            "TypeScript"
+          ],
+          "stack_ids": [
+            "00000000-0000-0000-0000-000000000405",
+            "00000000-0000-0000-0000-000000000406"
+          ],
+          "salary_min": 190000,
+          "salary_max": 260000,
+          "currency": "RUB",
+          "work_format": "remote"
+        }
+      ]
+    },
+    {
+      "id": "33333333-3333-3333-3333-000000001003",
+      "owner_user_id": "44444444-4444-4444-4444-000000001003",
+      "name": "Ozon E-commerce",
+      "industry": "E-commerce",
+      "size": "1000+",
+      "description": "Маркетплейс номер один: миллионы RPS, распределенные склады и микросервисы.",
+      "vacancies": [
+        {
+          "id": "55555555-5555-5555-5555-000000001003",
+          "title": "Senior Go Developer",
+          "specialization": "backend",
+          "specialization_id": "00000000-0000-0000-0000-000000000201",
+          "grade": "senior",
+          "grade_id": "00000000-0000-0000-0000-000000000305",
+          "stack": [
+            "Go",
+            "PostgreSQL",
+            "Redis"
+          ],
+          "stack_ids": [
+            "00000000-0000-0000-0000-000000000401",
+            "00000000-0000-0000-0000-000000000402",
+            "00000000-0000-0000-0000-000000000403"
+          ],
+          "salary_min": 320000,
+          "salary_max": 480000,
+          "currency": "RUB",
+          "work_format": "hybrid"
+        }
+      ]
+    },
+    {
+      "id": "33333333-3333-3333-3333-000000001004",
+      "owner_user_id": "44444444-4444-4444-4444-000000001004",
+      "name": "Авито Платформа",
+      "industry": "Классифайд",
+      "size": "1000+",
+      "description": "Самый посещаемый классифайд в мире с передовым технологическим стеком.",
+      "vacancies": [
+        {
+          "id": "55555555-5555-5555-5555-000000001004",
+          "title": "Middle Python Backend Engineer",
+          "specialization": "backend",
+          "specialization_id": "00000000-0000-0000-0000-000000000201",
+          "grade": "middle",
+          "grade_id": "00000000-0000-0000-0000-000000000303",
+          "stack": [
+            "Python",
+            "PostgreSQL",
+            "Docker"
+          ],
+          "stack_ids": [
+            "00000000-0000-0000-0000-000000000404",
+            "00000000-0000-0000-0000-000000000402",
+            "00000000-0000-0000-0000-000000000407"
+          ],
+          "salary_min": 200000,
+          "salary_max": 280000,
+          "currency": "RUB",
+          "work_format": "remote"
+        }
+      ]
+    },
+    {
+      "id": "33333333-3333-3333-3333-000000001005",
+      "owner_user_id": "44444444-4444-4444-4444-000000001005",
+      "name": "VK Tech",
+      "industry": "Социальные сети / Cloud",
+      "size": "1000+",
+      "description": "Корпоративные облачные сервисы, коммуникации и медиаплатформы.",
+      "vacancies": [
+        {
+          "id": "55555555-5555-5555-5555-000000001005",
+          "title": "Frontend React / TypeScript Developer",
+          "specialization": "frontend",
+          "specialization_id": "00000000-0000-0000-0000-000000000202",
+          "grade": "middle",
+          "grade_id": "00000000-0000-0000-0000-000000000303",
+          "stack": [
+            "React",
+            "TypeScript"
+          ],
+          "stack_ids": [
+            "00000000-0000-0000-0000-000000000405",
+            "00000000-0000-0000-0000-000000000406"
+          ],
+          "salary_min": 190000,
+          "salary_max": 260000,
+          "currency": "RUB",
+          "work_format": "hybrid"
+        }
+      ]
+    },
+    {
+      "id": "33333333-3333-3333-3333-000000001006",
+      "owner_user_id": "44444444-4444-4444-4444-000000001006",
+      "name": "Лаборатория Касперского",
+      "industry": "Кибербезопасность",
+      "size": "1000+",
+      "description": "Мировой лидер в области кибербезопасности и защиты данных.",
+      "vacancies": [
+        {
+          "id": "55555555-5555-5555-5555-000000001006",
+          "title": "Senior Go Developer",
+          "specialization": "backend",
+          "specialization_id": "00000000-0000-0000-0000-000000000201",
+          "grade": "senior",
+          "grade_id": "00000000-0000-0000-0000-000000000305",
+          "stack": [
+            "Go",
+            "PostgreSQL",
+            "Redis"
+          ],
+          "stack_ids": [
+            "00000000-0000-0000-0000-000000000401",
+            "00000000-0000-0000-0000-000000000402",
+            "00000000-0000-0000-0000-000000000403"
+          ],
+          "salary_min": 320000,
+          "salary_max": 480000,
+          "currency": "RUB",
+          "work_format": "remote"
+        }
+      ]
+    },
+    {
+      "id": "33333333-3333-3333-3333-000000001007",
+      "owner_user_id": "44444444-4444-4444-4444-000000001007",
+      "name": "2ГИС Геосервисы",
+      "industry": "Карты / Навигация",
+      "size": "500-1000",
+      "description": "Детализированные 3D-карты и навигация для городов России и мира.",
+      "vacancies": [
+        {
+          "id": "55555555-5555-5555-5555-000000001007",
+          "title": "Middle Python Backend Engineer",
+          "specialization": "backend",
+          "specialization_id": "00000000-0000-0000-0000-000000000201",
+          "grade": "middle",
+          "grade_id": "00000000-0000-0000-0000-000000000303",
+          "stack": [
+            "Python",
+            "PostgreSQL",
+            "Docker"
+          ],
+          "stack_ids": [
+            "00000000-0000-0000-0000-000000000404",
+            "00000000-0000-0000-0000-000000000402",
+            "00000000-0000-0000-0000-000000000407"
+          ],
+          "salary_min": 200000,
+          "salary_max": 280000,
+          "currency": "RUB",
+          "work_format": "hybrid"
+        }
+      ]
+    },
+    {
+      "id": "33333333-3333-3333-3333-000000001008",
+      "owner_user_id": "44444444-4444-4444-4444-000000001008",
+      "name": "Selectel",
+      "industry": "Облачные сервисы / IaaS",
+      "size": "500-1000",
+      "description": "Ведущий провайдер IT-инфраструктуры и облачных платформ в РФ.",
+      "vacancies": [
+        {
+          "id": "55555555-5555-5555-5555-000000001008",
+          "title": "Frontend React / TypeScript Developer",
+          "specialization": "frontend",
+          "specialization_id": "00000000-0000-0000-0000-000000000202",
+          "grade": "middle",
+          "grade_id": "00000000-0000-0000-0000-000000000303",
+          "stack": [
+            "React",
+            "TypeScript"
+          ],
+          "stack_ids": [
+            "00000000-0000-0000-0000-000000000405",
+            "00000000-0000-0000-0000-000000000406"
+          ],
+          "salary_min": 190000,
+          "salary_max": 260000,
+          "currency": "RUB",
+          "work_format": "remote"
+        }
+      ]
+    },
+    {
+      "id": "33333333-3333-3333-3333-000000001009",
+      "owner_user_id": "44444444-4444-4444-4444-000000001009",
+      "name": "Positive Technologies",
+      "industry": "Информационная безопасность",
+      "size": "1000+",
+      "description": "Продукты результативной кибербезопасности и обнаружения угроз.",
+      "vacancies": [
+        {
+          "id": "55555555-5555-5555-5555-000000001009",
+          "title": "Senior Go Developer",
+          "specialization": "backend",
+          "specialization_id": "00000000-0000-0000-0000-000000000201",
+          "grade": "senior",
+          "grade_id": "00000000-0000-0000-0000-000000000305",
+          "stack": [
+            "Go",
+            "PostgreSQL",
+            "Redis"
+          ],
+          "stack_ids": [
+            "00000000-0000-0000-0000-000000000401",
+            "00000000-0000-0000-0000-000000000402",
+            "00000000-0000-0000-0000-000000000403"
+          ],
+          "salary_min": 320000,
+          "salary_max": 480000,
+          "currency": "RUB",
+          "work_format": "hybrid"
+        }
+      ]
+    },
+    {
+      "id": "33333333-3333-3333-3333-000000001010",
+      "owner_user_id": "44444444-4444-4444-4444-000000001010",
+      "name": "Wildberries Инфраструктура",
+      "industry": "E-commerce",
+      "size": "1000+",
+      "description": "Высоконагруженная логистическая и торговая платформа.",
+      "vacancies": [
+        {
+          "id": "55555555-5555-5555-5555-000000001010",
+          "title": "Middle Python Backend Engineer",
+          "specialization": "backend",
+          "specialization_id": "00000000-0000-0000-0000-000000000201",
+          "grade": "middle",
+          "grade_id": "00000000-0000-0000-0000-000000000303",
+          "stack": [
+            "Python",
+            "PostgreSQL",
+            "Docker"
+          ],
+          "stack_ids": [
+            "00000000-0000-0000-0000-000000000404",
+            "00000000-0000-0000-0000-000000000402",
+            "00000000-0000-0000-0000-000000000407"
+          ],
+          "salary_min": 200000,
+          "salary_max": 280000,
+          "currency": "RUB",
+          "work_format": "remote"
+        }
+      ]
+    },
+    {
+      "id": "33333333-3333-3333-3333-000000001011",
+      "owner_user_id": "44444444-4444-4444-4444-000000001011",
+      "name": "Skyeng EdTech",
+      "industry": "Образование",
+      "size": "500-1000",
+      "description": "Крупнейшая EdTech компания в Восточной Европе с ИИ-технологиями обучения.",
+      "vacancies": [
+        {
+          "id": "55555555-5555-5555-5555-000000001011",
+          "title": "Frontend React / TypeScript Developer",
+          "specialization": "frontend",
+          "specialization_id": "00000000-0000-0000-0000-000000000202",
+          "grade": "middle",
+          "grade_id": "00000000-0000-0000-0000-000000000303",
+          "stack": [
+            "React",
+            "TypeScript"
+          ],
+          "stack_ids": [
+            "00000000-0000-0000-0000-000000000405",
+            "00000000-0000-0000-0000-000000000406"
+          ],
+          "salary_min": 190000,
+          "salary_max": 260000,
+          "currency": "RUB",
+          "work_format": "hybrid"
+        }
+      ]
+    },
+    {
+      "id": "33333333-3333-3333-3333-000000001012",
+      "owner_user_id": "44444444-4444-4444-4444-000000001012",
+      "name": "МойОфис",
+      "industry": "Офисное ПО",
+      "size": "500-1000",
+      "description": "Безопасные офисные решения для корпоративных коммуникаций.",
+      "vacancies": [
+        {
+          "id": "55555555-5555-5555-5555-000000001012",
+          "title": "Senior Go Developer",
+          "specialization": "backend",
+          "specialization_id": "00000000-0000-0000-0000-000000000201",
+          "grade": "senior",
+          "grade_id": "00000000-0000-0000-0000-000000000305",
+          "stack": [
+            "Go",
+            "PostgreSQL",
+            "Redis"
+          ],
+          "stack_ids": [
+            "00000000-0000-0000-0000-000000000401",
+            "00000000-0000-0000-0000-000000000402",
+            "00000000-0000-0000-0000-000000000403"
+          ],
+          "salary_min": 320000,
+          "salary_max": 480000,
+          "currency": "RUB",
+          "work_format": "remote"
+        }
+      ]
+    },
+    {
+      "id": "33333333-3333-3333-3333-000000001013",
+      "owner_user_id": "44444444-4444-4444-4444-000000001013",
+      "name": "Киберпротек",
+      "industry": "Резервное копирование",
+      "size": "100-500",
+      "description": "Решения для резервного копирования и защиты данных от киберугроз.",
+      "vacancies": [
+        {
+          "id": "55555555-5555-5555-5555-000000001013",
+          "title": "Middle Python Backend Engineer",
+          "specialization": "backend",
+          "specialization_id": "00000000-0000-0000-0000-000000000201",
+          "grade": "middle",
+          "grade_id": "00000000-0000-0000-0000-000000000303",
+          "stack": [
+            "Python",
+            "PostgreSQL",
+            "Docker"
+          ],
+          "stack_ids": [
+            "00000000-0000-0000-0000-000000000404",
+            "00000000-0000-0000-0000-000000000402",
+            "00000000-0000-0000-0000-000000000407"
+          ],
+          "salary_min": 200000,
+          "salary_max": 280000,
+          "currency": "RUB",
+          "work_format": "hybrid"
+        }
+      ]
+    },
+    {
+      "id": "33333333-3333-3333-3333-000000001014",
+      "owner_user_id": "44444444-4444-4444-4444-000000001014",
+      "name": "Купер (СберМаркет)",
+      "industry": "FoodTech / Доставка",
+      "size": "1000+",
+      "description": "Сервис быстрой доставки продуктов и товаров первой необходимости.",
+      "vacancies": [
+        {
+          "id": "55555555-5555-5555-5555-000000001014",
+          "title": "Frontend React / TypeScript Developer",
+          "specialization": "frontend",
+          "specialization_id": "00000000-0000-0000-0000-000000000202",
+          "grade": "middle",
+          "grade_id": "00000000-0000-0000-0000-000000000303",
+          "stack": [
+            "React",
+            "TypeScript"
+          ],
+          "stack_ids": [
+            "00000000-0000-0000-0000-000000000405",
+            "00000000-0000-0000-0000-000000000406"
+          ],
+          "salary_min": 190000,
+          "salary_max": 260000,
+          "currency": "RUB",
+          "work_format": "remote"
+        }
+      ]
+    },
+    {
+      "id": "33333333-3333-3333-3333-000000001015",
+      "owner_user_id": "44444444-4444-4444-4444-000000001015",
+      "name": "Yadro",
+      "industry": "Высокопроизводительные серверы",
+      "size": "1000+",
+      "description": "Разработка аппаратных платформ, СХД и телеком-оборудования.",
+      "vacancies": [
+        {
+          "id": "55555555-5555-5555-5555-000000001015",
+          "title": "Senior Go Developer",
+          "specialization": "backend",
+          "specialization_id": "00000000-0000-0000-0000-000000000201",
+          "grade": "senior",
+          "grade_id": "00000000-0000-0000-0000-000000000305",
+          "stack": [
+            "Go",
+            "PostgreSQL",
+            "Redis"
+          ],
+          "stack_ids": [
+            "00000000-0000-0000-0000-000000000401",
+            "00000000-0000-0000-0000-000000000402",
+            "00000000-0000-0000-0000-000000000403"
+          ],
+          "salary_min": 320000,
+          "salary_max": 480000,
+          "currency": "RUB",
+          "work_format": "hybrid"
+        }
+      ]
+    },
+    {
+      "id": "33333333-3333-3333-3333-000000001016",
+      "owner_user_id": "44444444-4444-4444-4444-000000001016",
+      "name": "Самокат",
+      "industry": "E-grocery / Логистика",
+      "size": "1000+",
+      "description": "Сервис сверхбыстрой доставки за 15 минут в десятках городов.",
+      "vacancies": [
+        {
+          "id": "55555555-5555-5555-5555-000000001016",
+          "title": "Middle Python Backend Engineer",
+          "specialization": "backend",
+          "specialization_id": "00000000-0000-0000-0000-000000000201",
+          "grade": "middle",
+          "grade_id": "00000000-0000-0000-0000-000000000303",
+          "stack": [
+            "Python",
+            "PostgreSQL",
+            "Docker"
+          ],
+          "stack_ids": [
+            "00000000-0000-0000-0000-000000000404",
+            "00000000-0000-0000-0000-000000000402",
+            "00000000-0000-0000-0000-000000000407"
+          ],
+          "salary_min": 200000,
+          "salary_max": 280000,
+          "currency": "RUB",
+          "work_format": "remote"
+        }
+      ]
+    },
+    {
+      "id": "33333333-3333-3333-3333-000000001017",
+      "owner_user_id": "44444444-4444-4444-4444-000000001017",
+      "name": "Mindbox",
+      "industry": "Маркетинг / MarTech",
+      "size": "100-500",
+      "description": "Автоматизация маркетинга и клиентских данных для enterprise-бизнеса.",
+      "vacancies": [
+        {
+          "id": "55555555-5555-5555-5555-000000001017",
+          "title": "Frontend React / TypeScript Developer",
+          "specialization": "frontend",
+          "specialization_id": "00000000-0000-0000-0000-000000000202",
+          "grade": "middle",
+          "grade_id": "00000000-0000-0000-0000-000000000303",
+          "stack": [
+            "React",
+            "TypeScript"
+          ],
+          "stack_ids": [
+            "00000000-0000-0000-0000-000000000405",
+            "00000000-0000-0000-0000-000000000406"
+          ],
+          "salary_min": 190000,
+          "salary_max": 260000,
+          "currency": "RUB",
+          "work_format": "hybrid"
+        }
+      ]
+    }
+  ],
+  "employer_queries": [
+    {
+      "employer_id": "33333333-3333-3333-3333-000000001000",
+      "company_name": "Яндекс Финтех",
+      "specialization": "backend",
+      "specialization_id": "00000000-0000-0000-0000-000000000201",
+      "grade": "senior",
+      "grade_id": "00000000-0000-0000-0000-000000000305",
+      "stack": [
+        "Go",
+        "PostgreSQL",
+        "Redis"
+      ],
+      "stack_ids": [
+        "00000000-0000-0000-0000-000000000401",
+        "00000000-0000-0000-0000-000000000402",
+        "00000000-0000-0000-0000-000000000403"
+      ],
+      "salary_min": 320000,
+      "salary_max": 480000
+    },
+    {
+      "employer_id": "33333333-3333-3333-3333-000000001001",
+      "company_name": "Т-Банк (Тинькофф)",
+      "specialization": "backend",
+      "specialization_id": "00000000-0000-0000-0000-000000000201",
+      "grade": "middle",
+      "grade_id": "00000000-0000-0000-0000-000000000303",
+      "stack": [
+        "Python",
+        "PostgreSQL",
+        "Docker"
+      ],
+      "stack_ids": [
+        "00000000-0000-0000-0000-000000000404",
+        "00000000-0000-0000-0000-000000000402",
+        "00000000-0000-0000-0000-000000000407"
+      ],
+      "salary_min": 200000,
+      "salary_max": 280000
+    },
+    {
+      "employer_id": "33333333-3333-3333-3333-000000001002",
+      "company_name": "СберТех",
+      "specialization": "frontend",
+      "specialization_id": "00000000-0000-0000-0000-000000000202",
+      "grade": "middle",
+      "grade_id": "00000000-0000-0000-0000-000000000303",
+      "stack": [
+        "React",
+        "TypeScript"
+      ],
+      "stack_ids": [
+        "00000000-0000-0000-0000-000000000405",
+        "00000000-0000-0000-0000-000000000406"
+      ],
+      "salary_min": 190000,
+      "salary_max": 260000
+    },
+    {
+      "employer_id": "33333333-3333-3333-3333-000000001003",
+      "company_name": "Ozon E-commerce",
+      "specialization": "backend",
+      "specialization_id": "00000000-0000-0000-0000-000000000201",
+      "grade": "senior",
+      "grade_id": "00000000-0000-0000-0000-000000000305",
+      "stack": [
+        "Go",
+        "PostgreSQL",
+        "Redis"
+      ],
+      "stack_ids": [
+        "00000000-0000-0000-0000-000000000401",
+        "00000000-0000-0000-0000-000000000402",
+        "00000000-0000-0000-0000-000000000403"
+      ],
+      "salary_min": 320000,
+      "salary_max": 480000
+    },
+    {
+      "employer_id": "33333333-3333-3333-3333-000000001004",
+      "company_name": "Авито Платформа",
+      "specialization": "backend",
+      "specialization_id": "00000000-0000-0000-0000-000000000201",
+      "grade": "middle",
+      "grade_id": "00000000-0000-0000-0000-000000000303",
+      "stack": [
+        "Python",
+        "PostgreSQL",
+        "Docker"
+      ],
+      "stack_ids": [
+        "00000000-0000-0000-0000-000000000404",
+        "00000000-0000-0000-0000-000000000402",
+        "00000000-0000-0000-0000-000000000407"
+      ],
+      "salary_min": 200000,
+      "salary_max": 280000
+    },
+    {
+      "employer_id": "33333333-3333-3333-3333-000000001005",
+      "company_name": "VK Tech",
+      "specialization": "frontend",
+      "specialization_id": "00000000-0000-0000-0000-000000000202",
+      "grade": "middle",
+      "grade_id": "00000000-0000-0000-0000-000000000303",
+      "stack": [
+        "React",
+        "TypeScript"
+      ],
+      "stack_ids": [
+        "00000000-0000-0000-0000-000000000405",
+        "00000000-0000-0000-0000-000000000406"
+      ],
+      "salary_min": 190000,
+      "salary_max": 260000
+    },
+    {
+      "employer_id": "33333333-3333-3333-3333-000000001006",
+      "company_name": "Лаборатория Касперского",
+      "specialization": "backend",
+      "specialization_id": "00000000-0000-0000-0000-000000000201",
+      "grade": "senior",
+      "grade_id": "00000000-0000-0000-0000-000000000305",
+      "stack": [
+        "Go",
+        "PostgreSQL",
+        "Redis"
+      ],
+      "stack_ids": [
+        "00000000-0000-0000-0000-000000000401",
+        "00000000-0000-0000-0000-000000000402",
+        "00000000-0000-0000-0000-000000000403"
+      ],
+      "salary_min": 320000,
+      "salary_max": 480000
+    },
+    {
+      "employer_id": "33333333-3333-3333-3333-000000001007",
+      "company_name": "2ГИС Геосервисы",
+      "specialization": "backend",
+      "specialization_id": "00000000-0000-0000-0000-000000000201",
+      "grade": "middle",
+      "grade_id": "00000000-0000-0000-0000-000000000303",
+      "stack": [
+        "Python",
+        "PostgreSQL",
+        "Docker"
+      ],
+      "stack_ids": [
+        "00000000-0000-0000-0000-000000000404",
+        "00000000-0000-0000-0000-000000000402",
+        "00000000-0000-0000-0000-000000000407"
+      ],
+      "salary_min": 200000,
+      "salary_max": 280000
+    },
+    {
+      "employer_id": "33333333-3333-3333-3333-000000001008",
+      "company_name": "Selectel",
+      "specialization": "frontend",
+      "specialization_id": "00000000-0000-0000-0000-000000000202",
+      "grade": "middle",
+      "grade_id": "00000000-0000-0000-0000-000000000303",
+      "stack": [
+        "React",
+        "TypeScript"
+      ],
+      "stack_ids": [
+        "00000000-0000-0000-0000-000000000405",
+        "00000000-0000-0000-0000-000000000406"
+      ],
+      "salary_min": 190000,
+      "salary_max": 260000
+    },
+    {
+      "employer_id": "33333333-3333-3333-3333-000000001009",
+      "company_name": "Positive Technologies",
+      "specialization": "backend",
+      "specialization_id": "00000000-0000-0000-0000-000000000201",
+      "grade": "senior",
+      "grade_id": "00000000-0000-0000-0000-000000000305",
+      "stack": [
+        "Go",
+        "PostgreSQL",
+        "Redis"
+      ],
+      "stack_ids": [
+        "00000000-0000-0000-0000-000000000401",
+        "00000000-0000-0000-0000-000000000402",
+        "00000000-0000-0000-0000-000000000403"
+      ],
+      "salary_min": 320000,
+      "salary_max": 480000
+    },
+    {
+      "employer_id": "33333333-3333-3333-3333-000000001010",
+      "company_name": "Wildberries Инфраструктура",
+      "specialization": "backend",
+      "specialization_id": "00000000-0000-0000-0000-000000000201",
+      "grade": "middle",
+      "grade_id": "00000000-0000-0000-0000-000000000303",
+      "stack": [
+        "Python",
+        "PostgreSQL",
+        "Docker"
+      ],
+      "stack_ids": [
+        "00000000-0000-0000-0000-000000000404",
+        "00000000-0000-0000-0000-000000000402",
+        "00000000-0000-0000-0000-000000000407"
+      ],
+      "salary_min": 200000,
+      "salary_max": 280000
+    },
+    {
+      "employer_id": "33333333-3333-3333-3333-000000001011",
+      "company_name": "Skyeng EdTech",
+      "specialization": "frontend",
+      "specialization_id": "00000000-0000-0000-0000-000000000202",
+      "grade": "middle",
+      "grade_id": "00000000-0000-0000-0000-000000000303",
+      "stack": [
+        "React",
+        "TypeScript"
+      ],
+      "stack_ids": [
+        "00000000-0000-0000-0000-000000000405",
+        "00000000-0000-0000-0000-000000000406"
+      ],
+      "salary_min": 190000,
+      "salary_max": 260000
+    },
+    {
+      "employer_id": "33333333-3333-3333-3333-000000001012",
+      "company_name": "МойОфис",
+      "specialization": "backend",
+      "specialization_id": "00000000-0000-0000-0000-000000000201",
+      "grade": "senior",
+      "grade_id": "00000000-0000-0000-0000-000000000305",
+      "stack": [
+        "Go",
+        "PostgreSQL",
+        "Redis"
+      ],
+      "stack_ids": [
+        "00000000-0000-0000-0000-000000000401",
+        "00000000-0000-0000-0000-000000000402",
+        "00000000-0000-0000-0000-000000000403"
+      ],
+      "salary_min": 320000,
+      "salary_max": 480000
+    },
+    {
+      "employer_id": "33333333-3333-3333-3333-000000001013",
+      "company_name": "Киберпротек",
+      "specialization": "backend",
+      "specialization_id": "00000000-0000-0000-0000-000000000201",
+      "grade": "middle",
+      "grade_id": "00000000-0000-0000-0000-000000000303",
+      "stack": [
+        "Python",
+        "PostgreSQL",
+        "Docker"
+      ],
+      "stack_ids": [
+        "00000000-0000-0000-0000-000000000404",
+        "00000000-0000-0000-0000-000000000402",
+        "00000000-0000-0000-0000-000000000407"
+      ],
+      "salary_min": 200000,
+      "salary_max": 280000
+    },
+    {
+      "employer_id": "33333333-3333-3333-3333-000000001014",
+      "company_name": "Купер (СберМаркет)",
+      "specialization": "frontend",
+      "specialization_id": "00000000-0000-0000-0000-000000000202",
+      "grade": "middle",
+      "grade_id": "00000000-0000-0000-0000-000000000303",
+      "stack": [
+        "React",
+        "TypeScript"
+      ],
+      "stack_ids": [
+        "00000000-0000-0000-0000-000000000405",
+        "00000000-0000-0000-0000-000000000406"
+      ],
+      "salary_min": 190000,
+      "salary_max": 260000
+    },
+    {
+      "employer_id": "33333333-3333-3333-3333-000000001015",
+      "company_name": "Yadro",
+      "specialization": "backend",
+      "specialization_id": "00000000-0000-0000-0000-000000000201",
+      "grade": "senior",
+      "grade_id": "00000000-0000-0000-0000-000000000305",
+      "stack": [
+        "Go",
+        "PostgreSQL",
+        "Redis"
+      ],
+      "stack_ids": [
+        "00000000-0000-0000-0000-000000000401",
+        "00000000-0000-0000-0000-000000000402",
+        "00000000-0000-0000-0000-000000000403"
+      ],
+      "salary_min": 320000,
+      "salary_max": 480000
+    },
+    {
+      "employer_id": "33333333-3333-3333-3333-000000001016",
+      "company_name": "Самокат",
+      "specialization": "backend",
+      "specialization_id": "00000000-0000-0000-0000-000000000201",
+      "grade": "middle",
+      "grade_id": "00000000-0000-0000-0000-000000000303",
+      "stack": [
+        "Python",
+        "PostgreSQL",
+        "Docker"
+      ],
+      "stack_ids": [
+        "00000000-0000-0000-0000-000000000404",
+        "00000000-0000-0000-0000-000000000402",
+        "00000000-0000-0000-0000-000000000407"
+      ],
+      "salary_min": 200000,
+      "salary_max": 280000
+    },
+    {
+      "employer_id": "33333333-3333-3333-3333-000000001017",
+      "company_name": "Mindbox",
+      "specialization": "frontend",
+      "specialization_id": "00000000-0000-0000-0000-000000000202",
+      "grade": "middle",
+      "grade_id": "00000000-0000-0000-0000-000000000303",
+      "stack": [
+        "React",
+        "TypeScript"
+      ],
+      "stack_ids": [
+        "00000000-0000-0000-0000-000000000405",
+        "00000000-0000-0000-0000-000000000406"
+      ],
+      "salary_min": 190000,
+      "salary_max": 260000
+    }
+  ]
+}

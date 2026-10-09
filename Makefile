@@ -48,3 +48,9 @@ gen-frontend-barrel:
 	@for s in $(CONTRACTS); do \
 		echo "export * as $$s from './$$s';" >> $(FE_API_DIR)/index.ts; \
 	done
+
+seed: ## Запуск сидинга синтетических данных
+	python3 seed.py
+
+validate: ## Запуск процедуры валидации алгоритмов (BE2-05)
+	python3 validate.py
