@@ -172,6 +172,31 @@ paths:
             application/json:
               schema: { $ref: "#/components/schemas/User" }
         "401": { $ref: "#/components/responses/Unauthorized" }
+    delete:
+      tags: [auth]
+      summary: Удаление аккаунта (soft delete + анонимизация по 152-ФЗ)
+      operationId: deleteMe
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        description: Подтверждение паролем — защита от CSRF и случайного удаления
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                password: { type: string }
+                reason:   { type: [string, "null"] }
+              required: [password]
+      responses:
+        "204":
+          description: Аккаунт удалён, все refresh-токены отозваны
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403":
+          description: Неверный пароль
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Error" }
 
   /auth/external/{provider}/callback:
     post:
