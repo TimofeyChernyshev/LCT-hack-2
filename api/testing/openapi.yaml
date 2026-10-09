@@ -177,6 +177,123 @@ paths:
                   gradeId: { type: string, format: uuid }
                   testScore: { type: number }
 
+  /me/fsp:
+    get:
+      summary: Получение профиля и достижений ФСП кандидата (с поддержкой No-FSP)
+      operationId: getMyFSP
+      responses:
+        "200":
+          description: Данные профиля ФСП (обогащенные или нейтральные)
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/CandidateFSPProfile" }
+    put:
+      summary: Привязка аккаунта кандидата к FSP ID
+      operationId: linkFSP
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/LinkFSPRequest" }
+      responses:
+        "200":
+          description: Профиль успешно обогащен данными ФСП
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/CandidateFSPProfile" }
+        "404":
+          description: Участник не найден в реестре ФСП
+    delete:
+      summary: Отвязка FSP ID и возврат профиля в нейтральное состояние
+      operationId: unlinkFSP
+      responses:
+        "200":
+          description: FSP отвязан, профиль возвращен в базовое состояние
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/CandidateFSPProfile" }
+
+  /me/fsp/sync-keycloak:
+    post:
+      summary: Автоматическая синхронизация FSP ID из клеймов Keycloak токена
+      operationId: syncKeycloakFSP
+      responses:
+        "200":
+          description: Результат синхронизации
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/CandidateFSPProfile" }
+
+  /internal/candidates/{userId}/fsp:
+    get:
+      summary: Внутренний эндпоинт данных ФСП для поисковой выдачи и ранжирования
+      operationId: internalGetCandidateFSP
+      parameters:
+        - { in: path, name: userId, required: true, schema: { type: string, format: uuid } }
+      responses:
+        "200":
+          description: Данные ФСП кандидата
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/CandidateFSPProfile" }
+
+  /fsp/registry/members:
+    get:
+      security: []
+      summary: Поиск участников в реестре Федерации спортивного программирования
+      operationId: searchFSPRegistryMembers
+      parameters:
+        - { in: query, name: q, schema: { type: string } }
+        - { in: query, name: rank, schema: { type: string } }
+        - { in: query, name: region, schema: { type: string } }
+        - { in: query, name: limit, schema: { type: integer, default: 20 } }
+        - { in: query, name: offset, schema: { type: integer, default: 0 } }
+      responses:
+        "200":
+          description: Список участников
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  total: { type: integer }
+                  members:
+                    type: array
+                    items: { $ref: "#/components/schemas/FSPRegistryMember" }
+
+  /fsp/registry/members/{fspId}:
+    get:
+      security: []
+      summary: Получение карточки участника из реестра ФСП
+      operationId: getFSPRegistryMember
+      parameters:
+        - { in: path, name: fspId, required: true, schema: { type: string } }
+      responses:
+        "200":
+          description: Участник найден
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/FSPRegistryMember" }
+        "404":
+          description: Участник не найден
+
+  /fsp/registry/verify:
+    post:
+      security: []
+      summary: Верификация участника в реестре ФСП
+      operationId: verifyFSPMember
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/FSPVerificationRequest" }
+      responses:
+        "200":
+          description: Результат верификации
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/FSPVerificationResult" }
+
 components:
   securitySchemes:
     bearerAuth: { type: http, scheme: bearer, bearerFormat: JWT }
@@ -279,3 +396,80 @@ components:
           properties:
             id: { type: string, format: uuid }
             createdAt: { type: string, format: date-time }
+
+    CandidateFSPProfile:
+      type: object
+      properties:
+        userId: { type: string, format: uuid }
+        hasFsp: { type: boolean }
+        fspMemberId: { type: [string, "null"] }
+        fullName: { type: [string, "null"] }
+        sportsRank: { type: [string, "null"] }
+        fspRating: { type: integer }
+        region: { type: [string, "null"] }
+        discipline: { type: [string, "null"] }
+        fspScore: { type: number }
+        fspWeightSum: { type: integer }
+        achievementsCount: { type: integer }
+        bestPlace: { type: [integer, "null"] }
+        verificationSource: { type: string }
+        linkedAt: { type: [string, "null"], format: date-time }
+        explanation: { type: string }
+        achievements:
+          type: array
+          items: { $ref: "#/components/schemas/FSPAchievement" }
+      required: [userId, hasFsp, fspRating, fspScore, fspWeightSum, achievementsCount, verificationSource, explanation, achievements]
+
+    LinkFSPRequest:
+      type: object
+      properties:
+        fspMemberId: { type: string }
+      required: [fspMemberId]
+
+    FSPAchievement:
+      type: object
+      properties:
+        id: { type: string }
+        externalId: { type: [string, "null"] }
+        eventName: { type: string }
+        eventDate: { type: [string, "null"] }
+        place: { type: [integer, "null"] }
+        category: { type: string }
+        score: { type: [number, "null"] }
+        weight: { type: integer }
+        badge: { type: [string, "null"] }
+        description: { type: [string, "null"] }
+      required: [eventName, category, weight]
+
+    FSPRegistryMember:
+      type: object
+      properties:
+        fspId: { type: string }
+        fullName: { type: string }
+        sportsRank: { type: string }
+        rating: { type: integer }
+        region: { type: string }
+        discipline: { type: string }
+        status: { type: string }
+        verified: { type: boolean }
+        achievements:
+          type: array
+          items: { $ref: "#/components/schemas/FSPAchievement" }
+      required: [fspId, fullName, sportsRank, rating, region, verified]
+
+    FSPVerificationRequest:
+      type: object
+      properties:
+        fspId: { type: string }
+        fullName: { type: string }
+        certificate: { type: string }
+      required: [fspId]
+
+    FSPVerificationResult:
+      type: object
+      properties:
+        isValid: { type: boolean }
+        message: { type: string }
+        verifiedAt: { type: string, format: date-time }
+        member: { $ref: "#/components/schemas/FSPRegistryMember" }
+      required: [isValid, message, verifiedAt]

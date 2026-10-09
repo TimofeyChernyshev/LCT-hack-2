@@ -25,9 +25,10 @@ type Config struct {
 	JWTSecret string `env:"JWT_SECRET" envDefault:"dev-secret-change-me-please-32-chars-min"`
 	JWTIssuer string `env:"JWT_ISSUER" envDefault:"fsp-platform"`
 
-	AuthURL      string `env:"AUTH_SERVICE_URL" envDefault:"http://auth:8080"`
-	DictURL      string `env:"DICT_SERVICE_URL" envDefault:"http://dict:8080"`
-	CandidateURL string `env:"CANDIDATE_SERVICE_URL" envDefault:"http://candidate:8080"`
+	AuthURL        string `env:"AUTH_SERVICE_URL" envDefault:"http://auth:8080"`
+	DictURL        string `env:"DICT_SERVICE_URL" envDefault:"http://dict:8080"`
+	CandidateURL   string `env:"CANDIDATE_SERVICE_URL" envDefault:"http://candidate:8080"`
+	FSPRegistryURL string `env:"FSP_REGISTRY_URL" envDefault:""`
 
 	// бизнес-правила тестирования
 	GradeChangeCooldownDays int     `env:"GRADE_CHANGE_COOLDOWN_DAYS" envDefault:"90"`

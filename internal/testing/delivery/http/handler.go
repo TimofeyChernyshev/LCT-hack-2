@@ -12,6 +12,7 @@ import (
 	"TimofeyChernyshev/LCT-hack-2/internal/testing/domain"
 	"TimofeyChernyshev/LCT-hack-2/internal/testing/service"
 	"TimofeyChernyshev/LCT-hack-2/pkg/auth"
+	"TimofeyChernyshev/LCT-hack-2/pkg/fsp"
 )
 
 type Handler struct {
@@ -394,4 +395,313 @@ func (h *Handler) CreatePeriodicTask(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusCreated, resp)
+}
+
+// GetMyFSP (GET /me/fsp)
+func (h *Handler) GetMyFSP(c *gin.Context) {
+	userID, err := auth.GetUserID(c)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+		return
+	}
+
+	profile, err := h.svc.GetCandidateFSP(c.Request.Context(), userID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to get fsp profile", "details": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, mapCandidateFSPProfileToAPI(profile))
+}
+
+// LinkFSP (PUT /me/fsp)
+func (h *Handler) LinkFSP(c *gin.Context) {
+	userID, err := auth.GetUserID(c)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+		return
+	}
+
+	var req apitesting.LinkFSPRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request body", "details": err.Error()})
+		return
+	}
+
+	profile, err := h.svc.LinkFSP(c.Request.Context(), userID, req.FspMemberId, "manual")
+	if err != nil {
+		if errors.Is(err, service.ErrFSPMemberNotFound) {
+			c.JSON(http.StatusNotFound, gin.H{"error": "участник с указанным ID не найден в реестре ФСП"})
+			return
+		}
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to link fsp profile", "details": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, mapCandidateFSPProfileToAPI(profile))
+}
+
+// UnlinkFSP (DELETE /me/fsp)
+func (h *Handler) UnlinkFSP(c *gin.Context) {
+	userID, err := auth.GetUserID(c)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+		return
+	}
+
+	profile, err := h.svc.UnlinkFSP(c.Request.Context(), userID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to unlink fsp profile", "details": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, mapCandidateFSPProfileToAPI(profile))
+}
+
+// SyncKeycloakFSP (POST /me/fsp/sync-keycloak)
+func (h *Handler) SyncKeycloakFSP(c *gin.Context) {
+	userID, err := auth.GetUserID(c)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+		return
+	}
+
+	// 1. Check if token or dev header already set FSP member ID in context
+	fspID := auth.GetFSPMemberID(c)
+	if fspID != "" {
+		profile, err := h.svc.LinkFSP(c.Request.Context(), userID, fspID, "keycloak")
+		if err == nil {
+			c.JSON(http.StatusOK, mapCandidateFSPProfileToAPI(profile))
+			return
+		}
+	}
+
+	// 2. Alternatively check JSON body for Keycloak claims or raw ID if passed
+	var bodyClaims map[string]any
+	_ = c.ShouldBindJSON(&bodyClaims)
+
+	profile, err := h.svc.SyncKeycloakFSP(c.Request.Context(), userID, bodyClaims)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to sync keycloak fsp profile", "details": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, mapCandidateFSPProfileToAPI(profile))
+}
+
+// InternalGetCandidateFSP (GET /internal/candidates/{userId}/fsp)
+func (h *Handler) InternalGetCandidateFSP(c *gin.Context, userId openapi_types.UUID) {
+	profile, err := h.svc.GetCandidateFSP(c.Request.Context(), userId)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to get internal candidate fsp", "details": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, mapCandidateFSPProfileToAPI(profile))
+}
+
+// SearchFSPRegistryMembers (GET /fsp/registry/members)
+func (h *Handler) SearchFSPRegistryMembers(c *gin.Context, params apitesting.SearchFSPRegistryMembersParams) {
+	var query string
+	if params.Q != nil {
+		query = *params.Q
+	}
+	var rank fsp.SportsRank
+	if params.Rank != nil {
+		rank = fsp.SportsRank(*params.Rank)
+	}
+	var region string
+	if params.Region != nil {
+		region = *params.Region
+	}
+	limit := 20
+	if params.Limit != nil && *params.Limit > 0 {
+		limit = *params.Limit
+	}
+	offset := 0
+	if params.Offset != nil && *params.Offset >= 0 {
+		offset = *params.Offset
+	}
+
+	members, total, err := h.svc.SearchFSPRegistry(c.Request.Context(), query, rank, region, limit, offset)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to search fsp registry", "details": err.Error()})
+		return
+	}
+
+	apiMembers := make([]apitesting.FSPRegistryMember, 0, len(members))
+	for _, m := range members {
+		apiMembers = append(apiMembers, mapFSPRegistryMemberToAPI(m))
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"total":   total,
+		"members": apiMembers,
+	})
+}
+
+// GetFSPRegistryMember (GET /fsp/registry/members/{fspId})
+func (h *Handler) GetFSPRegistryMember(c *gin.Context, fspId string) {
+	m, err := h.svc.GetFSPRegistryMember(c.Request.Context(), fspId)
+	if err != nil {
+		if errors.Is(err, fsp.ErrMemberNotFound) {
+			c.JSON(http.StatusNotFound, gin.H{"error": "участник не найден в реестре ФСП"})
+			return
+		}
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to get fsp registry member", "details": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, mapFSPRegistryMemberToAPI(*m))
+}
+
+// VerifyFSPMember (POST /fsp/registry/verify)
+func (h *Handler) VerifyFSPMember(c *gin.Context) {
+	var req apitesting.FSPVerificationRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid verification request body", "details": err.Error()})
+		return
+	}
+
+	var fullName, cert string
+	if req.FullName != nil {
+		fullName = *req.FullName
+	}
+	if req.Certificate != nil {
+		cert = *req.Certificate
+	}
+
+	res, err := h.svc.VerifyFSPMember(c.Request.Context(), fsp.VerificationRequest{
+		FSPID:       req.FspId,
+		FullName:    fullName,
+		Certificate: cert,
+	})
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to verify member", "details": err.Error()})
+		return
+	}
+
+	apiRes := apitesting.FSPVerificationResult{
+		IsValid:    res.IsValid,
+		Message:    res.Message,
+		VerifiedAt: res.VerifiedAt,
+	}
+	if res.Member != nil {
+		m := mapFSPRegistryMemberToAPI(*res.Member)
+		apiRes.Member = &m
+	}
+
+	c.JSON(http.StatusOK, apiRes)
+}
+
+func mapCandidateFSPProfileToAPI(p *domain.CandidateFSPProfile) apitesting.CandidateFSPProfile {
+	achievements := make([]apitesting.FSPAchievement, 0, len(p.Achievements))
+	for _, a := range p.Achievements {
+		ach := apitesting.FSPAchievement{
+			Category:  string(a.Category),
+			EventName: a.EventName,
+			Weight:    a.Weight,
+		}
+		if a.ID != "" {
+			aID := a.ID
+			ach.Id = &aID
+		}
+		if a.ExternalID != "" {
+			extID := a.ExternalID
+			ach.ExternalId = &extID
+		}
+		if a.EventDate != "" {
+			ed := a.EventDate
+			ach.EventDate = &ed
+		}
+		if a.Place != nil {
+			ach.Place = a.Place
+		}
+		if a.Score != nil {
+			sc := float32(*a.Score)
+			ach.Score = &sc
+		}
+		if a.Badge != "" {
+			bd := a.Badge
+			ach.Badge = &bd
+		}
+		if a.Description != "" {
+			ds := a.Description
+			ach.Description = &ds
+		}
+		achievements = append(achievements, ach)
+	}
+
+	return apitesting.CandidateFSPProfile{
+		UserId:             p.UserID,
+		HasFsp:             p.HasFSP,
+		FspMemberId:        p.FSPMemberID,
+		FullName:           p.FullName,
+		SportsRank:         p.SportsRank,
+		FspRating:          p.FSPRating,
+		Region:             p.Region,
+		Discipline:         p.Discipline,
+		FspScore:           float32(p.FSPScore),
+		FspWeightSum:       p.FSPWeightSum,
+		AchievementsCount:  p.AchievementsCount,
+		BestPlace:          p.BestPlace,
+		VerificationSource: p.VerificationSource,
+		LinkedAt:           p.LinkedAt,
+		Explanation:        p.Explanation,
+		Achievements:       achievements,
+	}
+}
+
+func mapFSPRegistryMemberToAPI(m fsp.Member) apitesting.FSPRegistryMember {
+	achievements := make([]apitesting.FSPAchievement, 0, len(m.Achievements))
+	for _, a := range m.Achievements {
+		ach := apitesting.FSPAchievement{
+			Category:  string(a.Category),
+			EventName: a.EventName,
+			Weight:    a.Weight,
+		}
+		if a.ID != "" {
+			aID := a.ID
+			ach.Id = &aID
+		}
+		if a.ExternalID != "" {
+			extID := a.ExternalID
+			ach.ExternalId = &extID
+		}
+		if a.EventDate != "" {
+			ed := a.EventDate
+			ach.EventDate = &ed
+		}
+		if a.Place != nil {
+			ach.Place = a.Place
+		}
+		if a.Score != nil {
+			sc := float32(*a.Score)
+			ach.Score = &sc
+		}
+		if a.Badge != "" {
+			bd := a.Badge
+			ach.Badge = &bd
+		}
+		if a.Description != "" {
+			ds := a.Description
+			ach.Description = &ds
+		}
+		achievements = append(achievements, ach)
+	}
+
+	status := m.Status
+	discipline := string(m.Discipline)
+
+	return apitesting.FSPRegistryMember{
+		FspId:        m.FSPID,
+		FullName:     m.FullName,
+		SportsRank:   string(m.SportsRank),
+		Rating:       m.Rating,
+		Region:       m.Region,
+		Discipline:   &discipline,
+		Status:       &status,
+		Verified:     m.Verified,
+		Achievements: &achievements,
+	}
 }

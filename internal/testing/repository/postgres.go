@@ -46,6 +46,11 @@ type Repository interface {
 	GetLatestQuestionnaire(ctx context.Context, userID uuid.UUID) (*domain.CandidateQuestionnaire, error)
 	SaveCandidateCategoryState(ctx context.Context, state *domain.CandidateCategoryState) error
 	GetCandidateCategoryState(ctx context.Context, userID uuid.UUID) (*domain.CandidateCategoryState, error)
+
+	// BE2-03: FSP Registry Integration & Candidate FSP State
+	SaveCandidateFSP(ctx context.Context, profile *domain.CandidateFSPProfile) error
+	GetCandidateFSP(ctx context.Context, userID uuid.UUID) (*domain.CandidateFSPProfile, error)
+	UnlinkCandidateFSP(ctx context.Context, userID uuid.UUID) error
 }
 
 type SessionItemEval struct {

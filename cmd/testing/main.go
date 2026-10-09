@@ -77,9 +77,7 @@ func main() {
 	// Register generated handlers
 	apitesting.RegisterHandlers(router, handler)
 
-	// BE2-02: Questionnaire & onboarding routes
-	router.POST("/me/questionnaire", handler.SubmitQuestionnaire)
-	router.GET("/me/questionnaire", handler.GetQuestionnaireState)
+	// BE2-02: Questionnaire alias routes
 	router.POST("/me/onboarding-questionnaire", handler.SubmitQuestionnaire)
 	router.GET("/me/onboarding-questionnaire", handler.GetQuestionnaireState)
 

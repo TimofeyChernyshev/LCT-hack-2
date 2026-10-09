@@ -23,6 +23,7 @@ type mockRepository struct {
 	categories     map[uuid.UUID]*domain.CategoryDefinition
 	categoryStates map[uuid.UUID]*domain.CandidateCategoryState
 	questionnaires map[uuid.UUID]*domain.CandidateQuestionnaire
+	fspProfiles    map[uuid.UUID]*domain.CandidateFSPProfile
 }
 
 func newMockRepository() *mockRepository {
@@ -36,6 +37,7 @@ func newMockRepository() *mockRepository {
 		categories:     make(map[uuid.UUID]*domain.CategoryDefinition),
 		categoryStates: make(map[uuid.UUID]*domain.CandidateCategoryState),
 		questionnaires: make(map[uuid.UUID]*domain.CandidateQuestionnaire),
+		fspProfiles:    make(map[uuid.UUID]*domain.CandidateFSPProfile),
 	}
 
 	// Seed grades: 1: intern .. 7: lead
@@ -267,6 +269,23 @@ func (m *mockRepository) GetCandidateCategoryState(ctx context.Context, userID u
 		return s, nil
 	}
 	return nil, nil
+}
+
+func (m *mockRepository) SaveCandidateFSP(ctx context.Context, profile *domain.CandidateFSPProfile) error {
+	m.fspProfiles[profile.UserID] = profile
+	return nil
+}
+
+func (m *mockRepository) GetCandidateFSP(ctx context.Context, userID uuid.UUID) (*domain.CandidateFSPProfile, error) {
+	if p, ok := m.fspProfiles[userID]; ok {
+		return p, nil
+	}
+	return nil, nil
+}
+
+func (m *mockRepository) UnlinkCandidateFSP(ctx context.Context, userID uuid.UUID) error {
+	delete(m.fspProfiles, userID)
+	return nil
 }
 
 func TestTestingService_CompleteFlow(t *testing.T) {

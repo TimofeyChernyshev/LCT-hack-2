@@ -13,10 +13,12 @@ import (
 )
 
 const (
-	CtxUserIDKey   = "userID"
-	CtxUserRoleKey  = "userRole"
-	HeaderUserID    = "X-User-ID"
-	HeaderUserRole  = "X-User-Role"
+	CtxUserIDKey      = "userID"
+	CtxUserRoleKey     = "userRole"
+	CtxFSPMemberIDKey = "fspMemberID"
+	HeaderUserID       = "X-User-ID"
+	HeaderUserRole     = "X-User-Role"
+	HeaderFSPID        = "X-FSP-ID"
 )
 
 var (
@@ -25,8 +27,10 @@ var (
 )
 
 type Claims struct {
-	UserID uuid.UUID `json:"sub"`
-	Role   string    `json:"role"`
+	UserID      uuid.UUID `json:"sub"`
+	Role        string    `json:"role"`
+	FSPMemberID string    `json:"fsp_id,omitempty"`
+	FSPID       string    `json:"fsp_member_id,omitempty"`
 	jwt.RegisteredClaims
 }
 
@@ -94,6 +98,11 @@ func Middleware(validator *JWTValidator, isDev bool) gin.HandlerFunc {
 				if err == nil {
 					c.Set(CtxUserIDKey, claims.UserID)
 					c.Set(CtxUserRoleKey, claims.Role)
+					if claims.FSPMemberID != "" {
+						c.Set(CtxFSPMemberIDKey, claims.FSPMemberID)
+					} else if claims.FSPID != "" {
+						c.Set(CtxFSPMemberIDKey, claims.FSPID)
+					}
 					c.Next()
 					return
 				}
@@ -110,15 +119,18 @@ func Middleware(validator *JWTValidator, isDev bool) gin.HandlerFunc {
 					}
 					c.Set(CtxUserIDKey, uid)
 					c.Set(CtxUserRoleKey, role)
+					if devFSP := c.GetHeader(HeaderFSPID); devFSP != "" {
+						c.Set(CtxFSPMemberIDKey, devFSP)
+					}
 					c.Next()
 					return
 				}
 			}
 		}
 
-		// If path doesn't require authentication (e.g., healthcheck or internal routes), proceed
+		// If path doesn't require authentication (e.g., healthcheck, internal routes, or public FSP registry), proceed
 		path := c.Request.URL.Path
-		if path == "/healthz" || strings.HasPrefix(path, "/internal/") {
+		if path == "/healthz" || strings.HasPrefix(path, "/internal/") || strings.HasPrefix(path, "/fsp/registry/") {
 			c.Next()
 			return
 		}
@@ -151,4 +163,14 @@ func GetUserRole(c *gin.Context) string {
 	}
 	role, _ := val.(string)
 	return role
+}
+
+// GetFSPMemberID extracts the FSP member ID if present in the context
+func GetFSPMemberID(c *gin.Context) string {
+	val, exists := c.Get(CtxFSPMemberIDKey)
+	if !exists {
+		return ""
+	}
+	fspID, _ := val.(string)
+	return fspID
 }

@@ -20,18 +20,20 @@ import (
 )
 
 type mockRepo struct {
-	sessions map[uuid.UUID]*domain.Session
-	items    map[uuid.UUID]*domain.SessionItem
-	tasks    map[uuid.UUID]*domain.Task
-	answers  map[uuid.UUID]*domain.TestAnswer
+	sessions    map[uuid.UUID]*domain.Session
+	items       map[uuid.UUID]*domain.SessionItem
+	tasks       map[uuid.UUID]*domain.Task
+	answers     map[uuid.UUID]*domain.TestAnswer
+	fspProfiles map[uuid.UUID]*domain.CandidateFSPProfile
 }
 
 func newMockRepo() *mockRepo {
 	return &mockRepo{
-		sessions: make(map[uuid.UUID]*domain.Session),
-		items:    make(map[uuid.UUID]*domain.SessionItem),
-		tasks:    make(map[uuid.UUID]*domain.Task),
-		answers:  make(map[uuid.UUID]*domain.TestAnswer),
+		sessions:    make(map[uuid.UUID]*domain.Session),
+		items:       make(map[uuid.UUID]*domain.SessionItem),
+		tasks:       make(map[uuid.UUID]*domain.Task),
+		answers:     make(map[uuid.UUID]*domain.TestAnswer),
+		fspProfiles: make(map[uuid.UUID]*domain.CandidateFSPProfile),
 	}
 }
 
@@ -197,6 +199,23 @@ func (m *mockRepo) GetCandidateCategoryState(ctx context.Context, userID uuid.UU
 	return nil, nil
 }
 
+func (m *mockRepo) SaveCandidateFSP(ctx context.Context, profile *domain.CandidateFSPProfile) error {
+	m.fspProfiles[profile.UserID] = profile
+	return nil
+}
+
+func (m *mockRepo) GetCandidateFSP(ctx context.Context, userID uuid.UUID) (*domain.CandidateFSPProfile, error) {
+	if p, ok := m.fspProfiles[userID]; ok {
+		return p, nil
+	}
+	return nil, nil
+}
+
+func (m *mockRepo) UnlinkCandidateFSP(ctx context.Context, userID uuid.UUID) error {
+	delete(m.fspProfiles, userID)
+	return nil
+}
+
 func setupTestServer() (*gin.Engine, uuid.UUID) {
 	gin.SetMode(gin.TestMode)
 	repo := newMockRepo()
@@ -216,10 +235,6 @@ func setupTestServer() (*gin.Engine, uuid.UUID) {
 	jwtValidator := auth.NewJWTValidator(cfg.JWTSecret, cfg.JWTIssuer)
 	router.Use(auth.Middleware(jwtValidator, true)) // dev mode allows X-User-ID
 	apitesting.RegisterHandlers(router, handler)
-
-	// Questionnaire routes
-	router.POST("/me/questionnaire", handler.SubmitQuestionnaire)
-	router.GET("/me/questionnaire", handler.GetQuestionnaireState)
 
 	testUserID := uuid.New()
 	return router, testUserID

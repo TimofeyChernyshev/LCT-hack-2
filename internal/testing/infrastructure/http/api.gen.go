@@ -154,12 +154,79 @@ type AnswerInput struct {
 	Skipped *bool              `json:"skipped,omitempty"`
 }
 
+// CandidateFSPProfile defines model for CandidateFSPProfile.
+type CandidateFSPProfile struct {
+	Achievements       []FSPAchievement   `json:"achievements"`
+	AchievementsCount  int                `json:"achievementsCount"`
+	BestPlace          *int               `json:"bestPlace,omitempty"`
+	Discipline         *string            `json:"discipline,omitempty"`
+	Explanation        string             `json:"explanation"`
+	FspMemberId        *string            `json:"fspMemberId,omitempty"`
+	FspRating          int                `json:"fspRating"`
+	FspScore           float32            `json:"fspScore"`
+	FspWeightSum       int                `json:"fspWeightSum"`
+	FullName           *string            `json:"fullName,omitempty"`
+	HasFsp             bool               `json:"hasFsp"`
+	LinkedAt           *time.Time         `json:"linkedAt,omitempty"`
+	Region             *string            `json:"region,omitempty"`
+	SportsRank         *string            `json:"sportsRank,omitempty"`
+	UserId             openapi_types.UUID `json:"userId"`
+	VerificationSource string             `json:"verificationSource"`
+}
+
+// FSPAchievement defines model for FSPAchievement.
+type FSPAchievement struct {
+	Badge       *string  `json:"badge,omitempty"`
+	Category    string   `json:"category"`
+	Description *string  `json:"description,omitempty"`
+	EventDate   *string  `json:"eventDate,omitempty"`
+	EventName   string   `json:"eventName"`
+	ExternalId  *string  `json:"externalId,omitempty"`
+	Id          *string  `json:"id,omitempty"`
+	Place       *int     `json:"place,omitempty"`
+	Score       *float32 `json:"score,omitempty"`
+	Weight      int      `json:"weight"`
+}
+
+// FSPRegistryMember defines model for FSPRegistryMember.
+type FSPRegistryMember struct {
+	Achievements *[]FSPAchievement `json:"achievements,omitempty"`
+	Discipline   *string           `json:"discipline,omitempty"`
+	FspId        string            `json:"fspId"`
+	FullName     string            `json:"fullName"`
+	Rating       int               `json:"rating"`
+	Region       string            `json:"region"`
+	SportsRank   string            `json:"sportsRank"`
+	Status       *string           `json:"status,omitempty"`
+	Verified     bool              `json:"verified"`
+}
+
+// FSPVerificationRequest defines model for FSPVerificationRequest.
+type FSPVerificationRequest struct {
+	Certificate *string `json:"certificate,omitempty"`
+	FspId       string  `json:"fspId"`
+	FullName    *string `json:"fullName,omitempty"`
+}
+
+// FSPVerificationResult defines model for FSPVerificationResult.
+type FSPVerificationResult struct {
+	IsValid    bool               `json:"isValid"`
+	Member     *FSPRegistryMember `json:"member,omitempty"`
+	Message    string             `json:"message"`
+	VerifiedAt time.Time          `json:"verifiedAt"`
+}
+
 // GradeChange defines model for GradeChange.
 type GradeChange struct {
 	ChangedAt   *time.Time          `json:"changedAt,omitempty"`
 	FromGradeId *openapi_types.UUID `json:"fromGradeId,omitempty"`
 	Reason      *string             `json:"reason,omitempty"`
 	ToGradeId   *openapi_types.UUID `json:"toGradeId,omitempty"`
+}
+
+// LinkFSPRequest defines model for LinkFSPRequest.
+type LinkFSPRequest struct {
+	FspMemberId string `json:"fspMemberId"`
 }
 
 // PeriodicTask defines model for PeriodicTask.
@@ -176,6 +243,31 @@ type PeriodicTaskInput struct {
 	Body       string             `json:"body"`
 	CategoryId openapi_types.UUID `json:"categoryId"`
 	Title      string             `json:"title"`
+}
+
+// QuestionnaireInput defines model for QuestionnaireInput.
+type QuestionnaireInput struct {
+	ClaimedGradeId   openapi_types.UUID `json:"claimedGradeId"`
+	SpecializationId openapi_types.UUID `json:"specializationId"`
+	Technologies     *[]string          `json:"technologies,omitempty"`
+	YearsExperience  *float32           `json:"yearsExperience,omitempty"`
+}
+
+// QuestionnaireResult defines model for QuestionnaireResult.
+type QuestionnaireResult struct {
+	CanChangeAt           *time.Time          `json:"canChangeAt,omitempty"`
+	CanStartTest          bool                `json:"canStartTest"`
+	CooldownRemainingDays *int                `json:"cooldownRemainingDays,omitempty"`
+	Message               string              `json:"message"`
+	RecommendedGradeId    *openapi_types.UUID `json:"recommendedGradeId,omitempty"`
+	TargetCategoryId      openapi_types.UUID  `json:"targetCategoryId"`
+}
+
+// QuestionnaireState defines model for QuestionnaireState.
+type QuestionnaireState struct {
+	CanChangeAt  *time.Time              `json:"canChangeAt,omitempty"`
+	CanStartTest bool                    `json:"canStartTest"`
+	State        *map[string]interface{} `json:"state,omitempty"`
 }
 
 // Session defines model for Session.
@@ -210,6 +302,7 @@ type SessionItemType string
 type SessionResult struct {
 	AbilityEstimate     *float32              `json:"abilityEstimate,omitempty"`
 	Decision            SessionResultDecision `json:"decision"`
+	Explanation         *string               `json:"explanation,omitempty"`
 	ResultingCategoryId openapi_types.UUID    `json:"resultingCategoryId"`
 	ResultingGradeId    openapi_types.UUID    `json:"resultingGradeId"`
 	Score               float32               `json:"score"`
@@ -237,13 +330,31 @@ type StartSessionRequest struct {
 	TargetCategoryId openapi_types.UUID `json:"targetCategoryId"`
 }
 
+// SearchFSPRegistryMembersParams defines parameters for SearchFSPRegistryMembers.
+type SearchFSPRegistryMembersParams struct {
+	Q      *string `form:"q,omitempty" json:"q,omitempty"`
+	Rank   *string `form:"rank,omitempty" json:"rank,omitempty"`
+	Region *string `form:"region,omitempty" json:"region,omitempty"`
+	Limit  *int    `form:"limit,omitempty" json:"limit,omitempty"`
+	Offset *int    `form:"offset,omitempty" json:"offset,omitempty"`
+}
+
 // SubmitPeriodicTaskJSONBody defines parameters for SubmitPeriodicTask.
 type SubmitPeriodicTaskJSONBody struct {
 	Answer string `json:"answer"`
 }
 
+// VerifyFSPMemberJSONRequestBody defines body for VerifyFSPMember for application/json ContentType.
+type VerifyFSPMemberJSONRequestBody = FSPVerificationRequest
+
+// LinkFSPJSONRequestBody defines body for LinkFSP for application/json ContentType.
+type LinkFSPJSONRequestBody = LinkFSPRequest
+
 // SubmitPeriodicTaskJSONRequestBody defines body for SubmitPeriodicTask for application/json ContentType.
 type SubmitPeriodicTaskJSONRequestBody SubmitPeriodicTaskJSONBody
+
+// SubmitQuestionnaireJSONRequestBody defines body for SubmitQuestionnaire for application/json ContentType.
+type SubmitQuestionnaireJSONRequestBody = QuestionnaireInput
 
 // StartSessionJSONRequestBody defines body for StartSession for application/json ContentType.
 type StartSessionJSONRequestBody = StartSessionRequest
@@ -256,21 +367,51 @@ type CreatePeriodicTaskJSONRequestBody = PeriodicTaskInput
 
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
+	// SearchFSPRegistryMembers Поиск участников в реестре Федерации спортивного программирования
+	// (GET /fsp/registry/members)
+	SearchFSPRegistryMembers(c *gin.Context, params SearchFSPRegistryMembersParams)
+	// GetFSPRegistryMember Получение карточки участника из реестра ФСП
+	// (GET /fsp/registry/members/{fspId})
+	GetFSPRegistryMember(c *gin.Context, fspId string)
+	// VerifyFSPMember Верификация участника в реестре ФСП
+	// (POST /fsp/registry/verify)
+	VerifyFSPMember(c *gin.Context)
 
 	// (GET /healthz)
 	Healthz(c *gin.Context)
+	// InternalGetCandidateFSP Внутренний эндпоинт данных ФСП для поисковой выдачи и ранжирования
+	// (GET /internal/candidates/{userId}/fsp)
+	InternalGetCandidateFSP(c *gin.Context, userId openapi_types.UUID)
 	// InternalGetCategory Внутренний эндпоинт — текущая категория кандидата
 	// (GET /internal/users/{userId}/category)
 	InternalGetCategory(c *gin.Context, userId openapi_types.UUID)
 	// ListGradeChanges История смены грейда и остаток кулдауна
 	// (GET /me/category-changes)
 	ListGradeChanges(c *gin.Context)
+	// UnlinkFSP Отвязка FSP ID и возврат профиля в нейтральное состояние
+	// (DELETE /me/fsp)
+	UnlinkFSP(c *gin.Context)
+	// GetMyFSP Получение профиля и достижений ФСП кандидата (с поддержкой No-FSP)
+	// (GET /me/fsp)
+	GetMyFSP(c *gin.Context)
+	// LinkFSP Привязка аккаунта кандидата к FSP ID
+	// (PUT /me/fsp)
+	LinkFSP(c *gin.Context)
+	// SyncKeycloakFSP Автоматическая синхронизация FSP ID из клеймов Keycloak токена
+	// (POST /me/fsp/sync-keycloak)
+	SyncKeycloakFSP(c *gin.Context)
 
 	// (GET /me/periodic-tasks)
 	ListPeriodicTasks(c *gin.Context)
 
 	// (POST /me/periodic-tasks/{id}/submit)
 	SubmitPeriodicTask(c *gin.Context, id openapi_types.UUID)
+	// GetQuestionnaireState Получение текущего статуса опросника и кулдауна
+	// (GET /me/questionnaire)
+	GetQuestionnaireState(c *gin.Context)
+	// SubmitQuestionnaire Опросник на входе — определение специализации и заявленного грейда
+	// (POST /me/questionnaire)
+	SubmitQuestionnaire(c *gin.Context)
 
 	// (GET /me/sessions)
 	ListMySessions(c *gin.Context)
@@ -300,6 +441,103 @@ type ServerInterfaceWrapper struct {
 
 type MiddlewareFunc func(c *gin.Context)
 
+// SearchFSPRegistryMembers operation middleware
+func (siw *ServerInterfaceWrapper) SearchFSPRegistryMembers(c *gin.Context) {
+
+	var err error
+	_ = err
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params SearchFSPRegistryMembersParams
+
+	// ------------- Optional query parameter "q" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "q", c.Request.URL.Query(), &params.Q, runtime.BindQueryParameterOptions{Type: "string", Format: ""})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter q: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	// ------------- Optional query parameter "rank" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "rank", c.Request.URL.Query(), &params.Rank, runtime.BindQueryParameterOptions{Type: "string", Format: ""})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter rank: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	// ------------- Optional query parameter "region" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "region", c.Request.URL.Query(), &params.Region, runtime.BindQueryParameterOptions{Type: "string", Format: ""})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter region: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	// ------------- Optional query parameter "limit" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "limit", c.Request.URL.Query(), &params.Limit, runtime.BindQueryParameterOptions{Type: "integer", Format: ""})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter limit: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	// ------------- Optional query parameter "offset" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "offset", c.Request.URL.Query(), &params.Offset, runtime.BindQueryParameterOptions{Type: "integer", Format: ""})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter offset: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.SearchFSPRegistryMembers(c, params)
+}
+
+// GetFSPRegistryMember operation middleware
+func (siw *ServerInterfaceWrapper) GetFSPRegistryMember(c *gin.Context) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "fspId" -------------
+	var fspId string
+
+	err = runtime.BindStyledParameterWithOptions("simple", "fspId", c.Param("fspId"), &fspId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", ValueIsUnescaped: true})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter fspId: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.GetFSPRegistryMember(c, fspId)
+}
+
+// VerifyFSPMember operation middleware
+func (siw *ServerInterfaceWrapper) VerifyFSPMember(c *gin.Context) {
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.VerifyFSPMember(c)
+}
+
 // Healthz operation middleware
 func (siw *ServerInterfaceWrapper) Healthz(c *gin.Context) {
 
@@ -311,6 +549,31 @@ func (siw *ServerInterfaceWrapper) Healthz(c *gin.Context) {
 	}
 
 	siw.Handler.Healthz(c)
+}
+
+// InternalGetCandidateFSP operation middleware
+func (siw *ServerInterfaceWrapper) InternalGetCandidateFSP(c *gin.Context) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "userId" -------------
+	var userId openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithOptions("simple", "userId", c.Param("userId"), &userId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid", ValueIsUnescaped: true})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter userId: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.InternalGetCandidateFSP(c, userId)
 }
 
 // InternalGetCategory operation middleware
@@ -351,6 +614,58 @@ func (siw *ServerInterfaceWrapper) ListGradeChanges(c *gin.Context) {
 	siw.Handler.ListGradeChanges(c)
 }
 
+// UnlinkFSP operation middleware
+func (siw *ServerInterfaceWrapper) UnlinkFSP(c *gin.Context) {
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.UnlinkFSP(c)
+}
+
+// GetMyFSP operation middleware
+func (siw *ServerInterfaceWrapper) GetMyFSP(c *gin.Context) {
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.GetMyFSP(c)
+}
+
+// LinkFSP operation middleware
+func (siw *ServerInterfaceWrapper) LinkFSP(c *gin.Context) {
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.LinkFSP(c)
+}
+
+// SyncKeycloakFSP operation middleware
+func (siw *ServerInterfaceWrapper) SyncKeycloakFSP(c *gin.Context) {
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.SyncKeycloakFSP(c)
+}
+
 // ListPeriodicTasks operation middleware
 func (siw *ServerInterfaceWrapper) ListPeriodicTasks(c *gin.Context) {
 
@@ -387,6 +702,32 @@ func (siw *ServerInterfaceWrapper) SubmitPeriodicTask(c *gin.Context) {
 	}
 
 	siw.Handler.SubmitPeriodicTask(c, id)
+}
+
+// GetQuestionnaireState operation middleware
+func (siw *ServerInterfaceWrapper) GetQuestionnaireState(c *gin.Context) {
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.GetQuestionnaireState(c)
+}
+
+// SubmitQuestionnaire operation middleware
+func (siw *ServerInterfaceWrapper) SubmitQuestionnaire(c *gin.Context) {
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.SubmitQuestionnaire(c)
 }
 
 // ListMySessions operation middleware
@@ -537,10 +878,20 @@ func RegisterHandlersWithOptions(router gin.IRouter, si ServerInterface, options
 	router.POST(options.BaseURL+"/me/sessions/:id/answers", wrapper.AnswerItem)
 	router.POST(options.BaseURL+"/me/sessions/:id/submit", wrapper.SubmitSession)
 	router.GET(options.BaseURL+"/me/category-changes", wrapper.ListGradeChanges)
+	router.GET(options.BaseURL+"/me/questionnaire", wrapper.GetQuestionnaireState)
+	router.POST(options.BaseURL+"/me/questionnaire", wrapper.SubmitQuestionnaire)
 	router.GET(options.BaseURL+"/me/periodic-tasks", wrapper.ListPeriodicTasks)
 	router.POST(options.BaseURL+"/me/periodic-tasks/:id/submit", wrapper.SubmitPeriodicTask)
 	router.POST(options.BaseURL+"/periodic-tasks", wrapper.CreatePeriodicTask)
 	router.GET(options.BaseURL+"/internal/users/:userId/category", wrapper.InternalGetCategory)
+	router.DELETE(options.BaseURL+"/me/fsp", wrapper.UnlinkFSP)
+	router.GET(options.BaseURL+"/me/fsp", wrapper.GetMyFSP)
+	router.PUT(options.BaseURL+"/me/fsp", wrapper.LinkFSP)
+	router.POST(options.BaseURL+"/me/fsp/sync-keycloak", wrapper.SyncKeycloakFSP)
+	router.GET(options.BaseURL+"/internal/candidates/:userId/fsp", wrapper.InternalGetCandidateFSP)
+	router.GET(options.BaseURL+"/fsp/registry/members", wrapper.SearchFSPRegistryMembers)
+	router.GET(options.BaseURL+"/fsp/registry/members/:fspId", wrapper.GetFSPRegistryMember)
+	router.POST(options.BaseURL+"/fsp/registry/verify", wrapper.VerifyFSPMember)
 }
 
 // Base64 encoded, compressed with deflate, json marshaled OpenAPI spec.
@@ -548,33 +899,57 @@ func RegisterHandlersWithOptions(router gin.IRouter, si ServerInterface, options
 // const string: with thousands of chunks the chained `+` fold is several
 // times slower for the Go compiler than parsing a slice literal.
 var swaggerSpec = []string{
-	"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",
+	"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",
+	"GzjIHQSMr72++vov1Xsz/x4A",
 }
 
 // decodeSpec returns the embedded OpenAPI spec as raw JSON bytes,

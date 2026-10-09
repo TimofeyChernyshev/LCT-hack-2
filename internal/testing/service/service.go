@@ -16,6 +16,7 @@ import (
 	"TimofeyChernyshev/LCT-hack-2/internal/testing/engine"
 	"TimofeyChernyshev/LCT-hack-2/internal/testing/infrastructure/config"
 	"TimofeyChernyshev/LCT-hack-2/internal/testing/repository"
+	"TimofeyChernyshev/LCT-hack-2/pkg/fsp"
 )
 
 var (
@@ -25,16 +26,19 @@ var (
 	ErrCooldownActive      = errors.New("grade change cooldown is active")
 	ErrUnauthorized        = errors.New("unauthorized to access session")
 	ErrNoTasksAvailable    = errors.New("no tasks available for category")
+	ErrFSPMemberNotFound   = errors.New("fsp member not found in registry")
 )
 
 type TestingService struct {
-	repo       repository.Repository
-	generator  *engine.TaskGenerator
-	grader     *engine.Grader
-	scorer     *engine.IRTScorer
-	anticheat  *engine.AntiCheatEngine
-	cfg        *config.Config
-	httpClient *http.Client
+	repo           repository.Repository
+	generator      *engine.TaskGenerator
+	grader         *engine.Grader
+	scorer         *engine.IRTScorer
+	anticheat      *engine.AntiCheatEngine
+	cfg            *config.Config
+	httpClient     *http.Client
+	fspClient      *fsp.Client
+	keycloakHelper *fsp.KeycloakClaimsHelper
 }
 
 func NewTestingService(repo repository.Repository, cfg *config.Config) *TestingService {
@@ -48,8 +52,10 @@ func NewTestingService(repo repository.Repository, cfg *config.Config) *TestingS
 			SessionDuration:      sessionDuration,
 			MinAnswerTimeSeconds: 2,
 		}),
-		cfg:        cfg,
-		httpClient: &http.Client{Timeout: cfg.HTTPTimeout},
+		cfg:            cfg,
+		httpClient:     &http.Client{Timeout: cfg.HTTPTimeout},
+		fspClient:      fsp.NewClient(cfg.FSPRegistryURL, cfg.HTTPTimeout),
+		keycloakHelper: fsp.NewKeycloakClaimsHelper(),
 	}
 }
 

@@ -207,6 +207,7 @@ services:
       AUTH_SERVICE_URL: ${AUTH_SERVICE_URL:-http://auth:8080}
       DICT_SERVICE_URL: ${DICT_SERVICE_URL:-http://dict:8080}
       CANDIDATE_SERVICE_URL: ${CANDIDATE_SERVICE_URL:-http://candidate:8080}
+      FSP_REGISTRY_URL: ${FSP_REGISTRY_URL:-http://fspmock:8080}
     ports:
       - "${TESTING_HOST_PORT:-8085}:8080"
     depends_on:
@@ -214,6 +215,19 @@ services:
         condition: service_healthy
       dict:
         condition: service_started
+
+  # FSP Registry Mock
+  fspmock:
+    build:
+      context: .
+      dockerfile: Dockerfile.fspmock
+    restart: unless-stopped
+    environment:
+      <<: *common-env
+      HTTP_PORT: "8080"
+    ports:
+      - "${FSPMOCK_HOST_PORT:-8088}:8080"
+    networks: [fsp]
 
   # Interaction
   interaction:
