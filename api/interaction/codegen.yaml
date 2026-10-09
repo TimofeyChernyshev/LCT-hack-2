@@ -1,5 +1,5 @@
 package: apiinteraction
-output: internal/interaction/infrastructure/http/api.gen.go
+output: internal/interaction/infrastructure/http/api/api.gen.go
 generate:
   models: true
   gin-server: true

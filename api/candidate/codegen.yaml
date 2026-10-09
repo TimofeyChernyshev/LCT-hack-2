@@ -1,5 +1,5 @@
 package: apicandidate
-output: internal/candidate/infrastructure/http/api.gen.go
+output: internal/candidate/infrastructure/http/api/api.gen.go
 generate:
   models: true
   gin-server: true
