@@ -10,8 +10,7 @@ import (
 
 const (
 	minJWTSecretLen = 32
-	minAccessTTL    = 1 * time.Minute
-	maxAccessTTL    = 24 * time.Hour
+	minPasswordLen  = 6
 )
 
 type Config struct {
@@ -20,8 +19,7 @@ type Config struct {
 	Env             string        `env:"APP_ENV" envDefault:"development"`
 	LogLevel        string        `env:"LOG_LEVEL" envDefault:"info"`
 	ShutdownTimeout time.Duration `env:"AUTH_SHUTDOWN_TIMEOUT" envDefault:"30s"`
-
-	RunMigrations bool `env:"RUN_MIGRATIONS" envDefault:"true"`
+	RunMigrations   bool          `env:"RUN_MIGRATIONS" envDefault:"true"`
 
 	// DB
 	DBUser     string `env:"POSTGRES_USER" envDefault:"fsp"`
@@ -40,13 +38,20 @@ type Config struct {
 	EmailVerificationTTL time.Duration `env:"EMAIL_VERIFICATION_TTL" envDefault:"24h"`
 	PasswordResetTTL     time.Duration `env:"PASSWORD_RESET_TTL" envDefault:"1h"`
 
+	MaxFailedLogins int           `env:"MAX_FAILED_LOGINS" envDefault:"5"`
+	LockDuration    time.Duration `env:"LOCK_DURATION" envDefault:"15m"`
+	MinPasswordLen  int           `env:"MIN_PASSWORD_LEN" envDefault:"8"`
+
+	ConsentVersionPDN string `env:"CONSENT_VERSION_PDN" envDefault:"v1"`
+	ConsentVersionPub string `env:"CONSENT_VERSION_PROFILE_PUBLICATION" envDefault:"v1"`
+
 	// SMTP
 	SMTPHost     string `env:"SMTP_HOST" envDefault:"mailhog"`
 	SMTPPort     int    `env:"SMTP_PORT" envDefault:"1025"`
 	SMTPUser     string `env:"SMTP_USER"`
 	SMTPPassword string `env:"SMTP_PASSWORD"`
 	SMTPFrom     string `env:"SMTP_FROM" envDefault:"noreply@fsp.local"`
-	SMTPTLS      bool   `env:"SMTP_TLS" envDefault:"false"`
+	SMTPMode     string `env:"SMTP_MODE" envDefault:"none"`
 
 	AppBaseURL         string   `env:"APP_BASE_URL" envDefault:"http://localhost:3000"`
 	CORSAllowedOrigins []string `env:"CORS_ALLOWED_ORIGINS" envSeparator:"," envDefault:"http://localhost:3000"`
@@ -56,16 +61,13 @@ type Config struct {
 
 type RateLimiterConfig struct {
 	RPS   float64 `env:"RPS" envDefault:"20"`
-	Burst int     `env:"BURST" envDefault:"40"`
+	BURST int     `env:"BURST" envDefault:"40"`
 }
 
 func (c Config) DSN() string {
-	return fmt.Sprintf(
-		"postgres://%s:%s@%s:%d/%s?sslmode=%s",
-		url.QueryEscape(c.DBUser),
-		url.QueryEscape(c.DBPassword),
-		c.DBHost, c.DBPort, c.DBName, c.DBSSLMode,
-	)
+	return fmt.Sprintf("postgres://%s:%s@%s:%d/%s?sslmode=%s",
+		url.QueryEscape(c.DBUser), url.QueryEscape(c.DBPassword),
+		c.DBHost, c.DBPort, c.DBName, c.DBSSLMode)
 }
 
 func Load() (*Config, error) {
@@ -76,8 +78,8 @@ func Load() (*Config, error) {
 	if len(cfg.JWTSecret) < minJWTSecretLen {
 		return nil, fmt.Errorf("JWT_SECRET must be at least %d chars", minJWTSecretLen)
 	}
-	if cfg.JWTAccessTTL < minAccessTTL || cfg.JWTAccessTTL > maxAccessTTL {
-		return nil, fmt.Errorf("JWT_ACCESS_TTL must be in [%s;%s]", minAccessTTL, maxAccessTTL)
+	if cfg.MinPasswordLen < minPasswordLen {
+		return nil, fmt.Errorf("MIN_PASSWORD_LEN must be at least 6")
 	}
 	return &cfg, nil
 }
