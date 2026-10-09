@@ -34,10 +34,10 @@ type Config struct {
 	SyncBatchSize int           `env:"SEARCH_SYNC_BATCH_SIZE" envDefault:"100"`
 	SyncInterval  time.Duration `env:"SEARCH_SYNC_INTERVAL" envDefault:"30s"`
 
-	DefaultLimit int `env:"SEARCH_DEFAULT_LIMIT" envDefault:"20"`
-	MaxLimit     int `env:"SEARCH_MAX_LIMIT" envDefault:"100"`
-
-	HTTPTimeout time.Duration `env:"SEARCH_HTTP_TIMEOUT" envDefault:"5s"`
+	DefaultLimit       int           `env:"SEARCH_DEFAULT_LIMIT" envDefault:"20"`
+	MaxLimit           int           `env:"SEARCH_MAX_LIMIT" envDefault:"100"`
+	CORSAllowedOrigins []string      `env:"CORS_ALLOWED_ORIGINS" envSeparator:"," envDefault:"*"`
+	HTTPTimeout        time.Duration `env:"SEARCH_HTTP_TIMEOUT" envDefault:"5s"`
 }
 
 func (c Config) DSN() string {
