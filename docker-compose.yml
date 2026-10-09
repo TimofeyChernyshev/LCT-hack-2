@@ -53,6 +53,46 @@ services:
       - "${MAILHOG_SMTP_PORT:-1025}:1025"
     networks: [fsp]
 
+  # Swagger  
+  swagger:
+    image: swaggerapi/swagger-ui
+    environment:
+      URLS: |
+        [
+          {"url":"${SWAGGER_SPEC_AUTH:-/specs/auth.yaml}","name":"auth"},
+          {"url":"${SWAGGER_SPEC_DICT:-/specs/dict.yaml}","name":"dict"},
+          {"url":"${SWAGGER_SPEC_CANDIDATE:-/specs/candidate.yaml}","name":"candidate"},
+          {"url":"${SWAGGER_SPEC_EMPLOYER:-/specs/employer.yaml}","name":"employer"},
+          {"url":"${SWAGGER_SPEC_TESTING:-/specs/testing.yaml}","name":"testing"},
+          {"url":"${SWAGGER_SPEC_INTERACTION:-/specs/interaction.yaml}","name":"interaction"},
+          {"url":"${SWAGGER_SPEC_SEARCH:-/specs/search.yaml}","name":"search"}
+        ]  
+    volumes:
+      - ./api:/usr/share/nginx/html/specs:ro
+    ports:
+      - "${SWAGGER_HOST_PORT:-8090}:8080"
+    networks: [fsp]
+
+  # nginx
+  gateway:
+    image: nginx:1.27-alpine
+    restart: unless-stopped
+    volumes:
+      - ./deploy/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./api:/usr/share/nginx/html/specs:ro
+    ports:
+      - "${GATEWAY_HOST_PORT:-8080}:80"
+    depends_on:
+      - auth
+      - dict
+      - candidate
+      - employer
+      - testing
+      - interaction
+      - search
+      - frontend
+    networks: [fsp]
+
   # Auth
   auth:
     <<: *service-base
