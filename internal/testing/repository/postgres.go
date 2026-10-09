@@ -36,6 +36,16 @@ type Repository interface {
 	CreatePeriodicTask(ctx context.Context, task *domain.PeriodicTask) error
 	CreatePeriodicSubmission(ctx context.Context, sub *domain.PeriodicSubmission) error
 	GetCandidateCategory(ctx context.Context, userID uuid.UUID) (categoryID, gradeID *uuid.UUID, score *float64, err error)
+
+	// BE2-02: Grade scale, questionnaire, and category state
+	GetGradeDefinition(ctx context.Context, gradeID uuid.UUID) (*domain.GradeDefinition, error)
+	GetGradeByRank(ctx context.Context, rank int) (*domain.GradeDefinition, error)
+	FindCategory(ctx context.Context, specializationID, gradeID uuid.UUID) (*domain.CategoryDefinition, error)
+	GetCategoryByID(ctx context.Context, categoryID uuid.UUID) (*domain.CategoryDefinition, error)
+	SaveQuestionnaire(ctx context.Context, q *domain.CandidateQuestionnaire) error
+	GetLatestQuestionnaire(ctx context.Context, userID uuid.UUID) (*domain.CandidateQuestionnaire, error)
+	SaveCandidateCategoryState(ctx context.Context, state *domain.CandidateCategoryState) error
+	GetCandidateCategoryState(ctx context.Context, userID uuid.UUID) (*domain.CandidateCategoryState, error)
 }
 
 type SessionItemEval struct {
@@ -482,6 +492,11 @@ func (r *PostgresRepository) CreatePeriodicSubmission(ctx context.Context, sub *
 }
 
 func (r *PostgresRepository) GetCandidateCategory(ctx context.Context, userID uuid.UUID) (categoryID, gradeID *uuid.UUID, score *float64, err error) {
+	st, err := r.GetCandidateCategoryState(ctx, userID)
+	if err == nil && st != nil {
+		return &st.CurrentCategoryID, &st.CurrentGradeID, &st.TestScore, nil
+	}
+
 	query := `
 		SELECT target_category_id, resulting_grade_id, score
 		FROM test_sessions
@@ -509,4 +524,163 @@ func (r *PostgresRepository) GetCandidateCategory(ctx context.Context, userID uu
 		score = &sc.Float64
 	}
 	return categoryID, gradeID, score, nil
+}
+
+func (r *PostgresRepository) GetGradeDefinition(ctx context.Context, gradeID uuid.UUID) (*domain.GradeDefinition, error) {
+	query := `SELECT id, code, name, rank FROM grade_definitions WHERE id = $1;`
+	var g domain.GradeDefinition
+	err := r.db.QueryRowContext(ctx, query, gradeID).Scan(&g.ID, &g.Code, &g.Name, &g.Rank)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, ErrNotFound
+		}
+		return nil, fmt.Errorf("query grade: %w", err)
+	}
+	return &g, nil
+}
+
+func (r *PostgresRepository) GetGradeByRank(ctx context.Context, rank int) (*domain.GradeDefinition, error) {
+	query := `SELECT id, code, name, rank FROM grade_definitions WHERE rank = $1;`
+	var g domain.GradeDefinition
+	err := r.db.QueryRowContext(ctx, query, rank).Scan(&g.ID, &g.Code, &g.Name, &g.Rank)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, ErrNotFound
+		}
+		return nil, fmt.Errorf("query grade by rank: %w", err)
+	}
+	return &g, nil
+}
+
+func (r *PostgresRepository) FindCategory(ctx context.Context, specializationID, gradeID uuid.UUID) (*domain.CategoryDefinition, error) {
+	query := `SELECT id, specialization_id, grade_id, slug, is_active FROM category_definitions WHERE specialization_id = $1 AND grade_id = $2 LIMIT 1;`
+	var c domain.CategoryDefinition
+	err := r.db.QueryRowContext(ctx, query, specializationID, gradeID).Scan(&c.ID, &c.SpecializationID, &c.GradeID, &c.Slug, &c.IsActive)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, ErrNotFound
+		}
+		return nil, fmt.Errorf("find category: %w", err)
+	}
+	return &c, nil
+}
+
+func (r *PostgresRepository) GetCategoryByID(ctx context.Context, categoryID uuid.UUID) (*domain.CategoryDefinition, error) {
+	query := `SELECT id, specialization_id, grade_id, slug, is_active FROM category_definitions WHERE id = $1;`
+	var c domain.CategoryDefinition
+	err := r.db.QueryRowContext(ctx, query, categoryID).Scan(&c.ID, &c.SpecializationID, &c.GradeID, &c.Slug, &c.IsActive)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, ErrNotFound
+		}
+		return nil, fmt.Errorf("query category by id: %w", err)
+	}
+	return &c, nil
+}
+
+func (r *PostgresRepository) SaveQuestionnaire(ctx context.Context, q *domain.CandidateQuestionnaire) error {
+	query := `
+		INSERT INTO candidate_questionnaires (id, user_id, specialization_id, claimed_grade_id, target_category_id, years_experience, technologies, created_at)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8);
+	`
+	_, err := r.db.ExecContext(ctx, query,
+		q.ID, q.UserID, q.SpecializationID, q.ClaimedGradeID, q.TargetCategoryID,
+		q.YearsExperience, q.Technologies, q.CreatedAt,
+	)
+	if err != nil {
+		return fmt.Errorf("insert questionnaire: %w", err)
+	}
+	return nil
+}
+
+func (r *PostgresRepository) GetLatestQuestionnaire(ctx context.Context, userID uuid.UUID) (*domain.CandidateQuestionnaire, error) {
+	query := `
+		SELECT id, user_id, specialization_id, claimed_grade_id, target_category_id, years_experience, technologies, created_at
+		FROM candidate_questionnaires
+		WHERE user_id = $1
+		ORDER BY created_at DESC
+		LIMIT 1;
+	`
+	var q domain.CandidateQuestionnaire
+	var techBytes []byte
+	err := r.db.QueryRowContext(ctx, query, userID).Scan(
+		&q.ID, &q.UserID, &q.SpecializationID, &q.ClaimedGradeID, &q.TargetCategoryID,
+		&q.YearsExperience, &techBytes, &q.CreatedAt,
+	)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, nil
+		}
+		return nil, fmt.Errorf("query latest questionnaire: %w", err)
+	}
+	q.Technologies = techBytes
+	return &q, nil
+}
+
+func (r *PostgresRepository) SaveCandidateCategoryState(ctx context.Context, state *domain.CandidateCategoryState) error {
+	query := `
+		INSERT INTO candidate_category_state (
+			user_id, current_category_id, current_grade_id, specialization_id,
+			status, test_score, ability_estimate, last_session_id, can_change_at, updated_at
+		)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+		ON CONFLICT (user_id) DO UPDATE SET
+			current_category_id = EXCLUDED.current_category_id,
+			current_grade_id    = EXCLUDED.current_grade_id,
+			specialization_id   = EXCLUDED.specialization_id,
+			status              = EXCLUDED.status,
+			test_score          = EXCLUDED.test_score,
+			ability_estimate    = EXCLUDED.ability_estimate,
+			last_session_id     = EXCLUDED.last_session_id,
+			can_change_at       = EXCLUDED.can_change_at,
+			updated_at          = EXCLUDED.updated_at;
+	`
+	var specID *uuid.UUID
+	if state.SpecializationID != nil {
+		specID = state.SpecializationID
+	}
+	_, err := r.db.ExecContext(ctx, query,
+		state.UserID, state.CurrentCategoryID, state.CurrentGradeID, specID,
+		state.Status, state.TestScore, state.AbilityEstimate, state.LastSessionID,
+		state.CanChangeAt, state.UpdatedAt,
+	)
+	if err != nil {
+		return fmt.Errorf("save candidate category state: %w", err)
+	}
+	return nil
+}
+
+func (r *PostgresRepository) GetCandidateCategoryState(ctx context.Context, userID uuid.UUID) (*domain.CandidateCategoryState, error) {
+	query := `
+		SELECT user_id, current_category_id, current_grade_id, specialization_id,
+		       status, test_score, ability_estimate, last_session_id, can_change_at, updated_at
+		FROM candidate_category_state
+		WHERE user_id = $1;
+	`
+	var s domain.CandidateCategoryState
+	var specID uuid.NullUUID
+	var canChangeAt sql.NullTime
+	var abilityEst sql.NullFloat64
+
+	err := r.db.QueryRowContext(ctx, query, userID).Scan(
+		&s.UserID, &s.CurrentCategoryID, &s.CurrentGradeID, &specID,
+		&s.Status, &s.TestScore, &abilityEst, &s.LastSessionID, &canChangeAt, &s.UpdatedAt,
+	)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, nil
+		}
+		return nil, fmt.Errorf("query candidate category state: %w", err)
+	}
+
+	if specID.Valid {
+		s.SpecializationID = &specID.UUID
+	}
+	if canChangeAt.Valid {
+		s.CanChangeAt = &canChangeAt.Time
+	}
+	if abilityEst.Valid {
+		s.AbilityEstimate = &abilityEst.Float64
+	}
+	return &s, nil
 }

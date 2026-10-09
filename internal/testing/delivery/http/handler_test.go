@@ -165,6 +165,38 @@ func (m *mockRepo) GetCandidateCategory(ctx context.Context, userID uuid.UUID) (
 	return nil, nil, nil, nil
 }
 
+func (m *mockRepo) GetGradeDefinition(ctx context.Context, gradeID uuid.UUID) (*domain.GradeDefinition, error) {
+	return &domain.GradeDefinition{ID: gradeID, Code: "middle", Name: "Middle", Rank: 4}, nil
+}
+
+func (m *mockRepo) GetGradeByRank(ctx context.Context, rank int) (*domain.GradeDefinition, error) {
+	return &domain.GradeDefinition{ID: uuid.New(), Code: "middle", Name: "Middle", Rank: rank}, nil
+}
+
+func (m *mockRepo) FindCategory(ctx context.Context, specializationID, gradeID uuid.UUID) (*domain.CategoryDefinition, error) {
+	return &domain.CategoryDefinition{ID: uuid.New(), SpecializationID: specializationID, GradeID: gradeID, Slug: "cat_test", IsActive: true}, nil
+}
+
+func (m *mockRepo) GetCategoryByID(ctx context.Context, categoryID uuid.UUID) (*domain.CategoryDefinition, error) {
+	return &domain.CategoryDefinition{ID: categoryID, SpecializationID: uuid.New(), GradeID: uuid.New(), Slug: "cat_test", IsActive: true}, nil
+}
+
+func (m *mockRepo) SaveQuestionnaire(ctx context.Context, q *domain.CandidateQuestionnaire) error {
+	return nil
+}
+
+func (m *mockRepo) GetLatestQuestionnaire(ctx context.Context, userID uuid.UUID) (*domain.CandidateQuestionnaire, error) {
+	return nil, nil
+}
+
+func (m *mockRepo) SaveCandidateCategoryState(ctx context.Context, state *domain.CandidateCategoryState) error {
+	return nil
+}
+
+func (m *mockRepo) GetCandidateCategoryState(ctx context.Context, userID uuid.UUID) (*domain.CandidateCategoryState, error) {
+	return nil, nil
+}
+
 func setupTestServer() (*gin.Engine, uuid.UUID) {
 	gin.SetMode(gin.TestMode)
 	repo := newMockRepo()
@@ -184,6 +216,10 @@ func setupTestServer() (*gin.Engine, uuid.UUID) {
 	jwtValidator := auth.NewJWTValidator(cfg.JWTSecret, cfg.JWTIssuer)
 	router.Use(auth.Middleware(jwtValidator, true)) // dev mode allows X-User-ID
 	apitesting.RegisterHandlers(router, handler)
+
+	// Questionnaire routes
+	router.POST("/me/questionnaire", handler.SubmitQuestionnaire)
+	router.GET("/me/questionnaire", handler.GetQuestionnaireState)
 
 	testUserID := uuid.New()
 	return router, testUserID
@@ -278,3 +314,43 @@ func TestHTTP_SessionLifecycle(t *testing.T) {
 		t.Errorf("unexpected decision: %s", result.Decision)
 	}
 }
+
+func TestHTTP_Questionnaire(t *testing.T) {
+	router, userID := setupTestServer()
+
+	// 1. Submit questionnaire
+	body, _ := json.Marshal(domain.QuestionnaireInput{
+		SpecializationID: uuid.New(),
+		ClaimedGradeID:   uuid.New(),
+		YearsExperience:  3.5,
+		Technologies:     []string{"go", "k8s"},
+	})
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest(http.MethodPost, "/me/questionnaire", bytes.NewReader(body))
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set(auth.HeaderUserID, userID.String())
+	router.ServeHTTP(w, req)
+
+	if w.Code != http.StatusOK {
+		t.Fatalf("expected 200 on questionnaire submit, got %d: %s", w.Code, w.Body.String())
+	}
+
+	var qRes domain.QuestionnaireResult
+	if err := json.Unmarshal(w.Body.Bytes(), &qRes); err != nil {
+		t.Fatalf("failed to decode questionnaire result: %v", err)
+	}
+	if !qRes.CanStartTest {
+		t.Errorf("expected canStartTest = true")
+	}
+
+	// 2. Query questionnaire state
+	w = httptest.NewRecorder()
+	req, _ = http.NewRequest(http.MethodGet, "/me/questionnaire", nil)
+	req.Header.Set(auth.HeaderUserID, userID.String())
+	router.ServeHTTP(w, req)
+
+	if w.Code != http.StatusOK {
+		t.Fatalf("expected 200 on get questionnaire state, got %d", w.Code)
+	}
+}
+

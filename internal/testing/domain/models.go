@@ -136,3 +136,59 @@ type PeriodicSubmission struct {
 	Score     *float64  `json:"score,omitempty"`
 	CreatedAt time.Time `json:"created_at"`
 }
+
+type GradeDefinition struct {
+	ID   uuid.UUID `json:"id"`
+	Code string    `json:"code"`
+	Name string    `json:"name"`
+	Rank int       `json:"rank"` // 1..7
+}
+
+type CategoryDefinition struct {
+	ID                uuid.UUID `json:"id"`
+	SpecializationID  uuid.UUID `json:"specialization_id"`
+	GradeID           uuid.UUID `json:"grade_id"`
+	Slug              string    `json:"slug"`
+	IsActive          bool      `json:"is_active"`
+}
+
+type CandidateQuestionnaire struct {
+	ID                 uuid.UUID       `json:"id"`
+	UserID             uuid.UUID       `json:"user_id"`
+	SpecializationID   uuid.UUID       `json:"specialization_id"`
+	ClaimedGradeID     uuid.UUID       `json:"claimed_grade_id"`
+	TargetCategoryID   uuid.UUID       `json:"target_category_id"`
+	YearsExperience    float64         `json:"years_experience"`
+	Technologies       json.RawMessage `json:"technologies"`
+	CreatedAt          time.Time       `json:"created_at"`
+}
+
+type CandidateCategoryState struct {
+	UserID             uuid.UUID  `json:"user_id"`
+	CurrentCategoryID  uuid.UUID  `json:"current_category_id"`
+	CurrentGradeID     uuid.UUID  `json:"current_grade_id"`
+	SpecializationID   *uuid.UUID `json:"specialization_id,omitempty"`
+	Status             string     `json:"status"` // confirmed, downgrade_offered, upgrade_offered
+	TestScore          float64    `json:"test_score"`
+	AbilityEstimate    *float64   `json:"ability_estimate,omitempty"`
+	LastSessionID      uuid.UUID  `json:"last_session_id"`
+	CanChangeAt        *time.Time `json:"can_change_at,omitempty"`
+	UpdatedAt          time.Time  `json:"updated_at"`
+}
+
+type QuestionnaireInput struct {
+	SpecializationID uuid.UUID `json:"specializationId"`
+	ClaimedGradeID   uuid.UUID `json:"claimedGradeId"`
+	YearsExperience  float64   `json:"yearsExperience,omitempty"`
+	Technologies     []string  `json:"technologies,omitempty"`
+}
+
+type QuestionnaireResult struct {
+	TargetCategoryID      uuid.UUID  `json:"targetCategoryId"`
+	RecommendedGradeID    uuid.UUID  `json:"recommendedGradeId"`
+	CanStartTest          bool       `json:"canStartTest"`
+	CooldownRemainingDays int        `json:"cooldownRemainingDays,omitempty"`
+	CanChangeAt           *time.Time `json:"canChangeAt,omitempty"`
+	Message               string     `json:"message"`
+}
+

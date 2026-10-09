@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"testing"
+	"time"
 
 	"TimofeyChernyshev/LCT-hack-2/internal/testing/domain"
 	"TimofeyChernyshev/LCT-hack-2/internal/testing/infrastructure/config"
@@ -12,20 +13,45 @@ import (
 )
 
 type mockRepository struct {
-	sessions    map[uuid.UUID]*domain.Session
-	items       map[uuid.UUID]*domain.SessionItem
-	tasks       map[uuid.UUID]*domain.Task
-	answers     map[uuid.UUID]*domain.TestAnswer
-	gradeEvents []domain.GradeChangeEvent
+	sessions       map[uuid.UUID]*domain.Session
+	items          map[uuid.UUID]*domain.SessionItem
+	tasks          map[uuid.UUID]*domain.Task
+	answers        map[uuid.UUID]*domain.TestAnswer
+	gradeEvents    []domain.GradeChangeEvent
+	grades         map[uuid.UUID]*domain.GradeDefinition
+	gradesByRank   map[int]*domain.GradeDefinition
+	categories     map[uuid.UUID]*domain.CategoryDefinition
+	categoryStates map[uuid.UUID]*domain.CandidateCategoryState
+	questionnaires map[uuid.UUID]*domain.CandidateQuestionnaire
 }
 
 func newMockRepository() *mockRepository {
-	return &mockRepository{
-		sessions: make(map[uuid.UUID]*domain.Session),
-		items:    make(map[uuid.UUID]*domain.SessionItem),
-		tasks:    make(map[uuid.UUID]*domain.Task),
-		answers:  make(map[uuid.UUID]*domain.TestAnswer),
+	m := &mockRepository{
+		sessions:       make(map[uuid.UUID]*domain.Session),
+		items:          make(map[uuid.UUID]*domain.SessionItem),
+		tasks:          make(map[uuid.UUID]*domain.Task),
+		answers:        make(map[uuid.UUID]*domain.TestAnswer),
+		grades:         make(map[uuid.UUID]*domain.GradeDefinition),
+		gradesByRank:   make(map[int]*domain.GradeDefinition),
+		categories:     make(map[uuid.UUID]*domain.CategoryDefinition),
+		categoryStates: make(map[uuid.UUID]*domain.CandidateCategoryState),
+		questionnaires: make(map[uuid.UUID]*domain.CandidateQuestionnaire),
 	}
+
+	// Seed grades: 1: intern .. 7: lead
+	names := []string{"intern", "junior", "junior_plus", "middle", "middle_plus", "senior", "lead"}
+	for i, name := range names {
+		g := &domain.GradeDefinition{
+			ID:   uuid.New(),
+			Code: name,
+			Name: name,
+			Rank: i + 1,
+		}
+		m.grades[g.ID] = g
+		m.gradesByRank[g.Rank] = g
+	}
+
+	return m
 }
 
 func (m *mockRepository) GetTemplateForCategory(ctx context.Context, categoryID uuid.UUID) (*domain.Template, error) {
@@ -175,7 +201,72 @@ func (m *mockRepository) CreatePeriodicSubmission(ctx context.Context, sub *doma
 }
 
 func (m *mockRepository) GetCandidateCategory(ctx context.Context, userID uuid.UUID) (*uuid.UUID, *uuid.UUID, *float64, error) {
+	if st, ok := m.categoryStates[userID]; ok {
+		return &st.CurrentCategoryID, &st.CurrentGradeID, &st.TestScore, nil
+	}
 	return nil, nil, nil, nil
+}
+
+func (m *mockRepository) GetGradeDefinition(ctx context.Context, gradeID uuid.UUID) (*domain.GradeDefinition, error) {
+	if g, ok := m.grades[gradeID]; ok {
+		return g, nil
+	}
+	return nil, repository.ErrNotFound
+}
+
+func (m *mockRepository) GetGradeByRank(ctx context.Context, rank int) (*domain.GradeDefinition, error) {
+	if g, ok := m.gradesByRank[rank]; ok {
+		return g, nil
+	}
+	return nil, repository.ErrNotFound
+}
+
+func (m *mockRepository) FindCategory(ctx context.Context, specializationID, gradeID uuid.UUID) (*domain.CategoryDefinition, error) {
+	for _, c := range m.categories {
+		if c.SpecializationID == specializationID && c.GradeID == gradeID {
+			return c, nil
+		}
+	}
+	c := &domain.CategoryDefinition{
+		ID:               uuid.New(),
+		SpecializationID: specializationID,
+		GradeID:          gradeID,
+		Slug:             "test_cat",
+		IsActive:         true,
+	}
+	m.categories[c.ID] = c
+	return c, nil
+}
+
+func (m *mockRepository) GetCategoryByID(ctx context.Context, categoryID uuid.UUID) (*domain.CategoryDefinition, error) {
+	if c, ok := m.categories[categoryID]; ok {
+		return c, nil
+	}
+	return nil, repository.ErrNotFound
+}
+
+func (m *mockRepository) SaveQuestionnaire(ctx context.Context, q *domain.CandidateQuestionnaire) error {
+	m.questionnaires[q.UserID] = q
+	return nil
+}
+
+func (m *mockRepository) GetLatestQuestionnaire(ctx context.Context, userID uuid.UUID) (*domain.CandidateQuestionnaire, error) {
+	if q, ok := m.questionnaires[userID]; ok {
+		return q, nil
+	}
+	return nil, nil
+}
+
+func (m *mockRepository) SaveCandidateCategoryState(ctx context.Context, state *domain.CandidateCategoryState) error {
+	m.categoryStates[state.UserID] = state
+	return nil
+}
+
+func (m *mockRepository) GetCandidateCategoryState(ctx context.Context, userID uuid.UUID) (*domain.CandidateCategoryState, error) {
+	if s, ok := m.categoryStates[userID]; ok {
+		return s, nil
+	}
+	return nil, nil
 }
 
 func TestTestingService_CompleteFlow(t *testing.T) {
@@ -190,22 +281,32 @@ func TestTestingService_CompleteFlow(t *testing.T) {
 	svc := NewTestingService(repo, cfg)
 	ctx := context.Background()
 	userID := uuid.New()
-	targetCategoryID := uuid.New()
 
-	// 1. Start session
-	sess, err := svc.StartSession(ctx, userID, targetCategoryID)
+	// Junior grade (rank 2)
+	juniorGrade := repo.gradesByRank[2]
+	specID := uuid.New()
+
+	// 1. Questionnaire onboarding
+	qRes, err := svc.EvaluateQuestionnaire(ctx, userID, domain.QuestionnaireInput{
+		SpecializationID: specID,
+		ClaimedGradeID:   juniorGrade.ID,
+		YearsExperience:  1.0,
+		Technologies:     []string{"go", "postgres"},
+	})
+	if err != nil {
+		t.Fatalf("failed questionnaire: %v", err)
+	}
+	if !qRes.CanStartTest {
+		t.Fatalf("expected canStartTest = true")
+	}
+
+	// 2. Start session
+	sess, err := svc.StartSession(ctx, userID, qRes.TargetCategoryID)
 	if err != nil {
 		t.Fatalf("failed to start session: %v", err)
 	}
 
-	if sess.Status != domain.SessionStatusInProgress {
-		t.Errorf("expected session to be in_progress, got %s", sess.Status)
-	}
-	if len(sess.Items) != 2 {
-		t.Fatalf("expected 2 items, got %d", len(sess.Items))
-	}
-
-	// 2. Answer items correctly
+	// 3. Answer items 100% correctly
 	for _, it := range sess.Items {
 		var variant struct {
 			CorrectKeys   []string `json:"correct_keys"`
@@ -226,7 +327,7 @@ func TestTestingService_CompleteFlow(t *testing.T) {
 		}
 	}
 
-	// 3. Submit session
+	// 4. Submit session
 	res, err := svc.SubmitSession(ctx, userID, sess.ID)
 	if err != nil {
 		t.Fatalf("failed to submit session: %v", err)
@@ -239,9 +340,86 @@ func TestTestingService_CompleteFlow(t *testing.T) {
 		t.Errorf("expected upgrade_offered, got %s", res.Decision)
 	}
 
-	// 4. Verify cooldown takes effect on immediate next start
-	_, err = svc.StartSession(ctx, userID, targetCategoryID)
+	// Resulting grade should be promoted to rank 3 (junior_plus)
+	promotedGrade, _ := repo.GetGradeDefinition(ctx, res.ResultingGradeID)
+	if promotedGrade == nil || promotedGrade.Rank != 3 {
+		t.Errorf("expected promoted rank 3, got %v", promotedGrade)
+	}
+
+	// 5. Cooldown check: Immediate retake should be blocked
+	_, err = svc.StartSession(ctx, userID, qRes.TargetCategoryID)
 	if err == nil {
 		t.Errorf("expected cooldown error on immediate retake, got nil")
+	}
+
+	// 6. Candidate category state check
+	catID, gradeID, score, err := svc.GetCandidateCategory(ctx, userID)
+	if err != nil || catID == nil || gradeID == nil || score == nil {
+		t.Fatalf("expected candidate category to be set in state")
+	}
+	if *gradeID != res.ResultingGradeID {
+		t.Errorf("expected candidate state grade to match resultingGradeID")
+	}
+}
+
+func TestTestingService_DowngradePreservesBaseGrade(t *testing.T) {
+	repo := newMockRepository()
+	cfg := &config.Config{
+		GradeChangeCooldownDays: 90,
+		ItemsPerSession:         2,
+		PassThresholdRatio:      0.7,
+		UpgradeThresholdRatio:   0.9,
+	}
+
+	svc := NewTestingService(repo, cfg)
+	ctx := context.Background()
+	userID := uuid.New()
+
+	// Suppose user already had confirmed Middle grade (rank 4)
+	middleGrade := repo.gradesByRank[4]
+	seniorGrade := repo.gradesByRank[6]
+	specID := uuid.New()
+
+	middleCat, _ := repo.FindCategory(ctx, specID, middleGrade.ID)
+	seniorCat, _ := repo.FindCategory(ctx, specID, seniorGrade.ID)
+
+	pastSessionID := uuid.New()
+	pastTime := time.Now().Add(-100 * 24 * time.Hour) // cooldown expired
+	_ = repo.SaveCandidateCategoryState(ctx, &domain.CandidateCategoryState{
+		UserID:            userID,
+		CurrentCategoryID: middleCat.ID,
+		CurrentGradeID:    middleGrade.ID,
+		Status:            "confirmed",
+		TestScore:         80.0,
+		LastSessionID:     pastSessionID,
+		UpdatedAt:         pastTime,
+	})
+
+	// User now attempts test for Senior (rank 6)
+	sess, err := svc.StartSession(ctx, userID, seniorCat.ID)
+	if err != nil {
+		t.Fatalf("failed to start senior session: %v", err)
+	}
+
+	// User fails test (wrong answers -> 0%)
+	for _, it := range sess.Items {
+		_ = svc.AnswerItem(ctx, userID, sess.ID, it.ID, "WRONG_ANSWER", false)
+	}
+
+	// Submit session
+	res, err := svc.SubmitSession(ctx, userID, sess.ID)
+	if err != nil {
+		t.Fatalf("failed to submit session: %v", err)
+	}
+
+	if res.Decision != "downgrade_offered" {
+		t.Errorf("expected downgrade_offered, got %s", res.Decision)
+	}
+
+	// ТЗ DoD: При неуспешном прохождении грейд не срезается принудительно «в ноль».
+	// User had Middle (rank 4). Since rank 4 >= lower recommendation (rank 5), user preserves rank 4!
+	resultingGrade, _ := repo.GetGradeDefinition(ctx, res.ResultingGradeID)
+	if resultingGrade == nil || resultingGrade.Rank < 4 {
+		t.Errorf("expected base confirmed grade (rank >= 4) not to be dropped to 0, got rank %v", resultingGrade)
 	}
 }

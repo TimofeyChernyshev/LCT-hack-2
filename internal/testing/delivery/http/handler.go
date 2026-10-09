@@ -9,6 +9,7 @@ import (
 	openapi_types "github.com/oapi-codegen/runtime/types"
 
 	apitesting "TimofeyChernyshev/LCT-hack-2/internal/testing/infrastructure/http"
+	"TimofeyChernyshev/LCT-hack-2/internal/testing/domain"
 	"TimofeyChernyshev/LCT-hack-2/internal/testing/service"
 	"TimofeyChernyshev/LCT-hack-2/pkg/auth"
 )
@@ -195,16 +196,61 @@ func (h *Handler) SubmitSession(c *gin.Context, id openapi_types.UUID) {
 	theta32 := float32(res.AbilityEstimate)
 	score32 := float32(res.Score)
 
-	resp := apitesting.SessionResult{
-		SessionId:           id,
-		Score:               score32,
-		AbilityEstimate:     &theta32,
-		ResultingGradeId:    res.ResultingGradeID,
-		ResultingCategoryId: res.ResultingCategoryID,
-		Decision:            apitesting.SessionResultDecision(res.Decision),
+	resp := gin.H{
+		"sessionId":           id,
+		"score":               score32,
+		"abilityEstimate":     theta32,
+		"resultingGradeId":    res.ResultingGradeID,
+		"resultingCategoryId": res.ResultingCategoryID,
+		"decision":            res.Decision,
+		"explanation":         res.Explanation,
 	}
 
 	c.JSON(http.StatusOK, resp)
+}
+
+// SubmitQuestionnaire handles onboarding questionnaire (POST /me/questionnaire)
+func (h *Handler) SubmitQuestionnaire(c *gin.Context) {
+	userID, err := auth.GetUserID(c)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+		return
+	}
+
+	var req domain.QuestionnaireInput
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid questionnaire body", "details": err.Error()})
+		return
+	}
+
+	res, err := h.svc.EvaluateQuestionnaire(c.Request.Context(), userID, req)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to evaluate questionnaire", "details": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, res)
+}
+
+// GetQuestionnaireState handles querying onboarding/cooldown state (GET /me/questionnaire)
+func (h *Handler) GetQuestionnaireState(c *gin.Context) {
+	userID, err := auth.GetUserID(c)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+		return
+	}
+
+	state, canChangeAt, canStart, err := h.svc.GetQuestionnaireState(c.Request.Context(), userID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to get questionnaire state", "details": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"state":        state,
+		"canChangeAt":  canChangeAt,
+		"canStartTest": canStart,
+	})
 }
 
 // ListGradeChanges (GET /me/category-changes)

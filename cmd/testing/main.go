@@ -77,6 +77,12 @@ func main() {
 	// Register generated handlers
 	apitesting.RegisterHandlers(router, handler)
 
+	// BE2-02: Questionnaire & onboarding routes
+	router.POST("/me/questionnaire", handler.SubmitQuestionnaire)
+	router.GET("/me/questionnaire", handler.GetQuestionnaireState)
+	router.POST("/me/onboarding-questionnaire", handler.SubmitQuestionnaire)
+	router.GET("/me/onboarding-questionnaire", handler.GetQuestionnaireState)
+
 	srv := &http.Server{
 		Addr:         ":" + cfg.HTTPPort,
 		Handler:      router,

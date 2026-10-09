@@ -90,6 +90,31 @@ paths:
                     type: array
                     items: { $ref: "#/components/schemas/GradeChange" }
 
+  /me/questionnaire:
+    post:
+      summary: Опросник на входе — определение специализации и заявленного грейда
+      operationId: submitQuestionnaire
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/QuestionnaireInput" }
+      responses:
+        "200":
+          description: Рекомендованная категория и статус кулдауна
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/QuestionnaireResult" }
+    get:
+      summary: Получение текущего статуса опросника и кулдауна
+      operationId: getQuestionnaireState
+      responses:
+        "200":
+          description: Статус опросника и готовности к тесту
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/QuestionnaireState" }
+
   /me/periodic-tasks:
     get:
       operationId: listPeriodicTasks
@@ -204,7 +229,35 @@ components:
         resultingGradeId: { type: string, format: uuid }
         resultingCategoryId: { type: string, format: uuid }
         decision: { type: string, enum: [confirmed, downgrade_offered, upgrade_offered] }
+        explanation: { type: string }
       required: [sessionId, score, resultingGradeId, resultingCategoryId, decision]
+    QuestionnaireInput:
+      type: object
+      properties:
+        specializationId: { type: string, format: uuid }
+        claimedGradeId: { type: string, format: uuid }
+        yearsExperience: { type: number }
+        technologies:
+          type: array
+          items: { type: string }
+      required: [specializationId, claimedGradeId]
+    QuestionnaireResult:
+      type: object
+      properties:
+        targetCategoryId: { type: string, format: uuid }
+        recommendedGradeId: { type: string, format: uuid }
+        canStartTest: { type: boolean }
+        cooldownRemainingDays: { type: integer }
+        canChangeAt: { type: [string, "null"], format: date-time }
+        message: { type: string }
+      required: [targetCategoryId, canStartTest, message]
+    QuestionnaireState:
+      type: object
+      properties:
+        state: { type: object }
+        canChangeAt: { type: [string, "null"], format: date-time }
+        canStartTest: { type: boolean }
+      required: [canStartTest]
     GradeChange:
       type: object
       properties:
