@@ -195,23 +195,51 @@ paths:
   /candidates/{userId}:
     get:
       operationId: getCandidateForEmployer
-      description: Возвращает карточку без контактов. Контакты появятся только после accepted.
+      description: |
+        Возвращает карточку кандидата. Контакты маскируются, если нет
+        accepted-приглашения или отклика между этим работодателем и кандидатом.
+        Раскрытие определяется сервером по contact_reveals; query-параметров для этого нет.
+      security: [{ bearerAuth: [] }]
       parameters:
         - in: path
           name: userId
           required: true
           schema: { type: string, format: uuid }
-        - in: query
-          name: revealContacts
-          description: Показывать ли контакты (только при accepted-приглашении/отклике)
-          schema: { type: boolean, default: false }
       responses:
         "200":
           description: Карточка кандидата
           content:
             application/json:
               schema: { $ref: "#/components/schemas/CandidateCard" }
+        "403": { description: Только для работодателей }
         "404": { description: Не найдено }
+  /internal/reveals:
+    post:
+      operationId: internalRecordReveal
+      description: |
+        Вызывается interaction-сервисом при accepted-приглашении или
+        самостоятельном отклике кандидата. После этого работодатель увидит контакты.
+      parameters:
+        - in: header
+          name: X-Internal-Token
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                candidateUserId: { type: string, format: uuid }
+                employerUserId: { type: string, format: uuid }
+                entityType: { type: string, enum: [invitation, application] }
+                entityId: { type: string, format: uuid }
+                reason: { type: string, enum: [invitation_accepted, application_sent] }
+              required: [candidateUserId, employerUserId, entityType, entityId, reason]
+      responses:
+        "204": { description: OK }
+        "403": { description: Неверный internal-токен }
 
 components:
   securitySchemes:
@@ -224,6 +252,7 @@ components:
         userId: { type: string, format: uuid }
         firstName: { type: [string, "null"] }
         lastName: { type: [string, "null"] }
+        middleName: { type: [string, "null"] }
         headline: { type: [string, "null"] }
         about: { type: [string, "null"] }
         location: { type: [string, "null"] }
@@ -232,6 +261,13 @@ components:
         gradeId: { type: [string, "null"], format: uuid }
         specializationId: { type: [string, "null"], format: uuid }
         fspMemberId: { type: [string, "null"] }
+        salaryMin: { type: [integer, "null"], minimum: 0 }
+        salaryMax: { type: [integer, "null"], minimum: 0 }
+        salaryCurrency: { type: [string, "null"], default: RUB }
+        softSkills:
+          type: array
+          items: { type: string }
+          maxItems: 20
         updatedAt: { type: string, format: date-time }
       required: [userId, updatedAt]
 
@@ -240,28 +276,41 @@ components:
       properties:
         firstName: { type: string }
         lastName: { type: string }
+        middleName: { type: string }
         headline: { type: string }
         about: { type: string }
         location: { type: string }
-        yearsExperience: { type: number }
+        yearsExperience: { type: number, minimum: 0 }
+        salaryMin: { type: integer, minimum: 0 }
+        salaryMax: { type: integer, minimum: 0 }
+        salaryCurrency: { type: string }
+        softSkills:
+          type: array
+          items: { type: string }
+          maxItems: 20
 
     CandidateContacts:
       type: object
       properties:
-        email: { type: string, format: email }
+        email: { type: [string, "null"], format: email }
         phone: { type: [string, "null"] }
         telegram: { type: [string, "null"] }
         github: { type: [string, "null"] }
         linkedin: { type: [string, "null"] }
         website: { type: [string, "null"], format: uri }
+        masked: { type: boolean }
+        maskedFields: { type: array, items: { type: string } }
 
     Visibility:
       type: object
       properties:
         contacts: { type: boolean }
+        links: { type: boolean }
         fsp: { type: boolean }
         experience: { type: boolean }
         resume: { type: boolean }
+        salary: { type: boolean }
+        softSkills: { type: boolean }
 
     Resume:
       type: object
@@ -353,21 +402,30 @@ components:
         userId: { type: string, format: uuid }
         displayName: { type: string }
         headline: { type: [string, "null"] }
-        categoryId: { type: string, format: uuid }
-        gradeId: { type: string, format: uuid }
-        specializationId: { type: string, format: uuid }
+        categoryId: { type: [string, "null"], format: uuid }
+        gradeId: { type: [string, "null"], format: uuid }
+        specializationId: { type: [string, "null"], format: uuid }
         yearsExperience: { type: [number, "null"] }
+        location: { type: [string, "null"] }
+        softSkills: { type: array, items: { type: string } }
+        salary: { $ref: "#/components/schemas/CandidateCardSalary" }
         technologies:
           type: array
           items: { $ref: "#/components/schemas/CandidateTechnology" }
-        fsp:
-          type: object
-          properties:
-            hasFSP: { type: boolean }
-            achievementsCount: { type: integer }
-            bestPlace: { type: [integer, "null"] }
-        contacts:
-          description: null, если контакты не раскрыты
-          oneOf:
-            - $ref: "#/components/schemas/CandidateContacts"
-            - type: "null"
+        fsp: { $ref: "#/components/schemas/CandidateCardFsp" }
+        contacts: { $ref: "#/components/schemas/CandidateContacts" }
+
+    CandidateCardSalary:
+      type: object
+      properties:
+        min: { type: [integer, "null"] }
+        max: { type: [integer, "null"] }
+        currency: { type: [string, "null"] }
+        masked: { type: boolean }
+
+    CandidateCardFsp:
+      type: object
+      properties:
+        hasFSP: { type: boolean }
+        achievementsCount: { type: integer }
+        bestPlace: { type: [integer, "null"] }

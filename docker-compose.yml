@@ -154,6 +154,9 @@ services:
       AUTH_SERVICE_URL: ${AUTH_SERVICE_URL:-http://auth:8080}
       DICT_SERVICE_URL: ${DICT_SERVICE_URL:-http://dict:8080}
       TESTING_SERVICE_URL: ${TESTING_SERVICE_URL:-http://testing:8080}
+      INTERNAL_TOKEN: ${INTERNAL_TOKEN:-dev-internal-token}
+      CANDIDATE_RATE_LIMITER_RPS: ${CANDIDATE_RATE_LIMITER_RPS:-50}
+      CANDIDATE_RATE_LIMITER_BURST: ${CANDIDATE_RATE_LIMITER_BURST:-100}
     volumes:
       - candidate_uploads:/var/lib/fsp/uploads
     ports:
