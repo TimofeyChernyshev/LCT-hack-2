@@ -8,6 +8,8 @@ import (
 	"github.com/caarlos0/env/v11"
 )
 
+const minJWTSecretLen = 32
+
 type Config struct {
 	HTTPPort        string        `env:"HTTP_PORT" envDefault:"8080"`
 	Env             string        `env:"APP_ENV" envDefault:"development"`
@@ -25,14 +27,19 @@ type Config struct {
 	JWTSecret string `env:"JWT_SECRET" envDefault:"dev-secret-change-me-please-32-chars-min"`
 	JWTIssuer string `env:"JWT_ISSUER" envDefault:"fsp-platform"`
 
-	AuthURL        string `env:"AUTH_SERVICE_URL" envDefault:"http://auth:8080"`
-	DictURL        string `env:"DICT_SERVICE_URL" envDefault:"http://dict:8080"`
-	InteractionURL string `env:"INTERACTION_SERVICE_URL" envDefault:"http://interaction:8080"`
-
-	HTTPTimeout time.Duration `env:"EMPLOYER_HTTP_TIMEOUT" envDefault:"5s"`
-	HTTPRetries int           `env:"EMPLOYER_HTTP_RETRIES" envDefault:"3"`
+	SearchURL    string        `env:"SEARCH_SERVICE_URL" envDefault:"http://search:8080"`
+	CandidateURL string        `env:"CANDIDATE_SERVICE_URL" envDefault:"http://candidate:8080"`
+	HTTPTimeout  time.Duration `env:"EMPLOYER_HTTP_TIMEOUT" envDefault:"5s"`
+	HTTPRetries  int           `env:"EMPLOYER_HTTP_RETRIES" envDefault:"3"`
 
 	CORSAllowedOrigins []string `env:"CORS_ALLOWED_ORIGINS" envSeparator:"," envDefault:"http://localhost:3000"`
+
+	RateLimiter RateLimiterConfig `envPrefix:"EMPLOYER_RATE_LIMITER_"`
+}
+
+type RateLimiterConfig struct {
+	RPS   float64 `env:"RPS" envDefault:"50"`
+	Burst int     `env:"BURST" envDefault:"100"`
 }
 
 func (c Config) DSN() string {
@@ -45,6 +52,9 @@ func Load() (*Config, error) {
 	var cfg Config
 	if err := env.Parse(&cfg); err != nil {
 		return nil, fmt.Errorf("parse employer config: %w", err)
+	}
+	if len(cfg.JWTSecret) < minJWTSecretLen {
+		return nil, fmt.Errorf("JWT_SECRET must be at least %d chars", minJWTSecretLen)
 	}
 	return &cfg, nil
 }

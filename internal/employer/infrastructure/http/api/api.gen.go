@@ -20,6 +20,36 @@ import (
 	openapi_types "github.com/oapi-codegen/runtime/types"
 )
 
+// Defines values for CandidateContactsMaskedFields.
+const (
+	Email    CandidateContactsMaskedFields = "email"
+	Github   CandidateContactsMaskedFields = "github"
+	Linkedin CandidateContactsMaskedFields = "linkedin"
+	Phone    CandidateContactsMaskedFields = "phone"
+	Telegram CandidateContactsMaskedFields = "telegram"
+	Website  CandidateContactsMaskedFields = "website"
+)
+
+// Valid indicates whether the value is a known member of the CandidateContactsMaskedFields enum.
+func (e CandidateContactsMaskedFields) Valid() bool {
+	switch e {
+	case Email:
+		return true
+	case Github:
+		return true
+	case Linkedin:
+		return true
+	case Phone:
+		return true
+	case Telegram:
+		return true
+	case Website:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for NeedStatus.
 const (
 	NeedStatusActive NeedStatus = "active"
@@ -170,23 +200,123 @@ func (e VacancyInputWorkFormat) Valid() bool {
 	}
 }
 
+// Defines values for SearchCandidatesParamsSort.
+const (
+	FspWeight SearchCandidatesParamsSort = "fspWeight"
+	Relevance SearchCandidatesParamsSort = "relevance"
+	TestScore SearchCandidatesParamsSort = "testScore"
+)
+
+// Valid indicates whether the value is a known member of the SearchCandidatesParamsSort enum.
+func (e SearchCandidatesParamsSort) Valid() bool {
+	switch e {
+	case FspWeight:
+		return true
+	case Relevance:
+		return true
+	case TestScore:
+		return true
+	default:
+		return false
+	}
+}
+
+// CandidateCard Карточка кандидата без контактов, пока reveal не подтверждён.
+// Структура соответствует ответу candidate-сервиса.
+type CandidateCard struct {
+	CategoryId       *openapi_types.UUID  `json:"categoryId,omitempty"`
+	Contacts         *CandidateContacts   `json:"contacts,omitempty"`
+	DisplayName      *string              `json:"displayName,omitempty"`
+	Fsp              *CandidateCardFsp    `json:"fsp,omitempty"`
+	GradeId          *openapi_types.UUID  `json:"gradeId,omitempty"`
+	Headline         *string              `json:"headline,omitempty"`
+	Location         *string              `json:"location,omitempty"`
+	Salary           *CandidateCardSalary `json:"salary,omitempty"`
+	SoftSkills       *[]string            `json:"softSkills,omitempty"`
+	SpecializationId *openapi_types.UUID  `json:"specializationId,omitempty"`
+	UserId           *openapi_types.UUID  `json:"userId,omitempty"`
+	YearsExperience  *float32             `json:"yearsExperience,omitempty"`
+}
+
+// CandidateCardFsp defines model for CandidateCardFsp.
+type CandidateCardFsp struct {
+	AchievementsCount *int  `json:"achievementsCount,omitempty"`
+	BestPlace         *int  `json:"bestPlace,omitempty"`
+	HasFSP            *bool `json:"hasFSP,omitempty"`
+}
+
+// CandidateCardSalary defines model for CandidateCardSalary.
+type CandidateCardSalary struct {
+	Currency *string `json:"currency,omitempty"`
+	Masked   *bool   `json:"masked,omitempty"`
+	Max      *int    `json:"max,omitempty"`
+	Min      *int    `json:"min,omitempty"`
+}
+
+// CandidateContacts defines model for CandidateContacts.
+type CandidateContacts struct {
+	Email        *openapi_types.Email             `json:"email,omitempty"`
+	Github       *string                          `json:"github,omitempty"`
+	Linkedin     *string                          `json:"linkedin,omitempty"`
+	Masked       *bool                            `json:"masked,omitempty"`
+	MaskedFields *[]CandidateContactsMaskedFields `json:"maskedFields,omitempty"`
+	Phone        *string                          `json:"phone,omitempty"`
+	Telegram     *string                          `json:"telegram,omitempty"`
+	Website      *string                          `json:"website,omitempty"`
+}
+
+// CandidateContactsMaskedFields defines model for CandidateContacts.MaskedFields.
+type CandidateContactsMaskedFields string
+
+// CandidateSearchHit defines model for CandidateSearchHit.
+type CandidateSearchHit struct {
+	CategoryId           openapi_types.UUID `json:"categoryId"`
+	DisplayName          string             `json:"displayName"`
+	FspAchievementsCount *int               `json:"fspAchievementsCount,omitempty"`
+	FspBestPlace         *int               `json:"fspBestPlace,omitempty"`
+	FspWeightSum         *int               `json:"fspWeightSum,omitempty"`
+	GradeId              openapi_types.UUID `json:"gradeId"`
+	Reasons              []string           `json:"reasons"`
+	Score                float32            `json:"score"`
+	SpecializationId     openapi_types.UUID `json:"specializationId"`
+	TestScore            *float32           `json:"testScore,omitempty"`
+	UserId               openapi_types.UUID `json:"userId"`
+	YearsExperience      *float32           `json:"yearsExperience,omitempty"`
+}
+
+// CandidateSearchPage defines model for CandidateSearchPage.
+type CandidateSearchPage struct {
+	Items  []CandidateSearchHit `json:"items"`
+	Limit  int                  `json:"limit"`
+	Offset int                  `json:"offset"`
+	Total  int                  `json:"total"`
+}
+
 // Company defines model for Company.
 type Company struct {
-	Description *string            `json:"description,omitempty"`
-	Id          openapi_types.UUID `json:"id"`
-	Industry    *string            `json:"industry,omitempty"`
-	Name        string             `json:"name"`
-	Size        *string            `json:"size,omitempty"`
-	Website     *string            `json:"website,omitempty"`
+	ContactEmail    *openapi_types.Email `json:"contactEmail,omitempty"`
+	ContactPerson   *string              `json:"contactPerson,omitempty"`
+	ContactPhone    *string              `json:"contactPhone,omitempty"`
+	ContactTelegram *string              `json:"contactTelegram,omitempty"`
+	Description     *string              `json:"description,omitempty"`
+	Id              openapi_types.UUID   `json:"id"`
+	Industry        *string              `json:"industry,omitempty"`
+	Name            string               `json:"name"`
+	Size            *string              `json:"size,omitempty"`
+	Website         *string              `json:"website,omitempty"`
 }
 
 // CompanyInput defines model for CompanyInput.
 type CompanyInput struct {
-	Description *string `json:"description,omitempty"`
-	Industry    *string `json:"industry,omitempty"`
-	Name        string  `json:"name"`
-	Size        *string `json:"size,omitempty"`
-	Website     *string `json:"website,omitempty"`
+	ContactEmail    *openapi_types.Email `json:"contactEmail,omitempty"`
+	ContactPerson   *string              `json:"contactPerson,omitempty"`
+	ContactPhone    *string              `json:"contactPhone,omitempty"`
+	ContactTelegram *string              `json:"contactTelegram,omitempty"`
+	Description     *string              `json:"description,omitempty"`
+	Industry        *string              `json:"industry,omitempty"`
+	Name            string               `json:"name"`
+	Size            *string              `json:"size,omitempty"`
+	Website         *string              `json:"website,omitempty"`
 }
 
 // MatchCard defines model for MatchCard.
@@ -202,18 +332,20 @@ type MatchCard struct {
 
 // Need defines model for Need.
 type Need struct {
-	CategoryId       *openapi_types.UUID   `json:"categoryId,omitempty"`
-	Currency         string                `json:"currency"`
-	Description      string                `json:"description"`
-	GradeId          *openapi_types.UUID   `json:"gradeId,omitempty"`
-	Id               openapi_types.UUID    `json:"id"`
-	SalaryMax        int                   `json:"salaryMax"`
-	SalaryMin        int                   `json:"salaryMin"`
-	SpecializationId *openapi_types.UUID   `json:"specializationId,omitempty"`
-	Stack            *[]openapi_types.UUID `json:"stack,omitempty"`
-	Status           NeedStatus            `json:"status"`
-	Title            string                `json:"title"`
-	WorkFormat       *NeedWorkFormat       `json:"workFormat,omitempty"`
+	CategoryId         *openapi_types.UUID   `json:"categoryId,omitempty"`
+	Currency           string                `json:"currency"`
+	Description        string                `json:"description"`
+	GradeId            *openapi_types.UUID   `json:"gradeId,omitempty"`
+	Id                 openapi_types.UUID    `json:"id"`
+	Location           *string               `json:"location,omitempty"`
+	MinExperienceYears *float32              `json:"minExperienceYears,omitempty"`
+	SalaryMax          int                   `json:"salaryMax"`
+	SalaryMin          int                   `json:"salaryMin"`
+	SpecializationId   *openapi_types.UUID   `json:"specializationId,omitempty"`
+	Stack              *[]openapi_types.UUID `json:"stack,omitempty"`
+	Status             NeedStatus            `json:"status"`
+	Title              string                `json:"title"`
+	WorkFormat         *NeedWorkFormat       `json:"workFormat,omitempty"`
 }
 
 // NeedStatus defines model for Need.Status.
@@ -224,16 +356,18 @@ type NeedWorkFormat string
 
 // NeedInput defines model for NeedInput.
 type NeedInput struct {
-	CategoryId       *openapi_types.UUID   `json:"categoryId,omitempty"`
-	Description      string                `json:"description"`
-	GradeId          *openapi_types.UUID   `json:"gradeId,omitempty"`
-	SalaryMax        int                   `json:"salaryMax"`
-	SalaryMin        int                   `json:"salaryMin"`
-	SpecializationId *openapi_types.UUID   `json:"specializationId,omitempty"`
-	Stack            *[]openapi_types.UUID `json:"stack,omitempty"`
-	Status           *NeedInputStatus      `json:"status,omitempty"`
-	Title            string                `json:"title"`
-	WorkFormat       *NeedInputWorkFormat  `json:"workFormat,omitempty"`
+	CategoryId         *openapi_types.UUID   `json:"categoryId,omitempty"`
+	Description        string                `json:"description"`
+	GradeId            *openapi_types.UUID   `json:"gradeId,omitempty"`
+	Location           *string               `json:"location,omitempty"`
+	MinExperienceYears *float32              `json:"minExperienceYears,omitempty"`
+	SalaryMax          int                   `json:"salaryMax"`
+	SalaryMin          int                   `json:"salaryMin"`
+	SpecializationId   *openapi_types.UUID   `json:"specializationId,omitempty"`
+	Stack              *[]openapi_types.UUID `json:"stack,omitempty"`
+	Status             *NeedInputStatus      `json:"status,omitempty"`
+	Title              string                `json:"title"`
+	WorkFormat         *NeedInputWorkFormat  `json:"workFormat,omitempty"`
 }
 
 // NeedInputStatus defines model for NeedInput.Status.
@@ -244,18 +378,21 @@ type NeedInputWorkFormat string
 
 // Vacancy defines model for Vacancy.
 type Vacancy struct {
-	CategoryId  *openapi_types.UUID   `json:"categoryId,omitempty"`
-	CompanyId   *openapi_types.UUID   `json:"companyId,omitempty"`
-	CreatedAt   *time.Time            `json:"createdAt,omitempty"`
-	Description string                `json:"description"`
-	Id          *openapi_types.UUID   `json:"id,omitempty"`
-	PublishedAt *time.Time            `json:"publishedAt,omitempty"`
-	SalaryMax   int                   `json:"salaryMax"`
-	SalaryMin   int                   `json:"salaryMin"`
-	Stack       *[]openapi_types.UUID `json:"stack,omitempty"`
-	Status      *VacancyStatus        `json:"status,omitempty"`
-	Title       string                `json:"title"`
-	WorkFormat  *VacancyWorkFormat    `json:"workFormat,omitempty"`
+	CategoryId       *openapi_types.UUID   `json:"categoryId,omitempty"`
+	CompanyId        *openapi_types.UUID   `json:"companyId,omitempty"`
+	CreatedAt        *time.Time            `json:"createdAt,omitempty"`
+	Description      string                `json:"description"`
+	GradeId          *openapi_types.UUID   `json:"gradeId,omitempty"`
+	Id               *openapi_types.UUID   `json:"id,omitempty"`
+	Location         *string               `json:"location,omitempty"`
+	PublishedAt      *time.Time            `json:"publishedAt,omitempty"`
+	SalaryMax        int                   `json:"salaryMax"`
+	SalaryMin        int                   `json:"salaryMin"`
+	SpecializationId *openapi_types.UUID   `json:"specializationId,omitempty"`
+	Stack            *[]openapi_types.UUID `json:"stack,omitempty"`
+	Status           *VacancyStatus        `json:"status,omitempty"`
+	Title            string                `json:"title"`
+	WorkFormat       *VacancyWorkFormat    `json:"workFormat,omitempty"`
 }
 
 // VacancyStatus defines model for Vacancy.Status.
@@ -266,17 +403,41 @@ type VacancyWorkFormat string
 
 // VacancyInput defines model for VacancyInput.
 type VacancyInput struct {
-	CategoryId  *openapi_types.UUID     `json:"categoryId,omitempty"`
-	Description string                  `json:"description"`
-	SalaryMax   int                     `json:"salaryMax"`
-	SalaryMin   int                     `json:"salaryMin"`
-	Stack       *[]openapi_types.UUID   `json:"stack,omitempty"`
-	Title       string                  `json:"title"`
-	WorkFormat  *VacancyInputWorkFormat `json:"workFormat,omitempty"`
+	CategoryId       *openapi_types.UUID     `json:"categoryId,omitempty"`
+	Description      string                  `json:"description"`
+	GradeId          *openapi_types.UUID     `json:"gradeId,omitempty"`
+	Location         *string                 `json:"location,omitempty"`
+	SalaryMax        int                     `json:"salaryMax"`
+	SalaryMin        int                     `json:"salaryMin"`
+	SpecializationId *openapi_types.UUID     `json:"specializationId,omitempty"`
+	Stack            *[]openapi_types.UUID   `json:"stack,omitempty"`
+	Title            string                  `json:"title"`
+	WorkFormat       *VacancyInputWorkFormat `json:"workFormat,omitempty"`
 }
 
 // VacancyInputWorkFormat defines model for VacancyInput.WorkFormat.
 type VacancyInputWorkFormat string
+
+// SearchCandidatesParams defines parameters for SearchCandidates.
+type SearchCandidatesParams struct {
+	CategoryId       *openapi_types.UUID `form:"categoryId,omitempty" json:"categoryId,omitempty"`
+	SpecializationId *openapi_types.UUID `form:"specializationId,omitempty" json:"specializationId,omitempty"`
+	GradeId          *openapi_types.UUID `form:"gradeId,omitempty" json:"gradeId,omitempty"`
+
+	// Stack Повторяющийся параметр — ID технологий
+	Stack *[]openapi_types.UUID `form:"stack,omitempty" json:"stack,omitempty"`
+
+	// HasFsp Только кандидаты с подтверждёнными достижениями ФСП
+	HasFsp             *bool                       `form:"hasFsp,omitempty" json:"hasFsp,omitempty"`
+	MinYearsExperience *float32                    `form:"minYearsExperience,omitempty" json:"minYearsExperience,omitempty"`
+	Location           *string                     `form:"location,omitempty" json:"location,omitempty"`
+	Sort               *SearchCandidatesParamsSort `form:"sort,omitempty" json:"sort,omitempty"`
+	Limit              *int                        `form:"limit,omitempty" json:"limit,omitempty"`
+	Offset             *int                        `form:"offset,omitempty" json:"offset,omitempty"`
+}
+
+// SearchCandidatesParamsSort defines parameters for SearchCandidates.
+type SearchCandidatesParamsSort string
 
 // GetNeedMatchesParams defines parameters for GetNeedMatches.
 type GetNeedMatchesParams struct {
@@ -309,6 +470,12 @@ type UpdateVacancyJSONRequestBody = VacancyInput
 
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
+
+	// (GET /candidates)
+	SearchCandidates(c *gin.Context, params SearchCandidatesParams)
+
+	// (GET /candidates/{userId})
+	GetCandidateCard(c *gin.Context, userId openapi_types.UUID)
 
 	// (GET /healthz)
 	Healthz(c *gin.Context)
@@ -364,6 +531,130 @@ type ServerInterfaceWrapper struct {
 }
 
 type MiddlewareFunc func(c *gin.Context)
+
+// SearchCandidates operation middleware
+func (siw *ServerInterfaceWrapper) SearchCandidates(c *gin.Context) {
+
+	var err error
+	_ = err
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params SearchCandidatesParams
+
+	// ------------- Optional query parameter "categoryId" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "categoryId", c.Request.URL.Query(), &params.CategoryId, runtime.BindQueryParameterOptions{Type: "string", Format: "uuid"})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter categoryId: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	// ------------- Optional query parameter "specializationId" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "specializationId", c.Request.URL.Query(), &params.SpecializationId, runtime.BindQueryParameterOptions{Type: "string", Format: "uuid"})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter specializationId: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	// ------------- Optional query parameter "gradeId" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "gradeId", c.Request.URL.Query(), &params.GradeId, runtime.BindQueryParameterOptions{Type: "string", Format: "uuid"})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter gradeId: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	// ------------- Optional query parameter "stack" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "stack", c.Request.URL.Query(), &params.Stack, runtime.BindQueryParameterOptions{Type: "array", Format: ""})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter stack: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	// ------------- Optional query parameter "hasFsp" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "hasFsp", c.Request.URL.Query(), &params.HasFsp, runtime.BindQueryParameterOptions{Type: "boolean", Format: ""})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter hasFsp: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	// ------------- Optional query parameter "minYearsExperience" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "minYearsExperience", c.Request.URL.Query(), &params.MinYearsExperience, runtime.BindQueryParameterOptions{Type: "number", Format: ""})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter minYearsExperience: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	// ------------- Optional query parameter "location" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "location", c.Request.URL.Query(), &params.Location, runtime.BindQueryParameterOptions{Type: "string", Format: ""})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter location: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	// ------------- Optional query parameter "sort" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "sort", c.Request.URL.Query(), &params.Sort, runtime.BindQueryParameterOptions{Type: "string", Format: ""})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter sort: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	// ------------- Optional query parameter "limit" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "limit", c.Request.URL.Query(), &params.Limit, runtime.BindQueryParameterOptions{Type: "integer", Format: ""})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter limit: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	// ------------- Optional query parameter "offset" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "offset", c.Request.URL.Query(), &params.Offset, runtime.BindQueryParameterOptions{Type: "integer", Format: ""})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter offset: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.SearchCandidates(c, params)
+}
+
+// GetCandidateCard operation middleware
+func (siw *ServerInterfaceWrapper) GetCandidateCard(c *gin.Context) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "userId" -------------
+	var userId openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithOptions("simple", "userId", c.Param("userId"), &userId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid", ValueIsUnescaped: true})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter userId: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.GetCandidateCard(c, userId)
+}
 
 // Healthz operation middleware
 func (siw *ServerInterfaceWrapper) Healthz(c *gin.Context) {
@@ -741,6 +1032,8 @@ func RegisterHandlersWithOptions(router gin.IRouter, si ServerInterface, options
 	router.DELETE(options.BaseURL+"/me/vacancies/:id", wrapper.DeleteVacancy)
 	router.PATCH(options.BaseURL+"/me/vacancies/:id", wrapper.UpdateVacancy)
 	router.POST(options.BaseURL+"/me/vacancies/:id/publish", wrapper.PublishVacancy)
+	router.GET(options.BaseURL+"/candidates", wrapper.SearchCandidates)
+	router.GET(options.BaseURL+"/candidates/:userId", wrapper.GetCandidateCard)
 	router.GET(options.BaseURL+"/vacancies", wrapper.ListPublicVacancies)
 	router.GET(options.BaseURL+"/vacancies/:id", wrapper.GetPublicVacancy)
 }
@@ -750,30 +1043,48 @@ func RegisterHandlersWithOptions(router gin.IRouter, si ServerInterface, options
 // const string: with thousands of chunks the chained `+` fold is several
 // times slower for the Go compiler than parsing a slice literal.
 var swaggerSpec = []string{
-	"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",
+	"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",
+	"rfb+GwAA//8=",
 }
 
 // decodeSpec returns the embedded OpenAPI spec as raw JSON bytes,

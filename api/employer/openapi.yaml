@@ -160,6 +160,79 @@ paths:
             application/json:
               schema: { $ref: "#/components/schemas/Vacancy" }
 
+  /candidates:
+    get:
+      operationId: searchCandidates
+      description: Поиск по банку кандидатов. Проксирует запрос в search-сервис.
+      parameters:
+        - in: query
+          name: categoryId
+          schema: { type: string, format: uuid }
+        - in: query
+          name: specializationId
+          schema: { type: string, format: uuid }
+        - in: query
+          name: gradeId
+          schema: { type: string, format: uuid }
+        - in: query
+          name: stack
+          description: Повторяющийся параметр — ID технологий
+          schema:
+            type: array
+            items: { type: string, format: uuid }
+          style: form
+          explode: true
+        - in: query
+          name: hasFsp
+          description: Только кандидаты с подтверждёнными достижениями ФСП
+          schema: { type: boolean }
+        - in: query
+          name: minYearsExperience
+          schema: { type: number, minimum: 0 }
+        - in: query
+          name: location
+          schema: { type: string }
+        - in: query
+          name: sort
+          schema:
+            type: string
+            enum: [relevance, testScore, fspWeight]
+            default: relevance
+        - in: query
+          name: limit
+          schema: { type: integer, minimum: 1, maximum: 100, default: 20 }
+        - in: query
+          name: offset
+          schema: { type: integer, minimum: 0, default: 0 }
+      responses:
+        "200":
+          description: Страница кандидатов
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/CandidateSearchPage" }
+        "401": { description: Не авторизован }
+
+  /candidates/{userId}:
+    get:
+      operationId: getCandidateCard
+      description: |
+        Карточка кандидата для работодателя. Контакты маскируются, пока
+        кандидат не принял приглашение или сам не откликнулся. Проксирует
+        запрос в candidate-сервис с JWT текущего работодателя.
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: Карточка кандидата
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/CandidateCard" }
+        "403": { description: Только для работодателей }
+        "404": { description: Не найдено }
+
   # публичный листинг (доступен кандидату)
   /vacancies:
     get:
@@ -196,66 +269,6 @@ components:
   securitySchemes:
     bearerAuth: { type: http, scheme: bearer, bearerFormat: JWT }
   schemas:
-    Company:
-      type: object
-      properties:
-        id: { type: string, format: uuid }
-        name: { type: string }
-        description: { type: [string, "null"] }
-        industry: { type: [string, "null"] }
-        website: { type: [string, "null"], format: uri }
-        size: { type: [string, "null"] }
-      required: [id, name]
-    CompanyInput:
-      type: object
-      properties:
-        name: { type: string }
-        description: { type: string }
-        industry: { type: string }
-        website: { type: string, format: uri }
-        size: { type: string }
-      required: [name]
-    Need:
-      type: object
-      properties:
-        id: { type: string, format: uuid }
-        title: { type: string }
-        description: { type: string }
-        categoryId: { type: [string, "null"], format: uuid }
-        specializationId: { type: [string, "null"], format: uuid }
-        gradeId: { type: [string, "null"], format: uuid }
-        stack: { type: array, items: { type: string, format: uuid } }
-        salaryMin: { type: integer }
-        salaryMax: { type: integer }
-        currency: { type: string, default: RUB }
-        workFormat: { type: [string, "null"], enum: [remote, hybrid, office, null] }
-        status: { type: string, enum: [draft, active, closed] }
-      required: [id, title, description, salaryMin, salaryMax, currency, status]
-    NeedInput:
-      type: object
-      properties:
-        title: { type: string }
-        description: { type: string }
-        categoryId: { type: string, format: uuid }
-        specializationId: { type: string, format: uuid }
-        gradeId: { type: string, format: uuid }
-        stack: { type: array, items: { type: string, format: uuid } }
-        salaryMin: { type: integer, minimum: 0 }
-        salaryMax: { type: integer, minimum: 0 }
-        workFormat: { type: string, enum: [remote, hybrid, office] }
-        status: { type: string, enum: [draft, active, closed] }
-      required: [title, description, salaryMin, salaryMax]
-    VacancyInput:
-      type: object
-      properties:
-        title: { type: string }
-        description: { type: string }
-        categoryId: { type: string, format: uuid }
-        stack: { type: array, items: { type: string, format: uuid } }
-        salaryMin: { type: integer, minimum: 0 }
-        salaryMax: { type: integer, minimum: 0 }
-        workFormat: { type: string, enum: [remote, hybrid, office] }
-      required: [title, description, salaryMin, salaryMax]
     Vacancy:
       allOf:
         - $ref: "#/components/schemas/VacancyInput"
@@ -278,3 +291,164 @@ components:
           type: array
           items: { type: string, example: "grade_match" }
         hasFSP: { type: boolean }
+
+    Company:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        name: { type: string }
+        description: { type: [string, "null"] }
+        industry: { type: [string, "null"] }
+        website: { type: [string, "null"], format: uri }
+        size: { type: [string, "null"] }
+        contactPerson: { type: [string, "null"] }
+        contactEmail: { type: [string, "null"], format: email }
+        contactPhone: { type: [string, "null"] }
+        contactTelegram: { type: [string, "null"] }
+      required: [id, name]
+
+    CompanyInput:
+      type: object
+      properties:
+        name: { type: string }
+        description: { type: string }
+        industry: { type: string }
+        website: { type: string, format: uri }
+        size: { type: string }
+        contactPerson: { type: string }
+        contactEmail: { type: string, format: email }
+        contactPhone: { type: string }
+        contactTelegram: { type: string }
+      required: [name]
+
+    Need:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        title: { type: string }
+        description: { type: string }
+        categoryId: { type: [string, "null"], format: uuid }
+        specializationId: { type: [string, "null"], format: uuid }
+        gradeId: { type: [string, "null"], format: uuid }
+        stack: { type: array, items: { type: string, format: uuid } }
+        salaryMin: { type: integer }
+        salaryMax: { type: integer }
+        currency: { type: string, default: RUB }
+        workFormat: { type: [string, "null"], enum: [remote, hybrid, office, null] }
+        location: { type: [string, "null"] }
+        minExperienceYears: { type: [number, "null"] }
+        status: { type: string, enum: [draft, active, closed] }
+      required: [id, title, description, salaryMin, salaryMax, currency, status]
+
+    NeedInput:
+      type: object
+      properties:
+        title: { type: string }
+        description: { type: string }
+        categoryId: { type: string, format: uuid }
+        specializationId: { type: string, format: uuid }
+        gradeId: { type: string, format: uuid }
+        stack: { type: array, items: { type: string, format: uuid } }
+        salaryMin: { type: integer, minimum: 0 }
+        salaryMax: { type: integer, minimum: 0 }
+        workFormat: { type: string, enum: [remote, hybrid, office] }
+        location: { type: string }
+        minExperienceYears: { type: number, minimum: 0 }
+        status: { type: string, enum: [draft, active, closed] }
+      required: [title, description, salaryMin, salaryMax]
+
+    VacancyInput:
+      type: object
+      properties:
+        title: { type: string }
+        description: { type: string }
+        categoryId: { type: string, format: uuid }
+        specializationId: { type: string, format: uuid }
+        gradeId: { type: string, format: uuid }
+        stack: { type: array, items: { type: string, format: uuid } }
+        salaryMin: { type: integer, minimum: 0 }
+        salaryMax: { type: integer, minimum: 0 }
+        workFormat: { type: string, enum: [remote, hybrid, office] }
+        location: { type: string }
+      required: [title, description, salaryMin, salaryMax]
+
+    CandidateSearchPage:
+      type: object
+      properties:
+        items:
+          type: array
+          items: { $ref: "#/components/schemas/CandidateSearchHit" }
+        total: { type: integer }
+        limit: { type: integer }
+        offset: { type: integer }
+      required: [items, total, limit, offset]
+
+    CandidateSearchHit:
+      type: object
+      properties:
+        userId: { type: string, format: uuid }
+        displayName: { type: string }
+        categoryId: { type: string, format: uuid }
+        gradeId: { type: string, format: uuid }
+        specializationId: { type: string, format: uuid }
+        testScore: { type: [number, "null"] }
+        fspAchievementsCount: { type: integer }
+        fspBestPlace: { type: [integer, "null"] }
+        fspWeightSum: { type: integer }
+        yearsExperience: { type: [number, "null"] }
+        score: { type: number }
+        reasons:
+          type: array
+          items: { type: string, example: stack_match }
+      required: [userId, displayName, categoryId, gradeId, specializationId, score, reasons]
+
+    CandidateCard:
+      type: object
+      description: |
+        Карточка кандидата без контактов, пока reveal не подтверждён.
+        Структура соответствует ответу candidate-сервиса.
+      properties:
+        userId: { type: string, format: uuid }
+        displayName: { type: string }
+        headline: { type: [string, "null"] }
+        categoryId: { type: [string, "null"], format: uuid }
+        gradeId: { type: [string, "null"], format: uuid }
+        specializationId: { type: [string, "null"], format: uuid }
+        yearsExperience: { type: [number, "null"] }
+        location: { type: [string, "null"] }
+        softSkills: { type: array, items: { type: string } }
+        salary:
+          $ref: "#/components/schemas/CandidateCardSalary"
+        fsp:
+          $ref: "#/components/schemas/CandidateCardFsp"
+        contacts:
+          $ref: "#/components/schemas/CandidateContacts"
+
+    CandidateCardSalary:
+      type: object
+      properties:
+        min: { type: [integer, "null"] }
+        max: { type: [integer, "null"] }
+        currency: { type: [string, "null"] }
+        masked: { type: boolean }
+
+    CandidateCardFsp:
+      type: object
+      properties:
+        hasFSP: { type: boolean }
+        achievementsCount: { type: integer }
+        bestPlace: { type: [integer, "null"] }
+
+    CandidateContacts:
+      type: object
+      properties:
+        email: { type: [string, "null"], format: email }
+        phone: { type: [string, "null"] }
+        telegram: { type: [string, "null"] }
+        github: { type: [string, "null"] }
+        linkedin: { type: [string, "null"] }
+        website: { type: [string, "null"], format: uri }
+        masked: { type: boolean }
+        maskedFields:
+          type: array
+          items: { type: string, enum: [email, phone, telegram, github, linkedin, website] }
