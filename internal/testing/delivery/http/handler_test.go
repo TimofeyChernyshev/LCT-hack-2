@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"mime/multipart"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -17,6 +18,7 @@ import (
 	"TimofeyChernyshev/LCT-hack-2/internal/testing/repository"
 	"TimofeyChernyshev/LCT-hack-2/internal/testing/service"
 	"TimofeyChernyshev/LCT-hack-2/pkg/auth"
+	"TimofeyChernyshev/LCT-hack-2/pkg/resume"
 )
 
 type mockRepo struct {
@@ -236,6 +238,11 @@ func setupTestServer() (*gin.Engine, uuid.UUID) {
 	router.Use(auth.Middleware(jwtValidator, true)) // dev mode allows X-User-ID
 	apitesting.RegisterHandlers(router, handler)
 
+	// BE2-06 custom routes
+	router.POST("/resumes/parse-pdf", handler.ParseResumePDF)
+	router.POST("/me/resumes/upload", handler.ParseResumePDF)
+	router.POST("/candidates/export-pdf", handler.ExportCandidatePDF)
+
 	testUserID := uuid.New()
 	return router, testUserID
 }
@@ -368,4 +375,155 @@ func TestHTTP_Questionnaire(t *testing.T) {
 		t.Fatalf("expected 200 on get questionnaire state, got %d", w.Code)
 	}
 }
+
+func TestHTTP_ParseResumePDF_Multipart(t *testing.T) {
+	router, userID := setupTestServer()
+
+	// 1. Generate a valid PDF using resume generator
+	sampleProfile := resume.CandidateExportProfile{
+		UserID:             userID,
+		FullName:           "Александр Дмитриевич Смирнов",
+		Headline:           "Senior Backend Developer (Go)",
+		SpecializationName: "Backend",
+		GradeName:          "Senior",
+		Location:           "Москва",
+		TestScore:          95.0,
+		HasFSP:             true,
+		SportsRank:         "Мастер спорта",
+		Skills:             []string{"Go", "PostgreSQL", "Redis", "Docker", "Kubernetes"},
+		YearsExperience:    6.0,
+		MaskContacts:       false,
+		Email:              "alex.smirnov@example.com",
+		Telegram:           "@alex_backend",
+	}
+	pdfBytes, err := resume.GenerateCandidatePDF(sampleProfile)
+	if err != nil {
+		t.Fatalf("failed to generate PDF for test: %v", err)
+	}
+
+	// 2. Prepare multipart form request
+	var body bytes.Buffer
+	writer := multipart.NewWriter(&body)
+	part, err := writer.CreateFormFile("file", "resume.pdf")
+	if err != nil {
+		t.Fatalf("failed to create form file: %v", err)
+	}
+	if _, err := part.Write(pdfBytes); err != nil {
+		t.Fatalf("failed to write file part: %v", err)
+	}
+	writer.Close()
+
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest(http.MethodPost, "/resumes/parse-pdf", &body)
+	req.Header.Set("Content-Type", writer.FormDataContentType())
+	req.Header.Set(auth.HeaderUserID, userID.String())
+	router.ServeHTTP(w, req)
+
+	if w.Code != http.StatusOK {
+		t.Fatalf("expected 200 on parse-pdf multipart, got %d: %s", w.Code, w.Body.String())
+	}
+
+	var parsed resume.ParsedResume
+	if err := json.Unmarshal(w.Body.Bytes(), &parsed); err != nil {
+		t.Fatalf("failed to parse JSON response: %v", err)
+	}
+
+	if parsed.FullName == "" {
+		t.Errorf("expected non-empty fullName in parsed resume, got: %s", w.Body.String())
+	}
+	if parsed.SuggestedGrade == "" {
+		t.Errorf("expected suggestedGrade to be identified")
+	}
+}
+
+func TestHTTP_ParseResumePDF_JSON(t *testing.T) {
+	router, userID := setupTestServer()
+
+	resumeText := `
+Елена Николаевна Васильева
+Frontend React Engineer
+г. Санкт-Петербург
+
+Email: elena.react@mail.ru
+Телефон: +7 (911) 555-44-33
+Telegram: @elena_fe
+GitHub: github.com/elena-fe
+
+Опыт работы: 4 года
+2021 — настоящее время
+VK Tech, Frontend Разработчик
+Стек: React, TypeScript, Vue, Docker.
+
+Образование:
+ИТМО, Компьютерные технологии
+`
+	reqBody, _ := json.Marshal(map[string]string{
+		"text": resumeText,
+	})
+
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest(http.MethodPost, "/me/resumes/upload", bytes.NewReader(reqBody))
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set(auth.HeaderUserID, userID.String())
+	router.ServeHTTP(w, req)
+
+	if w.Code != http.StatusOK {
+		t.Fatalf("expected 200 on upload resume JSON, got %d: %s", w.Code, w.Body.String())
+	}
+
+	var parsed resume.ParsedResume
+	if err := json.Unmarshal(w.Body.Bytes(), &parsed); err != nil {
+		t.Fatalf("failed to parse JSON: %v", err)
+	}
+
+	if parsed.FullName != "Елена Николаевна Васильева" {
+		t.Errorf("expected 'Елена Николаевна Васильева', got '%s'", parsed.FullName)
+	}
+	if parsed.Contacts.Telegram != "@elena_fe" {
+		t.Errorf("expected telegram '@elena_fe', got '%s'", parsed.Contacts.Telegram)
+	}
+	if parsed.TotalYearsExperience < 3.0 {
+		t.Errorf("expected years exp >= 3.0, got %f", parsed.TotalYearsExperience)
+	}
+}
+
+func TestHTTP_ExportCandidatePDF(t *testing.T) {
+	router, userID := setupTestServer()
+
+	exportReq := resume.CandidateExportProfile{
+		UserID:             userID,
+		FullName:           "Сергей Павлов",
+		Headline:           "Lead Python / Go Architect",
+		SpecializationName: "Backend",
+		GradeName:          "Lead",
+		TestScore:          98.0,
+		HasFSP:             true,
+		SportsRank:         "ЗМС",
+		Skills:             []string{"Go", "Python", "Kubernetes", "PostgreSQL"},
+		YearsExperience:    8.0,
+		MaskContacts:       true,
+	}
+
+	reqBody, _ := json.Marshal(exportReq)
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest(http.MethodPost, "/candidates/export-pdf", bytes.NewReader(reqBody))
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set(auth.HeaderUserID, userID.String())
+	router.ServeHTTP(w, req)
+
+	if w.Code != http.StatusOK {
+		t.Fatalf("expected 200 on export-pdf, got %d: %s", w.Code, w.Body.String())
+	}
+
+	contentType := w.Header().Get("Content-Type")
+	if contentType != "application/pdf" {
+		t.Errorf("expected Content-Type application/pdf, got %s", contentType)
+	}
+
+	pdfData := w.Body.Bytes()
+	if !bytes.HasPrefix(pdfData, []byte("%PDF-1.4")) {
+		t.Errorf("expected PDF header %%PDF-1.4")
+	}
+}
+
 

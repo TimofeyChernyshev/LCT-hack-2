@@ -1,8 +1,12 @@
 package http
 
 import (
+	"encoding/base64"
 	"errors"
+	"fmt"
+	"io"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -13,6 +17,7 @@ import (
 	"TimofeyChernyshev/LCT-hack-2/internal/testing/service"
 	"TimofeyChernyshev/LCT-hack-2/pkg/auth"
 	"TimofeyChernyshev/LCT-hack-2/pkg/fsp"
+	"TimofeyChernyshev/LCT-hack-2/pkg/resume"
 )
 
 type Handler struct {
@@ -704,4 +709,107 @@ func mapFSPRegistryMemberToAPI(m fsp.Member) apitesting.FSPRegistryMember {
 		Verified:     m.Verified,
 		Achievements: &achievements,
 	}
+}
+
+// ParseResumePDF (POST /resumes/parse-pdf or POST /me/resumes/upload)
+func (h *Handler) ParseResumePDF(c *gin.Context) {
+	var fileBytes []byte
+
+	// 1. Multipart file upload ("file" or "resume")
+	file, _, err := c.Request.FormFile("file")
+	if err != nil {
+		file, _, err = c.Request.FormFile("resume")
+	}
+	if err == nil {
+		defer file.Close()
+		data, readErr := io.ReadAll(file)
+		if readErr == nil && len(data) > 0 {
+			fileBytes = data
+		}
+	}
+
+	// 2. JSON payload with text or base64
+	if len(fileBytes) == 0 {
+		var jsonReq struct {
+			PDFBase64 string `json:"pdf_base64"`
+			Text      string `json:"text"`
+			Content   string `json:"content"`
+		}
+		if err := c.ShouldBindJSON(&jsonReq); err == nil {
+			if jsonReq.PDFBase64 != "" {
+				if dec, decErr := base64.StdEncoding.DecodeString(jsonReq.PDFBase64); decErr == nil {
+					fileBytes = dec
+				}
+			} else if jsonReq.Text != "" {
+				fileBytes = []byte(jsonReq.Text)
+			} else if jsonReq.Content != "" {
+				fileBytes = []byte(jsonReq.Content)
+			}
+		}
+	}
+
+	// 3. Fallback raw body
+	if len(fileBytes) == 0 && c.Request.Body != nil {
+		raw, _ := io.ReadAll(c.Request.Body)
+		if len(raw) > 0 {
+			fileBytes = raw
+		}
+	}
+
+	if len(fileBytes) == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "empty resume payload: provide 'file' via multipart form, raw PDF body, or JSON with 'text'/'pdf_base64'",
+		})
+		return
+	}
+
+	parsed, err := resume.ExtractAndParse(fileBytes)
+	if err != nil {
+		c.JSON(http.StatusUnprocessableEntity, gin.H{
+			"error": "failed to extract/parse resume PDF: " + err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, parsed)
+}
+
+// ExportCandidatePDF renders a standardized branded FSP PDF candidate profile
+func (h *Handler) ExportCandidatePDF(c *gin.Context) {
+	var profile resume.CandidateExportProfile
+
+	if c.Request.ContentLength > 0 {
+		_ = c.ShouldBindJSON(&profile)
+	}
+
+	if profile.FullName == "" {
+		profile.FullName = c.DefaultQuery("fullName", "Александр Дмитриевич Смирнов")
+		profile.Headline = c.DefaultQuery("headline", "Senior Backend Developer")
+		profile.SpecializationName = c.DefaultQuery("specialization", "Backend")
+		profile.GradeName = c.DefaultQuery("grade", "Senior")
+		profile.Location = c.DefaultQuery("location", "Москва")
+		profile.TestScore = 95.0
+		profile.TestPercentile = 96.0
+		profile.HasFSP = true
+		profile.SportsRank = "Мастер спорта"
+		profile.Skills = []string{"Go", "PostgreSQL", "Redis", "Docker", "Kubernetes", "Kafka"}
+		profile.YearsExperience = 6.0
+		profile.MaskContacts = true
+	}
+	if profile.UserID == uuid.Nil {
+		profile.UserID = uuid.New()
+	}
+	if profile.GeneratedAt.IsZero() {
+		profile.GeneratedAt = time.Now()
+	}
+
+	pdfBytes, err := resume.GenerateCandidatePDF(profile)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to generate candidate PDF: " + err.Error()})
+		return
+	}
+
+	filename := fmt.Sprintf("fsp_profile_%s.pdf", profile.UserID.String()[:8])
+	c.Header("Content-Disposition", fmt.Sprintf("inline; filename=\"%s\"", filename))
+	c.Data(http.StatusOK, "application/pdf", pdfBytes)
 }

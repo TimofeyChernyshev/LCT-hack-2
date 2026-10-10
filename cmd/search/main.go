@@ -90,6 +90,12 @@ func main() {
 	// Register generated handlers
 	apisearch.RegisterHandlers(router, handler)
 
+	// BE2-06: Standardized Candidate PDF Export & PDF Resume Parser
+	router.GET("/candidates/:userId/export-pdf", handler.ExportCandidatePDF)
+	router.POST("/candidates/export-pdf", handler.ExportCandidatePDF)
+	router.POST("/resumes/parse-pdf", handler.ParseResumePDF)
+	router.POST("/me/resumes/upload", handler.ParseResumePDF)
+
 	srv := &http.Server{
 		Addr:         ":" + cfg.HTTPPort,
 		Handler:      router,

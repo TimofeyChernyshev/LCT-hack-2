@@ -225,3 +225,9 @@ func (s *SearchService) mapDocToFeatures(doc domain.CandidateSearchDoc) ranking.
 		LastActiveAt:         &doc.LastActiveAt,
 	}
 }
+
+// GetCandidateProfile retrieves the full candidate search doc for PDF export or profile inspection
+func (s *SearchService) GetCandidateProfile(ctx context.Context, userID uuid.UUID) (*domain.CandidateSearchDoc, error) {
+	return s.repo.GetByUserID(ctx, userID)
+}
+

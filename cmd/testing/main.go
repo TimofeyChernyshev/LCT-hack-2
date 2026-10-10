@@ -81,6 +81,11 @@ func main() {
 	router.POST("/me/onboarding-questionnaire", handler.SubmitQuestionnaire)
 	router.GET("/me/onboarding-questionnaire", handler.GetQuestionnaireState)
 
+	// BE2-06: PDF Resume Parsing & Profile Auto-Fill, and Standardized PDF Profile Generator
+	router.POST("/resumes/parse-pdf", handler.ParseResumePDF)
+	router.POST("/me/resumes/upload", handler.ParseResumePDF)
+	router.POST("/candidates/export-pdf", handler.ExportCandidatePDF)
+
 	srv := &http.Server{
 		Addr:         ":" + cfg.HTTPPort,
 		Handler:      router,
