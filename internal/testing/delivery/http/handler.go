@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"sync"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -20,12 +21,28 @@ import (
 	"github.com/TimofeyChernyshev/LCT-hack-2/pkg/resume"
 )
 
+type TaskAnswerItem struct {
+	TaskID      uuid.UUID `json:"taskId"`
+	TaskTitle   string    `json:"taskTitle"`
+	UserID      uuid.UUID `json:"userId"`
+	Email       string    `json:"email"`
+	Answer      string    `json:"answer"`
+	Kind        string    `json:"kind"`
+	SubmittedAt time.Time `json:"submittedAt"`
+	Reaction    string    `json:"reaction,omitempty"`
+}
+
 type Handler struct {
-	svc *service.TestingService
+	svc       *service.TestingService
+	answersMu sync.RWMutex
+	answers   []TaskAnswerItem
 }
 
 func NewHandler(svc *service.TestingService) *Handler {
-	return &Handler{svc: svc}
+	return &Handler{
+		svc:     svc,
+		answers: make([]TaskAnswerItem, 0),
+	}
 }
 
 // Healthz (GET /healthz)
@@ -331,17 +348,39 @@ func (h *Handler) ListPeriodicTasks(c *gin.Context) {
 		return
 	}
 
-	resp := make([]apitesting.PeriodicTask, 0, len(tasks))
+	userID, _ := auth.GetUserID(c)
+
+	h.answersMu.RLock()
+	userAnswers := make(map[uuid.UUID]TaskAnswerItem)
+	if userID != uuid.Nil {
+		for _, ans := range h.answers {
+			if ans.UserID == userID {
+				userAnswers[ans.TaskID] = ans
+			}
+		}
+	}
+	h.answersMu.RUnlock()
+
+	resp := make([]gin.H, 0, len(tasks))
 	for _, t := range tasks {
 		tID := t.ID
 		tCreated := t.CreatedAt
-		resp = append(resp, apitesting.PeriodicTask{
-			Id:         &tID,
-			CategoryId: t.CategoryID,
-			Title:      t.Title,
-			Body:       t.Body,
-			CreatedAt:  &tCreated,
-		})
+		item := gin.H{
+			"id":         tID,
+			"categoryId": t.CategoryID,
+			"title":      t.Title,
+			"body":       t.Body,
+			"createdAt":  tCreated,
+			"status":     "open",
+		}
+		if ans, ok := userAnswers[tID]; ok {
+			item["status"] = "sent"
+			item["answer"] = ans.Answer
+			item["kind"] = ans.Kind
+			item["submittedAt"] = ans.SubmittedAt
+			item["reaction"] = ans.Reaction
+		}
+		resp = append(resp, item)
 	}
 
 	c.JSON(http.StatusOK, resp)
@@ -355,10 +394,16 @@ func (h *Handler) SubmitPeriodicTask(c *gin.Context, id openapi_types.UUID) {
 		return
 	}
 
-	var req apitesting.SubmitPeriodicTaskJSONRequestBody
+	var req struct {
+		Answer string `json:"answer"`
+		Kind   string `json:"kind"`
+	}
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid answer body"})
 		return
+	}
+	if req.Kind == "" {
+		req.Kind = "solution"
 	}
 
 	if err := h.svc.SubmitPeriodicTask(c.Request.Context(), userID, id, req.Answer); err != nil {
@@ -366,6 +411,79 @@ func (h *Handler) SubmitPeriodicTask(c *gin.Context, id openapi_types.UUID) {
 		return
 	}
 
+	// Capture task title
+	taskTitle := "Мини-задача"
+	if allTasks, err := h.svc.ListPeriodicTasks(c.Request.Context(), nil); err == nil {
+		for _, t := range allTasks {
+			if t.ID == id {
+				taskTitle = t.Title
+				break
+			}
+		}
+	}
+
+	email := "candidate@fsp.local"
+	if hEmail := c.GetHeader("X-User-Email"); hEmail != "" {
+		email = hEmail
+	} else if emailVal, ok := c.Get("userEmail"); ok {
+		if emailStr, ok := emailVal.(string); ok && emailStr != "" {
+			email = emailStr
+		}
+	}
+
+	h.answersMu.Lock()
+	found := false
+	for i := range h.answers {
+		if h.answers[i].TaskID == id && h.answers[i].UserID == userID {
+			h.answers[i].Answer = req.Answer
+			h.answers[i].Kind = req.Kind
+			h.answers[i].SubmittedAt = time.Now()
+			found = true
+			break
+		}
+	}
+	if !found {
+		h.answers = append(h.answers, TaskAnswerItem{
+			TaskID:      id,
+			TaskTitle:   taskTitle,
+			UserID:      userID,
+			Email:       email,
+			Answer:      req.Answer,
+			Kind:        req.Kind,
+			SubmittedAt: time.Now(),
+		})
+	}
+	h.answersMu.Unlock()
+
+	c.JSON(http.StatusOK, gin.H{"status": "ok"})
+}
+
+// ListTaskResponses (GET /periodic-tasks)
+func (h *Handler) ListTaskResponses(c *gin.Context) {
+	h.answersMu.RLock()
+	defer h.answersMu.RUnlock()
+	c.JSON(http.StatusOK, h.answers)
+}
+
+// ReactToAnswer (POST /periodic-tasks/reactions)
+func (h *Handler) ReactToAnswer(c *gin.Context) {
+	var body struct {
+		TaskID   uuid.UUID `json:"taskId"`
+		UserID   uuid.UUID `json:"userId"`
+		Reaction string    `json:"reaction"`
+	}
+	if err := c.ShouldBindJSON(&body); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid reaction body"})
+		return
+	}
+	h.answersMu.Lock()
+	defer h.answersMu.Unlock()
+	for i := range h.answers {
+		if h.answers[i].TaskID == body.TaskID && h.answers[i].UserID == body.UserID {
+			h.answers[i].Reaction = body.Reaction
+			break
+		}
+	}
 	c.JSON(http.StatusOK, gin.H{"status": "ok"})
 }
 

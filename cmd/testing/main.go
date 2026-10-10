@@ -86,6 +86,10 @@ func main() {
 	router.POST("/me/resumes/upload", handler.ParseResumePDF)
 	router.POST("/candidates/export-pdf", handler.ExportCandidatePDF)
 
+	// Employer Periodic Tasks responses and reactions
+	router.GET("/periodic-tasks", handler.ListTaskResponses)
+	router.POST("/periodic-tasks/reactions", handler.ReactToAnswer)
+
 	srv := &http.Server{
 		Addr:         ":" + cfg.HTTPPort,
 		Handler:      router,

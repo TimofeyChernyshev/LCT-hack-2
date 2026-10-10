@@ -141,7 +141,7 @@ VALUES (
 INSERT INTO tasks (id, template_id, type, topic, title, body, generator, solution, difficulty, discrimination, difficulty_irt)
 VALUES (
   'a1111111-0000-0000-0000-000000000007',
-  '00000000-0000-0000-0000-000000000007',
+  '00000000-0000-0000-0000-000000000000',
   'text',
   'algorithms',
   'Кольцевой буфер и индекс элемента',
@@ -164,7 +164,7 @@ VALUES (
 INSERT INTO tasks (id, template_id, type, topic, title, body, generator, solution, difficulty, discrimination, difficulty_irt)
 VALUES (
   'a1111111-0000-0000-0000-000000000008',
-  '00000000-0000-0000-0000-000000000008',
+  '00000000-0000-0000-0000-000000000000',
   'single_choice',
   'system_design',
   'Паттерн Circuit Breaker в распределенных системах',
@@ -186,7 +186,7 @@ VALUES (
 INSERT INTO tasks (id, template_id, type, topic, title, body, generator, solution, difficulty, discrimination, difficulty_irt)
 VALUES (
   'a1111111-0000-0000-0000-000000000009',
-  '00000000-0000-0000-0000-000000000009',
+  '00000000-0000-0000-0000-000000000000',
   'single_choice',
   'databases',
   'Аномалия фантомного чтения (Phantom Read)',
@@ -208,7 +208,7 @@ VALUES (
 INSERT INTO tasks (id, template_id, type, topic, title, body, generator, solution, difficulty, discrimination, difficulty_irt)
 VALUES (
   'a1111111-0000-0000-0000-000000000010',
-  '00000000-0000-0000-0000-000000000010',
+  '00000000-0000-0000-0000-000000000000',
   'code',
   'concurrency',
   'Потокобезопасный счетчик на Go',

@@ -400,7 +400,7 @@ def generate_sql_dump(dataset: Dict[str, Any], output_path: str = "deploy/seeds/
         highlights = "{" + ",".join([f'"{h}"' for h in c["fsp_highlights"]]) + "}"
         reasons = "{" + ",".join([f'"{r}"' for r in c["reasons"]]) + "}"
         bp_val = str(c["fsp_best_place"]) if c["fsp_best_place"] is not None else "NULL"
-        rank_str = f"'{c['sports_rank']}'" if c["sports_rank"] else "NULL"
+        rank_str = f"'{c['sports_rank']}'" if c["sports_rank"] else "''"
         disp_name = c["full_name"].replace("'", "''")
         exp_txt = c["explanation"].replace("'", "''")
 
@@ -479,13 +479,13 @@ def seed_postgres_directly(dataset: Dict[str, Any], host="localhost", port=5432,
                             activity_score, calculated_score, explanation, reasons, last_active_at, updated_at
                         ) VALUES (
                             %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,
-                            %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, now()
+                            %s, %s::uuid[], %s, %s, %s, %s, %s, %s, %s, %s, now()
                         ) ON CONFLICT (user_id) DO UPDATE SET
                             calculated_score = EXCLUDED.calculated_score,
                             explanation = EXCLUDED.explanation;
                     """, (
                         c["id"], c["full_name"], c["category_id"], c["specialization_id"], c["specialization_name"],
-                        c["grade_id"], c["grade_name"], c["grade_rank"], c["test_score"], c["has_fsp"], c["sports_rank"],
+                        c["grade_id"], c["grade_name"], c["grade_rank"], c["test_score"], c["has_fsp"], c["sports_rank"] or "",
                         c["fsp_rating"], c["fsp_score"], c["fsp_achievements_count"], c["fsp_best_place"], c["fsp_weight_sum"],
                         c["fsp_highlights"], c["stack_ids"], c["years_experience"], c["city"], c["periodic_tasks"],
                         85.0, c["calculated_score"], c["explanation"], c["reasons"], c["last_active"]
@@ -504,7 +504,7 @@ def seed_postgres_directly(dataset: Dict[str, Any], host="localhost", port=5432,
                     for vac in emp["vacancies"]:
                         cur.execute("""
                             INSERT INTO vacancies (id, company_id, title, description, specialization_id, grade_id, stack, salary_min, salary_max, currency, work_format, status)
-                            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, 'RUB', %s, 'published')
+                            VALUES (%s, %s, %s, %s, %s, %s, %s::uuid[], %s, %s, 'RUB', %s, 'published')
                             ON CONFLICT (id) DO NOTHING;
                         """, (
                             vac["id"], emp["id"], vac["title"], f"Описание {vac['title']}", vac["specialization_id"],

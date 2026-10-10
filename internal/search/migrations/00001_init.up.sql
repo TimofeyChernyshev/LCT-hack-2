@@ -1,3 +1,6 @@
+-- +goose Up
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+
 CREATE TABLE candidate_search_docs (
   user_id                UUID PRIMARY KEY,
   category_id            UUID NOT NULL,

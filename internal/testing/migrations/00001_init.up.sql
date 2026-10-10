@@ -1,3 +1,6 @@
+-- +goose Up
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+
 CREATE TABLE test_templates (
   id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   category_id UUID NOT NULL,

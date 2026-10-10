@@ -156,20 +156,187 @@ func (s *Server) GetNeedMatches(c *gin.Context, id openapi_types.UUID, _ api.Get
 	c.JSON(http.StatusOK, gin.H{"items": []api.MatchCard{}, "total": 0})
 }
 func (s *Server) ListMyVacancies(c *gin.Context) {
-	if _, ok := owner(c); !ok {
+	owner, ok := owner(c)
+	if !ok {
 		return
 	}
-	c.JSON(http.StatusOK, []api.Vacancy{})
+	rows, err := s.pool.Query(c.Request.Context(), `
+		SELECT v.id, v.company_id, v.title, v.description, v.category_id, v.stack,
+		       v.salary_min, v.salary_max, v.work_format, v.status, v.published_at, v.created_at
+		FROM vacancies v JOIN companies c ON c.id = v.company_id
+		WHERE c.owner_user_id = $1 ORDER BY v.created_at DESC`, owner)
+	if err != nil {
+		httpx.GinError(c, http.StatusInternalServerError, "internal", "вакансии не прочитались")
+		return
+	}
+	defer rows.Close()
+	out := []api.Vacancy{}
+	for rows.Next() {
+		item, err := readVacancy(rows)
+		if err != nil {
+			httpx.GinError(c, http.StatusInternalServerError, "internal", "ошибка чтения вакансии")
+			return
+		}
+		out = append(out, item)
+	}
+	c.JSON(http.StatusOK, out)
 }
-func (s *Server) CreateVacancy(c *gin.Context) { s.notReady(c) }
-func (s *Server) UpdateVacancy(c *gin.Context, id openapi_types.UUID) { s.writeMissing(c, id) }
-func (s *Server) DeleteVacancy(c *gin.Context, id openapi_types.UUID) { s.writeMissing(c, id) }
-func (s *Server) PublishVacancy(c *gin.Context, id openapi_types.UUID) { s.writeMissing(c, id) }
+
+func (s *Server) CreateVacancy(c *gin.Context) {
+	owner, ok := owner(c)
+	if !ok {
+		return
+	}
+	var body api.VacancyInput
+	if err := c.ShouldBindJSON(&body); err != nil || body.Title == "" || body.Description == "" || body.SalaryMax < body.SalaryMin {
+		httpx.GinError(c, http.StatusBadRequest, "invalid_body", "проверьте название, описание и вилку зарплаты")
+		return
+	}
+	company, err := s.company(c, owner)
+	if err != nil {
+		httpx.GinError(c, http.StatusConflict, "company_required", "сначала сохраните компанию")
+		return
+	}
+	var id uuid.UUID
+	var pubAt *time.Time
+	var createdAt time.Time
+	var stack []uuid.UUID
+	var format *string
+	var status string
+	err = s.pool.QueryRow(c.Request.Context(), `
+		INSERT INTO vacancies (company_id, title, description, category_id, stack, salary_min, salary_max, work_format, status, published_at, created_at, updated_at)
+		VALUES ($1,$2,$3,$4,$5,$6,$7,$8,'published',now(),now(),now())
+		RETURNING id, title, description, category_id, stack, salary_min, salary_max, work_format, status, published_at, created_at`,
+		company.Id, body.Title, body.Description, body.CategoryId, uuids(body.Stack), body.SalaryMin, body.SalaryMax, formatOfVacancy(body.WorkFormat),
+	).Scan(&id, &body.Title, &body.Description, &body.CategoryId, &stack, &body.SalaryMin, &body.SalaryMax, &format, &status, &pubAt, &createdAt)
+	if err != nil {
+		slog.Error("create vacancy", "err", err)
+		httpx.GinError(c, http.StatusInternalServerError, "internal", "не удалось сохранить вакансию")
+		return
+	}
+	st := api.VacancyStatus(status)
+	item := api.Vacancy{
+		Id:          &id,
+		CompanyId:   &company.Id,
+		Title:       body.Title,
+		Description: body.Description,
+		CategoryId:  body.CategoryId,
+		Stack:       uuidOut(stack),
+		SalaryMin:   body.SalaryMin,
+		SalaryMax:   body.SalaryMax,
+		Status:      &st,
+		PublishedAt: pubAt,
+		CreatedAt:   &createdAt,
+	}
+	if format != nil {
+		f := api.VacancyWorkFormat(*format)
+		item.WorkFormat = &f
+	}
+	c.JSON(http.StatusCreated, item)
+}
+
+func (s *Server) UpdateVacancy(c *gin.Context, id openapi_types.UUID) {
+	owner, ok := owner(c)
+	if !ok {
+		return
+	}
+	var body api.VacancyInput
+	if err := c.ShouldBindJSON(&body); err != nil {
+		httpx.GinError(c, http.StatusBadRequest, "invalid_body", "некорректное тело запроса")
+		return
+	}
+	row := s.pool.QueryRow(c.Request.Context(), `
+		UPDATE vacancies v
+		SET title = coalesce(nullif($3,''), v.title),
+		    description = coalesce(nullif($4,''), v.description),
+		    salary_min = case when $5 > 0 then $5 else v.salary_min end,
+		    salary_max = case when $6 > 0 then $6 else v.salary_max end,
+		    updated_at = now()
+		FROM companies c
+		WHERE v.id = $1 AND v.company_id = c.id AND c.owner_user_id = $2
+		RETURNING v.id, v.company_id, v.title, v.description, v.category_id, v.stack,
+		          v.salary_min, v.salary_max, v.work_format, v.status, v.published_at, v.created_at`,
+		id, owner, body.Title, body.Description, body.SalaryMin, body.SalaryMax)
+	item, err := readVacancy(row)
+	if err != nil {
+		httpx.GinError(c, http.StatusNotFound, "not_found", "вакансия не найдена")
+		return
+	}
+	c.JSON(http.StatusOK, item)
+}
+
+func (s *Server) DeleteVacancy(c *gin.Context, id openapi_types.UUID) {
+	owner, ok := owner(c)
+	if !ok {
+		return
+	}
+	tag, err := s.pool.Exec(c.Request.Context(), `
+		DELETE FROM vacancies v USING companies c
+		WHERE v.id = $1 AND v.company_id = c.id AND c.owner_user_id = $2`, id, owner)
+	if err != nil || tag.RowsAffected() == 0 {
+		httpx.GinError(c, http.StatusNotFound, "not_found", "вакансия не найдена")
+		return
+	}
+	c.Status(http.StatusNoContent)
+}
+
+func (s *Server) PublishVacancy(c *gin.Context, id openapi_types.UUID) {
+	owner, ok := owner(c)
+	if !ok {
+		return
+	}
+	row := s.pool.QueryRow(c.Request.Context(), `
+		UPDATE vacancies v
+		SET status = 'published', published_at = now(), updated_at = now()
+		FROM companies c
+		WHERE v.id = $1 AND v.company_id = c.id AND c.owner_user_id = $2
+		RETURNING v.id, v.company_id, v.title, v.description, v.category_id, v.stack,
+		          v.salary_min, v.salary_max, v.work_format, v.status, v.published_at, v.created_at`,
+		id, owner)
+	item, err := readVacancy(row)
+	if err != nil {
+		httpx.GinError(c, http.StatusNotFound, "not_found", "вакансия не найдена")
+		return
+	}
+	c.JSON(http.StatusOK, item)
+}
+
 func (s *Server) ListPublicVacancies(c *gin.Context, _ api.ListPublicVacanciesParams) {
-	c.JSON(http.StatusOK, []api.Vacancy{})
+	rows, err := s.pool.Query(c.Request.Context(), `
+		SELECT id, company_id, title, description, category_id, stack,
+		       salary_min, salary_max, work_format, status, published_at, created_at
+		FROM vacancies
+		WHERE status IN ('published', 'active')
+		ORDER BY created_at DESC`)
+	if err != nil {
+		httpx.GinError(c, http.StatusInternalServerError, "internal", "ошибка чтения вакансий")
+		return
+	}
+	defer rows.Close()
+	out := []api.Vacancy{}
+	for rows.Next() {
+		item, err := readVacancy(rows)
+		if err != nil {
+			httpx.GinError(c, http.StatusInternalServerError, "internal", "ошибка чтения вакансии")
+			return
+		}
+		out = append(out, item)
+	}
+	c.JSON(http.StatusOK, out)
 }
+
 func (s *Server) GetPublicVacancy(c *gin.Context, id openapi_types.UUID) {
-	httpx.GinError(c, http.StatusNotFound, "not_found", "вакансия не найдена")
+	row := s.pool.QueryRow(c.Request.Context(), `
+		SELECT id, company_id, title, description, category_id, stack,
+		       salary_min, salary_max, work_format, status, published_at, created_at
+		FROM vacancies
+		WHERE id = $1`, id)
+	item, err := readVacancy(row)
+	if err != nil {
+		httpx.GinError(c, http.StatusNotFound, "not_found", "вакансия не найдена")
+		return
+	}
+	c.JSON(http.StatusOK, item)
 }
 
 func (s *Server) company(c *gin.Context, ownerID uuid.UUID) (api.Company, error) {
@@ -291,4 +458,41 @@ func statusOf(v *api.NeedInputStatus) string {
 		return "active"
 	}
 	return string(*v)
+}
+
+func formatOfVacancy(v *api.VacancyInputWorkFormat) *string {
+	if v == nil {
+		return nil
+	}
+	s := string(*v)
+	return &s
+}
+
+func readVacancy(row pgx.Row) (api.Vacancy, error) {
+	var item api.Vacancy
+	var id uuid.UUID
+	var companyID uuid.UUID
+	var categoryID *uuid.UUID
+	var stack []uuid.UUID
+	var format *string
+	var status string
+	var pubAt *time.Time
+	var createdAt time.Time
+	err := row.Scan(&id, &companyID, &item.Title, &item.Description, &categoryID, &stack, &item.SalaryMin, &item.SalaryMax, &format, &status, &pubAt, &createdAt)
+	if err != nil {
+		return item, err
+	}
+	item.Id = &id
+	item.CompanyId = &companyID
+	item.CategoryId = categoryID
+	item.Stack = uuidOut(stack)
+	st := api.VacancyStatus(status)
+	item.Status = &st
+	if format != nil {
+		f := api.VacancyWorkFormat(*format)
+		item.WorkFormat = &f
+	}
+	item.PublishedAt = pubAt
+	item.CreatedAt = &createdAt
+	return item, nil
 }

@@ -1,14 +1,12 @@
-#!/usr/bin/env bash
-set -euo pipefail
+#!/bin/sh
+set -eu
 
 if [ -z "${POSTGRES_MULTIPLE_DATABASES:-}" ]; then
   echo "[init-db] POSTGRES_MULTIPLE_DATABASES not set, skipping"
   exit 0
 fi
 
-IFS=',' read -ra DBS <<< "${POSTGRES_MULTIPLE_DATABASES}"
-for raw in "${DBS[@]}"; do
-  db="$(echo "$raw" | xargs)"
+for db in $(echo "${POSTGRES_MULTIPLE_DATABASES}" | tr ',' ' '); do
   [ -z "$db" ] && continue
 
   echo "[init-db] -> $db"
@@ -20,3 +18,4 @@ EOSQL
 done
 
 echo "[init-db] done"
+
