@@ -1,4 +1,4 @@
-import { useState, type FormEvent, type ReactNode } from "react";
+import { useState, useEffect, type FormEvent, type ReactNode } from "react";
 import { Link, Navigate, useNavigate, useSearchParams } from "react-router-dom";
 import { api } from "../api/client";
 import type { Role, User } from "../api/types";
@@ -221,36 +221,63 @@ export function RegisterPage() {
 export function ConfirmPage() {
   const [params] = useSearchParams();
   const navigate = useNavigate();
-  const [token, setToken] = useState(params.get("token") ?? "");
+  const initialToken = params.get("token") ?? "";
+  const [token, setToken] = useState(initialToken);
   const [error, setError] = useState("");
   const [pending, setPending] = useState(false);
+  const [confirmed, setConfirmed] = useState(false);
 
-  async function onSubmit(event: FormEvent) {
-    event.preventDefault();
+  const confirmWithToken = async (tok: string) => {
+    if (!tok.trim()) return;
     setPending(true);
     setError("");
     try {
       await api("auth", "/auth/confirm-email", {
         method: "POST",
         auth: false,
-        body: JSON.stringify({ token: token.trim() }),
+        body: JSON.stringify({ token: tok.trim() }),
       });
+      setConfirmed(true);
+      setPending(false);
       const role = params.get("role");
-      navigate(role ? `/login?role=${role}` : "/login", { replace: true });
+      setTimeout(() => {
+        navigate(role ? `/login?role=${role}` : "/login", { replace: true });
+      }, 1500);
     } catch (reason) {
-      setError(reason instanceof Error ? reason.message : "Токен не принят");
+      setError(reason instanceof Error ? reason.message : "Токен не принят или уже использован");
       setPending(false);
     }
+  };
+
+  useEffect(() => {
+    if (initialToken) {
+      void confirmWithToken(initialToken);
+    }
+  }, [initialToken]);
+
+  async function onSubmit(event: FormEvent) {
+    event.preventDefault();
+    await confirmWithToken(token);
   }
 
   return (
     <form className="mx-auto grid max-w-md gap-5" onSubmit={onSubmit}>
-      <PageTitle title="Подтверждение почты" text="Вставьте токен из письма." />
+      <PageTitle
+        title="Подтверждение почты"
+        text={confirmed ? "Почта успешно подтверждена! Перенаправляем на страницу входа..." : "Подтверждение адреса электронной почты."}
+      />
+      {confirmed ? (
+        <Notice>Почта успешно подтверждена! Сейчас откроется страница входа.</Notice>
+      ) : null}
       {error ? <Notice>{error}</Notice> : null}
-      <Field label="Токен">
-        <TextInput required value={token} onChange={(event) => setToken(event.target.value)} />
-      </Field>
-      <Button type="submit" disabled={pending}>{pending ? "Проверяем" : "Подтвердить"}</Button>
+      {!confirmed && (
+        <>
+          <Field label="Токен">
+            <TextInput required value={token} onChange={(event) => setToken(event.target.value)} />
+          </Field>
+          <Button type="submit" disabled={pending}>{pending ? "Проверяем токен..." : "Подтвердить"}</Button>
+        </>
+      )}
       <Link to="/login" className="text-sm underline">Ко входу</Link>
     </form>
   );

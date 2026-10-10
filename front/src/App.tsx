@@ -20,6 +20,8 @@ export function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/confirm-email" element={<ConfirmPage />} />
+        <Route path="/auth/verify-email" element={<ConfirmPage />} />
+        <Route path="/verify-email" element={<ConfirmPage />} />
         <Route path="/candidate" element={<RequireRole role="candidate"><CandidateHome /></RequireRole>} />
         <Route path="/candidate/onboarding" element={<RequireRole role="candidate"><OnboardingPage /></RequireRole>} />
         <Route path="/candidate/test" element={<RequireRole role="candidate"><TestPage /></RequireRole>} />
