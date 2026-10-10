@@ -1,8 +1,19 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { api } from "../api/client";
 import type { Company, Named, Need } from "../api/types";
-import { Button, Field, Notice, PageTitle, Select, TextArea, TextInput } from "../components/ui";
+import { Button, Field, Modal, Notice, PageTitle, Salary, Select, TextArea, TextInput } from "../components/ui";
 import { loadCatalog } from "../lib/catalog";
+
+const workFormatLabel: Record<string, string> = {
+  remote: "Удалённо",
+  hybrid: "Гибрид",
+  office: "Офис",
+};
+
+function formatName(items: Named[], id?: string | null) {
+  if (!id) return "Любая";
+  return items.find((item) => item.id === id)?.name ?? "Любая";
+}
 
 export function EmployerHome() {
   const [company, setCompany] = useState({ name: "", description: "", industry: "", website: "", size: "" });
@@ -18,6 +29,7 @@ export function EmployerHome() {
   const [specs, setSpecs] = useState<Named[]>([]);
   const [grades, setGrades] = useState<Named[]>([]);
   const [needs, setNeeds] = useState<Need[]>([]);
+  const [viewing, setViewing] = useState<Need | null>(null);
   const [error, setError] = useState("");
   const [info, setInfo] = useState("");
   const [pending, setPending] = useState(false);
@@ -60,8 +72,10 @@ export function EmployerHome() {
   async function removeNeed(id: string) {
     setError("");
     try {
+      await api("interaction", `/me/needs/${id}/responses`, { method: "DELETE" }).catch(() => undefined);
       await api("employer", `/me/needs/${id}`, { method: "DELETE" });
       setNeeds((current) => current.filter((item) => item.id !== id));
+      setViewing(null);
     } catch (reason) {
       setError(reason instanceof Error ? reason.message : "Потребность не удалилась");
     }
@@ -155,12 +169,25 @@ export function EmployerHome() {
       {needs.length > 0 ? (
         <ul className="divide-y divide-line border-y border-line">
           {needs.map((item) => (
-            <li key={item.id} className="flex items-center justify-between gap-3 py-3">
-              <span>{item.title}</span>
-              <Button type="button" variant="ghost" onClick={() => void removeNeed(item.id)}>Удалить</Button>
+            <li key={item.id}>
+              <button type="button" className="flex w-full items-center justify-between gap-3 py-3 text-left" onClick={() => setViewing(item)}>
+                <span>{item.title}</span>
+                <span className="text-sm text-dim">Открыть</span>
+              </button>
             </li>
           ))}
         </ul>
+      ) : null}
+      {viewing ? (
+        <Modal title={viewing.title} onClose={() => setViewing(null)}>
+          <div className="grid gap-4">
+            <p className="whitespace-pre-wrap">{viewing.description}</p>
+            <p>{formatName(specs, viewing.specializationId) } · {formatName(grades, viewing.gradeId)}</p>
+            <p>{workFormatLabel[viewing.workFormat ?? ""] ?? viewing.workFormat}</p>
+            <Salary min={viewing.salaryMin} max={viewing.salaryMax} />
+            <Button type="button" variant="ghost" onClick={() => void removeNeed(viewing.id)}>Удалить</Button>
+          </div>
+        </Modal>
       ) : null}
     </div>
   );

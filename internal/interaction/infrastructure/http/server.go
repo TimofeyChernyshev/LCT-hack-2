@@ -282,7 +282,52 @@ func NewRouter(si api.ServerInterface, signer jwtx.Signer, origins []string, env
 	auth.GET("/me/vacancies/:vacancyId/applications", w.ListApplicationsForVacancy)
 	auth.POST("/me/applications/:id/accept", w.AcceptApplication)
 	auth.POST("/me/applications/:id/reject", w.RejectApplication)
+	if srv, ok := si.(*Server); ok {
+		auth.DELETE("/me/needs/:needId/responses", srv.DeleteNeedResponses)
+	}
 	return r
+}
+
+func (s *Server) DeleteNeedResponses(c *gin.Context) {
+	user, ok := mustUser(c)
+	if !ok {
+		return
+	}
+	if user.Role != "employer" && user.Role != "admin" {
+		httpx.GinError(c, http.StatusForbidden, "forbidden", "только работодатель")
+		return
+	}
+	needID, err := uuid.Parse(c.Param("needId"))
+	if err != nil {
+		httpx.GinError(c, http.StatusBadRequest, "invalid_id", "некорректная потребность")
+		return
+	}
+	uid, _ := uuid.Parse(user.ID)
+	ctx := c.Request.Context()
+	if _, err := s.pool.Exec(ctx, `
+		DELETE FROM contact_reveals
+		WHERE entity_type = 'invitation'
+		  AND entity_id IN (
+		    SELECT id FROM invitations WHERE need_id = $1 AND employer_user_id = $2
+		  )`, needID, uid); err != nil {
+		httpx.GinError(c, http.StatusInternalServerError, "internal", "не удалось удалить реакции")
+		return
+	}
+	if _, err := s.pool.Exec(ctx, `
+		DELETE FROM interaction_status_history
+		WHERE entity_type = 'invitation'
+		  AND entity_id IN (
+		    SELECT id FROM invitations WHERE need_id = $1 AND employer_user_id = $2
+		  )`, needID, uid); err != nil {
+		httpx.GinError(c, http.StatusInternalServerError, "internal", "не удалось удалить реакции")
+		return
+	}
+	if _, err := s.pool.Exec(ctx, `
+		DELETE FROM invitations WHERE need_id = $1 AND employer_user_id = $2`, needID, uid); err != nil {
+		httpx.GinError(c, http.StatusInternalServerError, "internal", "не удалось удалить реакции")
+		return
+	}
+	c.Status(http.StatusNoContent)
 }
 
 func mustUser(c *gin.Context) (httpx.UserInfo, bool) {

@@ -139,20 +139,20 @@ export function CatalogPage() {
     <div className="grid gap-6">
       <PageTitle title="Каталог" text="Контакты скрыты, пока кандидат не примет приглашение." />
       {error ? <Notice>{error}</Notice> : null}
-      <div className="grid gap-3 md:grid-cols-4">
+      <div className="grid items-end gap-3 md:grid-cols-4">
         <Field label="Специализация">
           <Select value={specializationId} onChange={(event) => update({ specializationId: event.target.value })}>
             <option value="">Все</option>
             {specs.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}
           </Select>
         </Field>
-        <Field label="Грейд" hint={gradeId ? "Также показываем на один уровень выше." : undefined}>
+        <Field label="Грейд">
           <Select value={gradeId} onChange={(event) => update({ gradeId: event.target.value })}>
             <option value="">Все</option>
             {grades.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}
           </Select>
         </Field>
-        <label className="mt-7 flex min-h-11 items-center gap-2 text-sm">
+        <label className="flex min-h-11 items-center gap-2 text-sm">
           <input type="checkbox" checked={hasFsp} onChange={(event) => update({ hasFsp: event.target.checked })} />
           Есть история ФСП
         </label>
