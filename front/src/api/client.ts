@@ -1,6 +1,8 @@
 import type { TokenPair } from "./types";
 
-const base = import.meta.env.VITE_API_BASE_URL ?? "";
+const base = (import.meta.env.VITE_API_BASE_URL ?? "")
+  .replace(/\/api\/?$/, "")
+  .replace(/\/+$/, "");
 
 export class ApiError extends Error {
   status: number;
@@ -95,7 +97,7 @@ export async function api<T>(service: string, path: string, options: Options = {
   if (!response.ok) {
     throw new ApiError(
       response.status,
-      data?.message || "Шлюз не ответил. Проверьте, что API запущен на порту 8080.",
+      data?.message || `Ошибка сервера (${response.status})`,
       data?.code,
     );
   }
