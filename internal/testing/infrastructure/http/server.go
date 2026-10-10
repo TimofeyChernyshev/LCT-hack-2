@@ -352,6 +352,46 @@ func (s *Server) ListGradeChanges(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"canChangeAt": next, "changes": []api.GradeChange{}})
 }
 
+func (s *Server) SearchFSPRegistryMembers(c *gin.Context, params api.SearchFSPRegistryMembersParams) {
+	c.JSON(http.StatusOK, []gin.H{})
+}
+
+func (s *Server) GetFSPRegistryMember(c *gin.Context, fspId string) {
+	c.JSON(http.StatusOK, gin.H{"status": "ok", "fspId": fspId})
+}
+
+func (s *Server) VerifyFSPMember(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{"isValid": true})
+}
+
+func (s *Server) InternalGetCandidateFSP(c *gin.Context, userId openapi_types.UUID) {
+	c.JSON(http.StatusOK, gin.H{"userId": userId})
+}
+
+func (s *Server) UnlinkFSP(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{"status": "ok"})
+}
+
+func (s *Server) GetMyFSP(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{"hasFsp": false})
+}
+
+func (s *Server) LinkFSP(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{"status": "ok"})
+}
+
+func (s *Server) SyncKeycloakFSP(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{"status": "ok"})
+}
+
+func (s *Server) GetQuestionnaireState(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{"completed": false})
+}
+
+func (s *Server) SubmitQuestionnaire(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{"canStartTest": true})
+}
+
 func (s *Server) own(c *gin.Context, id openapi_types.UUID, userID string) (*session, bool) {
 	uid, _ := uuid.Parse(userID)
 	s.mu.Lock()
