@@ -44,6 +44,7 @@ type ResumeRepository interface {
 type ExperienceRepository interface {
 	ListByUser(ctx context.Context, userID string) ([]domain.Experience, error)
 	Create(ctx context.Context, e *domain.Experience) error
+	Delete(ctx context.Context, userID, id string) error
 }
 
 type TechnologyRepository interface {
@@ -61,6 +62,7 @@ type FSPRepository interface {
 
 type CategoryRepository interface {
 	GetState(ctx context.Context, userID string) (*domain.CategoryState, error)
+	Assign(ctx context.Context, userID, categoryID, gradeID, specializationID string) error
 }
 
 type FileStorage interface {

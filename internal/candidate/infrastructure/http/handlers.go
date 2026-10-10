@@ -3,6 +3,7 @@ package http
 import (
 	"errors"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	openapi_types "github.com/oapi-codegen/runtime/types"
@@ -67,7 +68,8 @@ func (h *Handlers) UpdateMyProfile(c *gin.Context) {
 		YearsExperience: req.YearsExperience,
 		SalaryMin:       req.SalaryMin,
 		SalaryMax:       req.SalaryMax,
-		SalaryCurrency:  req.SalaryCurrency,
+		SalaryCurrency:   req.SalaryCurrency,
+		SpecializationID: uuidString(req.SpecializationId),
 	}
 	if req.SoftSkills != nil {
 		in.SoftSkills = *req.SoftSkills
@@ -299,7 +301,7 @@ func (h *Handlers) AddExperience(c *gin.Context) {
 		Company:     req.Company,
 		Position:    req.Position,
 		StartedAt:   req.StartedAt.Time,
-		EndedAt:     req.EndedAt.Time,
+		EndedAt:     dateOrZero(req.EndedAt),
 		Description: req.Description,
 	})
 	if err != nil {
@@ -307,6 +309,41 @@ func (h *Handlers) AddExperience(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusCreated, toExperienceResponse(e))
+}
+
+func (h *Handlers) DeleteExperience(c *gin.Context) {
+	u, ok := httpx.UserFromGin(c)
+	if !ok {
+		httpx.GinError(c, http.StatusUnauthorized, "unauthorized", "no user")
+		return
+	}
+	if err := h.svc.DeleteExperience(c.Request.Context(), u.ID, c.Param("experienceId")); err != nil {
+		writeDomainError(c, err)
+		return
+	}
+	c.Status(http.StatusNoContent)
+}
+
+func (h *Handlers) ListMyTechnologies(c *gin.Context) {
+	u, ok := httpx.UserFromGin(c)
+	if !ok {
+		httpx.GinError(c, http.StatusUnauthorized, "unauthorized", "no user")
+		return
+	}
+	list, err := h.svc.ListTechnologies(c.Request.Context(), u.ID)
+	if err != nil {
+		writeDomainError(c, err)
+		return
+	}
+	out := make([]api.CandidateTechnology, 0, len(list))
+	for _, item := range list {
+		id, err := uuidToAPI(item.TechnologyID)
+		if err != nil {
+			continue
+		}
+		out = append(out, api.CandidateTechnology{TechnologyId: id, Level: item.Level})
+	}
+	c.JSON(http.StatusOK, out)
 }
 
 // ---------- Technologies ----------
@@ -344,6 +381,33 @@ func (h *Handlers) GetMyCategory(c *gin.Context) {
 	c.JSON(http.StatusOK, toCategoryStateResponse(st))
 }
 
+func (h *Handlers) AssignMyCategory(c *gin.Context) {
+	u, ok := httpx.UserFromGin(c)
+	if !ok {
+		httpx.GinError(c, http.StatusUnauthorized, "unauthorized", "no user")
+		return
+	}
+	var req struct {
+		CategoryId       string `json:"categoryId"`
+		GradeId          string `json:"gradeId"`
+		SpecializationId string `json:"specializationId"`
+	}
+	if err := c.ShouldBindJSON(&req); err != nil {
+		httpx.GinError(c, http.StatusBadRequest, "invalid_json", "invalid body")
+		return
+	}
+	if err := h.svc.AssignCategory(c.Request.Context(), u.ID, req.CategoryId, req.GradeId, req.SpecializationId); err != nil {
+		writeDomainError(c, err)
+		return
+	}
+	st, err := h.svc.GetMyCategory(c.Request.Context(), u.ID)
+	if err != nil {
+		writeDomainError(c, err)
+		return
+	}
+	c.JSON(http.StatusOK, toCategoryStateResponse(st))
+}
+
 // ---------- FSP ----------
 
 func (h *Handlers) GetMyFSP(c *gin.Context) {
@@ -370,4 +434,19 @@ func (h *Handlers) LinkFSP(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"status": "ok"})
+}
+
+func uuidString(id *openapi_types.UUID) *string {
+	if id == nil {
+		return nil
+	}
+	value := id.String()
+	return &value
+}
+
+func dateOrZero(value *openapi_types.Date) time.Time {
+	if value == nil {
+		return time.Time{}
+	}
+	return value.Time
 }

@@ -2,6 +2,8 @@ package application
 
 import (
 	"context"
+	"errors"
+	"time"
 
 	"github.com/TimofeyChernyshev/LCT-hack-2/internal/candidate/domain"
 )
@@ -16,12 +18,17 @@ type UpdateProfileInput struct {
 	YearsExperience *float32
 	SalaryMin       *int
 	SalaryMax       *int
-	SalaryCurrency  *string
-	SoftSkills      []string
+	SalaryCurrency   *string
+	SpecializationID *string
+	SoftSkills       []string
 }
 
 func (s *Service) GetMyProfile(ctx context.Context, userID string) (*domain.Profile, error) {
-	return s.profiles.GetByUserID(ctx, userID)
+	p, err := s.profiles.GetByUserID(ctx, userID)
+	if errors.Is(err, domain.ErrProfileNotFound) {
+		return &domain.Profile{UserID: userID, UpdatedAt: time.Now(), SoftSkills: []string{}}, nil
+	}
+	return p, err
 }
 
 func (s *Service) UpdateMyProfile(ctx context.Context, userID string, in UpdateProfileInput) (*domain.Profile, error) {
@@ -52,6 +59,14 @@ func (s *Service) UpdateMyProfile(ctx context.Context, userID string, in UpdateP
 		out = p
 		return nil
 	})
+	if out != nil {
+		if out.SoftSkills == nil {
+			out.SoftSkills = []string{}
+		}
+		if out.UpdatedAt.IsZero() {
+			out.UpdatedAt = time.Now()
+		}
+	}
 	return out, err
 }
 
@@ -85,6 +100,13 @@ func applyProfileUpdate(p *domain.Profile, in UpdateProfileInput) {
 	}
 	if in.SalaryCurrency != nil {
 		p.SalaryCurrency = in.SalaryCurrency
+	}
+	if in.SpecializationID != nil {
+		if *in.SpecializationID == "" {
+			p.SpecializationID = nil
+		} else {
+			p.SpecializationID = in.SpecializationID
+		}
 	}
 	if in.SoftSkills != nil {
 		p.SoftSkills = in.SoftSkills

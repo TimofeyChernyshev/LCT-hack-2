@@ -5,18 +5,24 @@ security: [{ bearerAuth: [] }]
 
 paths:
   /healthz:
-    get: { security: [], operationId: healthz, responses: { "200": { description: OK } } }
+    get: { summary: Проверка живости сервиса, security: [], operationId: healthz, responses: { "200": { description: OK } } }
 
   /me/company:
     get:
+      summary: Профиль компании
       operationId: getMyCompany
       responses:
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
         "200":
           description: Компания
           content:
             application/json:
               schema: { $ref: "#/components/schemas/Company" }
     put:
+      summary: Создать или обновить компанию
       operationId: upsertMyCompany
       requestBody:
         required: true
@@ -24,6 +30,10 @@ paths:
           application/json:
             schema: { $ref: "#/components/schemas/CompanyInput" }
       responses:
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
         "200":
           description: Обновлено
           content:
@@ -32,8 +42,13 @@ paths:
 
   /me/needs:
     get:
+      summary: Список потребностей компании
       operationId: listMyNeeds
       responses:
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
         "200":
           description: Потребности компании
           content:
@@ -42,6 +57,7 @@ paths:
                 type: array
                 items: { $ref: "#/components/schemas/Need" }
     post:
+      summary: Описать потребность в специалисте
       operationId: createNeed
       requestBody:
         required: true
@@ -49,6 +65,10 @@ paths:
           application/json:
             schema: { $ref: "#/components/schemas/NeedInput" }
       responses:
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
         "201":
           description: Создано
           content:
@@ -57,6 +77,7 @@ paths:
 
   /me/needs/{id}:
     patch:
+      summary: Обновить потребность
       operationId: updateNeed
       parameters:
         - { in: path, name: id, required: true, schema: { type: string, format: uuid } }
@@ -66,20 +87,30 @@ paths:
           application/json:
             schema: { $ref: "#/components/schemas/NeedInput" }
       responses:
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
         "200":
           description: Обновлено
           content:
             application/json:
               schema: { $ref: "#/components/schemas/Need" }
     delete:
+      summary: Удалить потребность
       operationId: deleteNeed
       parameters:
         - { in: path, name: id, required: true, schema: { type: string, format: uuid } }
       responses:
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
         "204": { description: Удалено }
 
   /me/needs/{id}/matches:
     get:
+      summary: Подборка кандидатов под потребность
       operationId: getNeedMatches
       description: Подборка кандидатов под потребность, с объяснением
       parameters:
@@ -87,6 +118,10 @@ paths:
         - { in: query, name: limit, schema: { type: integer, minimum: 1, maximum: 100, default: 20 } }
         - { in: query, name: offset, schema: { type: integer, minimum: 0, default: 0 } }
       responses:
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
         "200":
           description: Подборка
           content:
@@ -102,8 +137,13 @@ paths:
 
   /me/vacancies:
     get:
+      summary: Вакансии компании
       operationId: listMyVacancies
       responses:
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
         "200":
           description: Вакансии
           content:
@@ -112,6 +152,7 @@ paths:
                 type: array
                 items: { $ref: "#/components/schemas/Vacancy" }
     post:
+      summary: Создать вакансию
       operationId: createVacancy
       requestBody:
         required: true
@@ -119,6 +160,10 @@ paths:
           application/json:
             schema: { $ref: "#/components/schemas/VacancyInput" }
       responses:
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
         "201":
           description: Создана
           content:
@@ -127,6 +172,7 @@ paths:
 
   /me/vacancies/{id}:
     patch:
+      summary: Обновить вакансию
       operationId: updateVacancy
       parameters:
         - { in: path, name: id, required: true, schema: { type: string, format: uuid } }
@@ -136,24 +182,38 @@ paths:
           application/json:
             schema: { $ref: "#/components/schemas/VacancyInput" }
       responses:
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
         "200":
           description: Обновлено
           content:
             application/json:
               schema: { $ref: "#/components/schemas/Vacancy" }
     delete:
+      summary: Удалить вакансию
       operationId: deleteVacancy
       parameters:
         - { in: path, name: id, required: true, schema: { type: string, format: uuid } }
       responses:
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
         "204": { description: Удалено }
 
   /me/vacancies/{id}/publish:
     post:
+      summary: Опубликовать вакансию
       operationId: publishVacancy
       parameters:
         - { in: path, name: id, required: true, schema: { type: string, format: uuid } }
       responses:
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
         "200":
           description: Опубликовано
           content:
@@ -164,6 +224,7 @@ paths:
   /vacancies:
     get:
       security: []
+      summary: Открытые вакансии
       operationId: listPublicVacancies
       parameters:
         - { in: query, name: categoryId, schema: { type: string, format: uuid } }
@@ -171,6 +232,10 @@ paths:
         - { in: query, name: limit, schema: { type: integer, default: 20, maximum: 100 } }
         - { in: query, name: offset, schema: { type: integer, default: 0 } }
       responses:
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
         "200":
           description: Публичные вакансии
           content:
@@ -182,10 +247,15 @@ paths:
   /vacancies/{id}:
     get:
       security: []
+      summary: Карточка открытой вакансии
       operationId: getPublicVacancy
       parameters:
         - { in: path, name: id, required: true, schema: { type: string, format: uuid } }
       responses:
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
         "200":
           description: Вакансия
           content:
@@ -195,7 +265,39 @@ paths:
 components:
   securitySchemes:
     bearerAuth: { type: http, scheme: bearer, bearerFormat: JWT }
+  responses:
+    BadRequest:
+      description: Неверный запрос
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+    Unauthorized:
+      description: Не авторизован
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+    Forbidden:
+      description: Доступ запрещён
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+    NotFound:
+      description: Не найдено
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+    Conflict:
+      description: Конфликт состояния
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
   schemas:
+    Error:
+      type: object
+      properties:
+        code: { type: string, example: BAD_REQUEST }
+        message: { type: string }
+      required: [code, message]
     Company:
       type: object
       properties:
@@ -277,4 +379,5 @@ components:
         reasons:
           type: array
           items: { type: string, example: "grade_match" }
+        explanation: { type: [string, "null"], description: Текст, почему кандидат попал в подборку }
         hasFSP: { type: boolean }

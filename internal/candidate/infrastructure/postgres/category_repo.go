@@ -50,3 +50,27 @@ func (r *CategoryRepo) GetState(ctx context.Context, userID string) (*domain.Cat
 	}
 	return st, rows.Err()
 }
+
+func (r *CategoryRepo) Assign(ctx context.Context, userID, categoryID, gradeID, specializationID string) error {
+	tag, err := r.q(ctx).Exec(ctx, `
+		UPDATE candidate_profiles
+		SET current_category_id = $2, current_grade_id = $3, updated_at = now()
+		WHERE user_id = $1`, userID, categoryID, gradeID)
+	if err != nil {
+		return err
+	}
+	if tag.RowsAffected() == 0 {
+		return domain.ErrProfileNotFound
+	}
+	if _, err := r.q(ctx).Exec(ctx, `
+		UPDATE candidate_category_history
+		SET effective_to = now()
+		WHERE user_id = $1 AND specialization_id = $2 AND effective_to IS NULL`, userID, specializationID); err != nil {
+		return err
+	}
+	_, err = r.q(ctx).Exec(ctx, `
+		INSERT INTO candidate_category_history
+			(user_id, category_id, grade_id, specialization_id, reason)
+		VALUES ($1, $2, $3, $4, 'initial_test')`, userID, categoryID, gradeID, specializationID)
+	return err
+}

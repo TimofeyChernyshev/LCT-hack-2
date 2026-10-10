@@ -19,6 +19,10 @@ func (s *Service) ListExperiences(ctx context.Context, userID string) ([]domain.
 	return s.experiences.ListByUser(ctx, userID)
 }
 
+func (s *Service) DeleteExperience(ctx context.Context, userID, id string) error {
+	return s.experiences.Delete(ctx, userID, id)
+}
+
 func (s *Service) AddExperience(ctx context.Context, userID string, in AddExperienceInput) (*domain.Experience, error) {
 	e := &domain.Experience{
 		UserID:      userID,

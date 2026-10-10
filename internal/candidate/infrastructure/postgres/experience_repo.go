@@ -2,6 +2,7 @@ package postgres
 
 import (
 	"context"
+	"time"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 
@@ -29,9 +30,13 @@ func (r *ExperienceRepo) ListByUser(ctx context.Context, userID string) ([]domai
 	var out []domain.Experience
 	for rows.Next() {
 		var e domain.Experience
+		var ended *time.Time
 		if err := rows.Scan(&e.ID, &e.UserID, &e.Company, &e.Position,
-			&e.StartedAt, &e.EndedAt, &e.Description, &e.CreatedAt); err != nil {
+			&e.StartedAt, &ended, &e.Description, &e.CreatedAt); err != nil {
 			return nil, err
+		}
+		if ended != nil {
+			e.EndedAt = *ended
 		}
 		out = append(out, e)
 	}
@@ -39,10 +44,26 @@ func (r *ExperienceRepo) ListByUser(ctx context.Context, userID string) ([]domai
 }
 
 func (r *ExperienceRepo) Create(ctx context.Context, e *domain.Experience) error {
+	var ended any
+	if !e.EndedAt.IsZero() {
+		ended = e.EndedAt
+	}
 	return r.q(ctx).QueryRow(ctx, `
 		INSERT INTO candidate_experiences (user_id, company, position, started_at, ended_at, description)
 		VALUES ($1,$2,$3,$4,$5,$6)
 		RETURNING id, created_at`,
-		e.UserID, e.Company, e.Position, e.StartedAt, e.EndedAt, e.Description,
+		e.UserID, e.Company, e.Position, e.StartedAt, ended, e.Description,
 	).Scan(&e.ID, &e.CreatedAt)
+}
+
+func (r *ExperienceRepo) Delete(ctx context.Context, userID, id string) error {
+	tag, err := r.q(ctx).Exec(ctx, `
+		DELETE FROM candidate_experiences WHERE id = $1 AND user_id = $2`, id, userID)
+	if err != nil {
+		return err
+	}
+	if tag.RowsAffected() == 0 {
+		return domain.ErrExperienceNotFound
+	}
+	return nil
 }

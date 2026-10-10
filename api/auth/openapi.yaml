@@ -15,6 +15,7 @@ paths:
     get:
       tags: [health]
       summary: Liveness probe
+      security: []
       operationId: healthz
       responses:
         "200":
@@ -31,6 +32,7 @@ paths:
     post:
       tags: [auth]
       summary: Регистрация пользователя
+      security: []
       operationId: register
       requestBody:
         required: true
@@ -50,6 +52,7 @@ paths:
     post:
       tags: [auth]
       summary: Подтверждение email по токену из письма
+      security: []
       operationId: confirmEmail
       requestBody:
         required: true
@@ -64,6 +67,7 @@ paths:
     post:
       tags: [auth]
       summary: Повторная отправка письма с подтверждением
+      security: []
       operationId: resendConfirmation
       requestBody:
         required: true
@@ -81,6 +85,7 @@ paths:
     post:
       tags: [auth]
       summary: Логин по email/паролю
+      security: []
       operationId: login
       requestBody:
         required: true
@@ -100,6 +105,7 @@ paths:
     post:
       tags: [auth]
       summary: Обновление access-токена
+      security: []
       operationId: refresh
       requestBody:
         required: true
@@ -133,6 +139,7 @@ paths:
     post:
       tags: [auth]
       summary: Запрос на сброс пароля
+      security: []
       operationId: forgotPassword
       requestBody:
         required: true
@@ -143,12 +150,17 @@ paths:
               properties: { email: { type: string, format: email } }
               required: [email]
       responses:
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
         "202": { description: Принято (email всегда возвращает 202 для защиты от enumeration) }
 
   /auth/reset-password:
     post:
       tags: [auth]
       summary: Установка нового пароля по токену
+      security: []
       operationId: resetPassword
       requestBody:
         required: true
@@ -202,6 +214,7 @@ paths:
     post:
       tags: [auth]
       summary: Callback внешнего identity-провайдера (задел под Keycloak/OIDC)
+      security: []
       operationId: externalCallback
       parameters:
         - in: path
@@ -225,6 +238,7 @@ paths:
     get:
       tags: [auth]
       summary: Внутренний эндпоинт — получить пользователя по ID (для других сервисов)
+      security: []
       operationId: internalGetUser
       parameters:
         - in: path
@@ -240,6 +254,7 @@ paths:
         "404": { $ref: "#/components/responses/NotFound" }
   /auth/consents:
     get:
+      summary: Список согласий пользователя
       operationId: listConsents
       security: [{ bearerAuth: [] }]
       responses:
@@ -254,6 +269,7 @@ paths:
 
   /auth/consents/{type}/grant:
     post:
+      summary: Зафиксировать согласие
       operationId: grantConsent
       security: [{ bearerAuth: [] }]
       parameters:
@@ -267,6 +283,7 @@ paths:
 
   /auth/consents/{type}/revoke:
     post:
+      summary: Отозвать согласие
       operationId: revokeConsent
       security: [{ bearerAuth: [] }]
       parameters:
@@ -275,6 +292,10 @@ paths:
           required: true
           schema: { type: string, enum: [pdn_processing, profile_publication] }
       responses:
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
         "204": { description: OK }
 
 components:

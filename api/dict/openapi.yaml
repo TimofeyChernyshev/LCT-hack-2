@@ -5,14 +5,22 @@ servers: [{ url: http://localhost:8082 }]
 paths:
   /healthz:
     get:
+      summary: Проверка живости сервиса
+      security: []
       operationId: healthz
       responses:
         "200": { description: OK }
 
   /industries:
     get:
+      summary: Список отраслей
+      security: []
       operationId: listIndustries
       responses:
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
         "200":
           description: Список отраслей
           content:
@@ -23,6 +31,8 @@ paths:
 
   /specializations:
     get:
+      summary: Список специализаций
+      security: []
       operationId: listSpecializations
       parameters:
         - in: query
@@ -32,6 +42,10 @@ paths:
           name: activeOnly
           schema: { type: boolean, default: true }
       responses:
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
         "200":
           description: Список специализаций
           content:
@@ -42,8 +56,14 @@ paths:
 
   /grades:
     get:
+      summary: Список грейдов
+      security: []
       operationId: listGrades
       responses:
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
         "200":
           description: Список грейдов
           content:
@@ -54,6 +74,8 @@ paths:
 
   /categories:
     get:
+      summary: Список категорий
+      security: []
       operationId: listCategories
       parameters:
         - in: query
@@ -63,6 +85,10 @@ paths:
           name: gradeId
           schema: { type: string, format: uuid }
       responses:
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
         "200":
           description: Список категорий
           content:
@@ -73,6 +99,8 @@ paths:
 
   /categories/{id}:
     get:
+      summary: Категория по идентификатору
+      security: []
       operationId: getCategory
       parameters:
         - in: path
@@ -89,12 +117,18 @@ paths:
 
   /technologies:
     get:
+      summary: Список технологий
+      security: []
       operationId: listTechnologies
       parameters:
         - in: query
           name: category
           schema: { type: string, example: language }
       responses:
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
         "200":
           description: Список технологий
           content:
@@ -105,9 +139,15 @@ paths:
 
   /internal/dictionaries/snapshot:
     get:
+      summary: Снимок справочников для внутренних сервисов
+      security: []
       operationId: snapshot
       description: Полный снимок справочников (для кеша других сервисов)
       responses:
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
         "200":
           description: Снимок
           content:
@@ -115,7 +155,39 @@ paths:
               schema: { $ref: "#/components/schemas/Snapshot" }
 
 components:
+  responses:
+    BadRequest:
+      description: Неверный запрос
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+    Unauthorized:
+      description: Не авторизован
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+    Forbidden:
+      description: Доступ запрещён
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+    NotFound:
+      description: Не найдено
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+    Conflict:
+      description: Конфликт состояния
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
   schemas:
+    Error:
+      type: object
+      properties:
+        code: { type: string, example: BAD_REQUEST }
+        message: { type: string }
+      required: [code, message]
     Industry:
       type: object
       properties:

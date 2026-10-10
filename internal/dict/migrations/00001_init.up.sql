@@ -1,3 +1,7 @@
+-- +goose Up
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+CREATE EXTENSION IF NOT EXISTS citext;
+
 CREATE TABLE industries (
   id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   code       TEXT UNIQUE NOT NULL,

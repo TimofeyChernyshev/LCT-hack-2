@@ -2,6 +2,7 @@ package http
 
 import (
 	"errors"
+	"log/slog"
 	"net/http"
 
 	"github.com/TimofeyChernyshev/LCT-hack-2/internal/candidate/domain"
@@ -23,6 +24,7 @@ func writeDomainError(c *gin.Context, err error) {
 	case errors.Is(err, domain.ErrInvalidInput):
 		httpx.GinError(c, http.StatusBadRequest, "invalid_input", err.Error())
 	default:
+		slog.Error("candidate request failed", "err", err)
 		httpx.GinError(c, http.StatusInternalServerError, "internal_error", "internal error")
 	}
 }

@@ -38,6 +38,8 @@ type Config struct {
 	MaxLimit     int `env:"SEARCH_MAX_LIMIT" envDefault:"100"`
 
 	HTTPTimeout time.Duration `env:"SEARCH_HTTP_TIMEOUT" envDefault:"5s"`
+
+	CORSAllowedOrigins []string `env:"CORS_ALLOWED_ORIGINS" envSeparator:"," envDefault:"http://localhost:3000"`
 }
 
 func (c Config) DSN() string {

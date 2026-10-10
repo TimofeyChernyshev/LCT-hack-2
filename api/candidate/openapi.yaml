@@ -7,20 +7,27 @@ paths:
   /healthz:
     get:
       security: []
+      summary: Проверка живости сервиса
       operationId: healthz
       responses:
         "200": { description: OK }
 
   /me/profile:
     get:
+      summary: Профиль текущего соискателя
       operationId: getMyProfile
       responses:
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
         "200":
           description: Профиль кандидата
           content:
             application/json:
               schema: { $ref: "#/components/schemas/CandidateProfile" }
     patch:
+      summary: Обновить профиль соискателя
       operationId: updateMyProfile
       requestBody:
         required: true
@@ -28,6 +35,10 @@ paths:
           application/json:
             schema: { $ref: "#/components/schemas/UpdateProfileRequest" }
       responses:
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
         "200":
           description: Обновлённый профиль
           content:
@@ -36,14 +47,20 @@ paths:
 
   /me/contacts:
     get:
+      summary: Контакты текущего соискателя
       operationId: getMyContacts
       responses:
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
         "200":
           description: Контакты
           content:
             application/json:
               schema: { $ref: "#/components/schemas/CandidateContacts" }
     put:
+      summary: Заменить контакты соискателя
       operationId: replaceMyContacts
       requestBody:
         required: true
@@ -51,6 +68,10 @@ paths:
           application/json:
             schema: { $ref: "#/components/schemas/CandidateContacts" }
       responses:
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
         "200":
           description: Обновлено
           content:
@@ -59,14 +80,20 @@ paths:
 
   /me/visibility:
     get:
+      summary: Настройки видимости профиля
       operationId: getMyVisibility
       responses:
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
         "200":
           description: Настройки видимости
           content:
             application/json:
               schema: { $ref: "#/components/schemas/Visibility" }
     put:
+      summary: Обновить настройки видимости
       operationId: updateMyVisibility
       requestBody:
         required: true
@@ -74,12 +101,21 @@ paths:
           application/json:
             schema: { $ref: "#/components/schemas/Visibility" }
       responses:
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
         "200": { description: Обновлено }
 
   /me/resumes:
     get:
+      summary: Список резюме
       operationId: listResumes
       responses:
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
         "200":
           description: Резюме
           content:
@@ -88,6 +124,7 @@ paths:
                 type: array
                 items: { $ref: "#/components/schemas/Resume" }
     post:
+      summary: Создать резюме вручную
       operationId: createResume
       requestBody:
         required: true
@@ -95,6 +132,10 @@ paths:
           application/json:
             schema: { $ref: "#/components/schemas/ResumeInput" }
       responses:
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
         "201":
           description: Создано
           content:
@@ -103,6 +144,7 @@ paths:
 
   /me/resumes/upload:
     post:
+      summary: Загрузить PDF-резюме
       operationId: uploadResumePDF
       description: Загрузка PDF с автораспознаванием
       requestBody:
@@ -115,6 +157,10 @@ paths:
                 file: { type: string, format: binary }
               required: [file]
       responses:
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
         "201":
           description: Резюме создано, поле parsed содержит извлечённые данные
           content:
@@ -123,8 +169,13 @@ paths:
 
   /me/experiences:
     get:
+      summary: Опыт работы
       operationId: listExperiences
       responses:
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
         "200":
           description: Опыт работы
           content:
@@ -133,6 +184,7 @@ paths:
                 type: array
                 items: { $ref: "#/components/schemas/Experience" }
     post:
+      summary: Добавить место работы
       operationId: addExperience
       requestBody:
         required: true
@@ -140,14 +192,50 @@ paths:
           application/json:
             schema: { $ref: "#/components/schemas/ExperienceInput" }
       responses:
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
         "201":
           description: Добавлено
           content:
             application/json:
               schema: { $ref: "#/components/schemas/Experience" }
 
+  /me/experiences/{experienceId}:
+    delete:
+      summary: Удалить место работы
+      operationId: deleteExperience
+      parameters:
+        - name: experienceId
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
+        "204": { description: Удалено }
+
   /me/technologies:
+    get:
+      summary: Стек текущего соискателя
+      operationId: listMyTechnologies
+      responses:
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
+        "200":
+          description: Выбранные технологии
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/CandidateTechnology" }
     put:
+      summary: Заменить стек технологий
       operationId: replaceTechnologies
       requestBody:
         required: true
@@ -157,12 +245,21 @@ paths:
               type: array
               items: { $ref: "#/components/schemas/CandidateTechnology" }
       responses:
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
         "200": { description: Обновлено }
 
   /me/category:
     get:
+      summary: Текущая категория и грейд
       operationId: getMyCategory
       responses:
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
         "200":
           description: Текущая категория/грейд и история
           content:
@@ -171,14 +268,20 @@ paths:
 
   /me/fsp:
     get:
+      summary: Привязка ФСП и достижения
       operationId: getMyFSP
       responses:
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
         "200":
           description: Привязка к ФСП ID и достижения (может быть пустым)
           content:
             application/json:
               schema: { $ref: "#/components/schemas/FSPState" }
     put:
+      summary: Привязать идентификатор участника ФСП
       operationId: linkFSP
       requestBody:
         required: true
@@ -189,11 +292,16 @@ paths:
               properties: { fspMemberId: { type: string } }
               required: [fspMemberId]
       responses:
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
         "200": { description: Привязано }
 
   # работодательский доступ (использует internal-токен)
   /candidates/{userId}:
     get:
+      summary: Карточка кандидата для работодателя
       operationId: getCandidateForEmployer
       description: |
         Возвращает карточку кандидата. Контакты маскируются, если нет
@@ -215,6 +323,7 @@ paths:
         "404": { description: Не найдено }
   /internal/reveals:
     post:
+      summary: Зафиксировать раскрытие контактов
       operationId: internalRecordReveal
       description: |
         Вызывается interaction-сервисом при accepted-приглашении или
@@ -245,7 +354,39 @@ components:
   securitySchemes:
     bearerAuth: { type: http, scheme: bearer, bearerFormat: JWT }
 
+  responses:
+    BadRequest:
+      description: Неверный запрос
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+    Unauthorized:
+      description: Не авторизован
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+    Forbidden:
+      description: Доступ запрещён
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+    NotFound:
+      description: Не найдено
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+    Conflict:
+      description: Конфликт состояния
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
   schemas:
+    Error:
+      type: object
+      properties:
+        code: { type: string, example: BAD_REQUEST }
+        message: { type: string }
+      required: [code, message]
     CandidateProfile:
       type: object
       properties:
@@ -284,6 +425,7 @@ components:
         salaryMin: { type: integer, minimum: 0 }
         salaryMax: { type: integer, minimum: 0 }
         salaryCurrency: { type: string }
+        specializationId: { type: string, format: uuid }
         softSkills:
           type: array
           items: { type: string }
@@ -371,6 +513,7 @@ components:
             properties:
               categoryId: { type: string, format: uuid }
               gradeId: { type: string, format: uuid }
+              specializationId: { type: string, format: uuid }
               reason: { type: string, enum: [initial_test, retake, manual] }
               effectiveFrom: { type: string, format: date-time }
               effectiveTo: { type: [string, "null"], format: date-time }

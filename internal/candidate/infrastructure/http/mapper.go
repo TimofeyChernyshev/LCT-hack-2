@@ -157,7 +157,7 @@ func toExperienceResponse(e *domain.Experience) api.Experience {
 		Company:     e.Company,
 		Position:    e.Position,
 		StartedAt:   openapi_types.Date{Time: e.StartedAt},
-		EndedAt:     &openapi_types.Date{Time: e.EndedAt},
+		EndedAt:     datePtr(e.EndedAt),
 		Description: e.Description,
 	}
 }
@@ -171,55 +171,94 @@ func toExperiencesResponse(list []domain.Experience) []api.Experience {
 }
 
 func toFSPStateResponse(s *domain.FSPState) api.FSPState {
-	out := api.FSPState{
-		FspMemberId: s.FSPMemberID,
-		LinkedAt:    s.LinkedAt,
-	}
+	achievements := make([]api.FSPAchievement, 0, len(s.Achievements))
 	for _, a := range s.Achievements {
-		id, _ := uuidToAPI(a.ID)
-		*out.Achievements = append(*out.Achievements, api.FSPAchievement{
+		id, err := uuidToAPI(a.ID)
+		if err != nil {
+			continue
+		}
+		var eventDate *openapi_types.Date
+		if a.EventDate != nil {
+			eventDate = &openapi_types.Date{Time: *a.EventDate}
+		}
+		achievements = append(achievements, api.FSPAchievement{
 			Id:         &id,
 			ExternalId: a.ExternalID,
 			EventName:  &a.EventName,
-			EventDate:  &openapi_types.Date{Time: *a.EventDate},
+			EventDate:  eventDate,
 			Place:      a.Place,
 			Category:   a.Category,
 			Score:      a.Score,
 			Weight:     intPtr(a.Weight),
 		})
 	}
-	return out
+	return api.FSPState{
+		FspMemberId:  s.FSPMemberID,
+		LinkedAt:     s.LinkedAt,
+		Achievements: &achievements,
+	}
 }
 
 func toCategoryStateResponse(s *domain.CategoryState) api.CategoryState {
-	category, _ := uuidToAPI(*s.CategoryID)
-	grade, _ := uuidToAPI(*s.GradeID)
-	specialization, _ := uuidToAPI(*s.SpecializationID)
-
-	out := api.CategoryState{
-		CategoryId:       &category,
-		GradeId:          &grade,
-		SpecializationId: &specialization,
+	out := api.CategoryState{}
+	if id := uuidPtr(s.CategoryID); id != nil {
+		out.CategoryId = id
 	}
+	if id := uuidPtr(s.GradeID); id != nil {
+		out.GradeId = id
+	}
+	if id := uuidPtr(s.SpecializationID); id != nil {
+		out.SpecializationId = id
+	}
+
+	history := make([]struct {
+		CategoryId       *openapi_types.UUID             `json:"categoryId,omitempty"`
+		EffectiveFrom    *time.Time                      `json:"effectiveFrom,omitempty"`
+		EffectiveTo      *time.Time                      `json:"effectiveTo,omitempty"`
+		GradeId          *openapi_types.UUID             `json:"gradeId,omitempty"`
+		Reason           *api.CategoryStateHistoryReason `json:"reason,omitempty"`
+		SpecializationId *openapi_types.UUID             `json:"specializationId,omitempty"`
+	}, 0, len(s.History))
 	for _, h := range s.History {
-		cid, _ := uuidToAPI(h.CategoryID)
-		gid, _ := uuidToAPI(h.GradeID)
+		cid, errC := uuidToAPI(h.CategoryID)
+		gid, errG := uuidToAPI(h.GradeID)
+		if errC != nil || errG != nil {
+			continue
+		}
 		reason := api.CategoryStateHistoryReason(h.Reason)
-		*out.History = append(*out.History, struct {
-			CategoryId    *openapi_types.UUID             "json:\"categoryId,omitempty\""
-			EffectiveFrom *time.Time                      "json:\"effectiveFrom,omitempty\""
-			EffectiveTo   *time.Time                      "json:\"effectiveTo,omitempty\""
-			GradeId       *openapi_types.UUID             "json:\"gradeId,omitempty\""
-			Reason        *api.CategoryStateHistoryReason "json:\"reason,omitempty\""
+		var spec *openapi_types.UUID
+		if parsed, err := uuidToAPI(h.SpecializationID); err == nil {
+			spec = &parsed
+		}
+		history = append(history, struct {
+			CategoryId       *openapi_types.UUID             `json:"categoryId,omitempty"`
+			EffectiveFrom    *time.Time                      `json:"effectiveFrom,omitempty"`
+			EffectiveTo      *time.Time                      `json:"effectiveTo,omitempty"`
+			GradeId          *openapi_types.UUID             `json:"gradeId,omitempty"`
+			Reason           *api.CategoryStateHistoryReason `json:"reason,omitempty"`
+			SpecializationId *openapi_types.UUID             `json:"specializationId,omitempty"`
 		}{
-			CategoryId:    &cid,
-			GradeId:       &gid,
-			Reason:        &reason,
-			EffectiveFrom: &h.EffectiveFrom,
-			EffectiveTo:   h.EffectiveTo,
+			CategoryId:       &cid,
+			GradeId:          &gid,
+			Reason:           &reason,
+			EffectiveFrom:    &h.EffectiveFrom,
+			EffectiveTo:      h.EffectiveTo,
+			SpecializationId: spec,
 		})
 	}
+	out.History = &history
 	return out
+}
+
+func uuidPtr(id *string) *openapi_types.UUID {
+	if id == nil || *id == "" {
+		return nil
+	}
+	parsed, err := uuidToAPI(*id)
+	if err != nil {
+		return nil
+	}
+	return &parsed
 }
 
 func intPtr(i int) *int { return &i }
@@ -233,3 +272,10 @@ func emailPtr(s string) *openapi_types.Email {
 }
 
 func boolPtr(b bool) *bool { return &b }
+
+func datePtr(value time.Time) *openapi_types.Date {
+	if value.IsZero() {
+		return nil
+	}
+	return &openapi_types.Date{Time: value}
+}

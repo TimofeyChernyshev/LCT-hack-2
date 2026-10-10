@@ -5,7 +5,7 @@ security: [{ bearerAuth: [] }]
 
 paths:
   /healthz:
-    get: { security: [], operationId: healthz, responses: { "200": { description: OK } } }
+    get: { summary: Проверка живости сервиса, security: [], operationId: healthz, responses: { "200": { description: OK } } }
 
   /candidates:
     get:
@@ -23,6 +23,10 @@ paths:
         - { in: query, name: offset, schema: { type: integer, default: 0 } }
         - { in: query, name: sort, schema: { type: string, enum: [relevance, testScore, fspWeight], default: relevance } }
       responses:
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
         "200":
           description: Страница результатов с объяснением
           content:
@@ -36,6 +40,10 @@ paths:
       parameters:
         - { in: path, name: userId, required: true, schema: { type: string, format: uuid } }
       responses:
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
         "200":
           description: Причины и вклады
           content:
@@ -50,6 +58,10 @@ paths:
         - { in: path, name: categoryId, required: true, schema: { type: string, format: uuid } }
         - { in: query, name: limit, schema: { type: integer, default: 50, maximum: 200 } }
       responses:
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
         "200":
           description: Список кандидатов, упорядоченный по силе профиля
           content:
@@ -61,7 +73,39 @@ paths:
 components:
   securitySchemes:
     bearerAuth: { type: http, scheme: bearer, bearerFormat: JWT }
+  responses:
+    BadRequest:
+      description: Неверный запрос
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+    Unauthorized:
+      description: Не авторизован
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+    Forbidden:
+      description: Доступ запрещён
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+    NotFound:
+      description: Не найдено
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+    Conflict:
+      description: Конфликт состояния
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
   schemas:
+    Error:
+      type: object
+      properties:
+        code: { type: string, example: BAD_REQUEST }
+        message: { type: string }
+      required: [code, message]
     SearchHit:
       type: object
       properties:
@@ -76,6 +120,7 @@ components:
         fspWeightSum: { type: integer }
         yearsExperience: { type: [number, "null"] }
         score: { type: number }
+        explanation: { type: [string, "null"], description: Текст, почему кандидат попал в подборку }
         reasons:
           type: array
           items: { type: string, example: stack_match }
@@ -95,6 +140,7 @@ components:
       properties:
         userId: { type: string, format: uuid }
         finalScore: { type: number }
+        explanation: { type: [string, "null"] }
         factors:
           type: array
           items:

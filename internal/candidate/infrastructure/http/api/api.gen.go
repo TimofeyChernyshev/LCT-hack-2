@@ -177,8 +177,9 @@ type CategoryState struct {
 		CategoryId    *openapi_types.UUID         `json:"categoryId,omitempty"`
 		EffectiveFrom *time.Time                  `json:"effectiveFrom,omitempty"`
 		EffectiveTo   *time.Time                  `json:"effectiveTo,omitempty"`
-		GradeId       *openapi_types.UUID         `json:"gradeId,omitempty"`
-		Reason        *CategoryStateHistoryReason `json:"reason,omitempty"`
+		GradeId          *openapi_types.UUID         `json:"gradeId,omitempty"`
+		Reason           *CategoryStateHistoryReason `json:"reason,omitempty"`
+		SpecializationId *openapi_types.UUID         `json:"specializationId,omitempty"`
 	} `json:"history,omitempty"`
 	SpecializationId *openapi_types.UUID `json:"specializationId,omitempty"`
 }
@@ -254,9 +255,10 @@ type UpdateProfileRequest struct {
 	MiddleName      *string   `json:"middleName,omitempty"`
 	SalaryCurrency  *string   `json:"salaryCurrency,omitempty"`
 	SalaryMax       *int      `json:"salaryMax,omitempty"`
-	SalaryMin       *int      `json:"salaryMin,omitempty"`
-	SoftSkills      *[]string `json:"softSkills,omitempty"`
-	YearsExperience *float32  `json:"yearsExperience,omitempty"`
+	SalaryMin        *int                 `json:"salaryMin,omitempty"`
+	SoftSkills       *[]string           `json:"softSkills,omitempty"`
+	SpecializationId *openapi_types.UUID `json:"specializationId,omitempty"`
+	YearsExperience  *float32            `json:"yearsExperience,omitempty"`
 }
 
 // Visibility defines model for Visibility.

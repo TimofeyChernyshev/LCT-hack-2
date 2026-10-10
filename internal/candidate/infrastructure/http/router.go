@@ -71,9 +71,16 @@ func NewRouter(
 
 		auth.GET("/me/experiences", wrapper.ListExperiences)
 		auth.POST("/me/experiences", wrapper.AddExperience)
+		if h, ok := si.(*Handlers); ok {
+			auth.DELETE("/me/experiences/:experienceId", h.DeleteExperience)
+			auth.GET("/me/technologies", h.ListMyTechnologies)
+		}
 
 		auth.PUT("/me/technologies", wrapper.ReplaceTechnologies)
 		auth.GET("/me/category", wrapper.GetMyCategory)
+		if h, ok := si.(*Handlers); ok {
+			auth.PUT("/me/category", h.AssignMyCategory)
+		}
 		auth.GET("/me/fsp", wrapper.GetMyFSP)
 		auth.PUT("/me/fsp", wrapper.LinkFSP)
 	}

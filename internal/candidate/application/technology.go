@@ -11,6 +11,10 @@ type TechnologyInput struct {
 	Level        *int
 }
 
+func (s *Service) ListTechnologies(ctx context.Context, userID string) ([]domain.CandidateTechnology, error) {
+	return s.technologies.ListByUser(ctx, userID)
+}
+
 func (s *Service) ReplaceTechnologies(ctx context.Context, userID string, in []TechnologyInput) error {
 	techs := make([]domain.CandidateTechnology, 0, len(in))
 	for _, t := range in {

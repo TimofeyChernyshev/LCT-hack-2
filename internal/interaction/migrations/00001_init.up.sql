@@ -1,3 +1,7 @@
+-- +goose Up
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+CREATE EXTENSION IF NOT EXISTS citext;
+
 CREATE TABLE invitations (
   id               UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   employer_user_id UUID NOT NULL,
@@ -10,6 +14,7 @@ CREATE TABLE invitations (
   salary_max       INT NOT NULL,
   currency         TEXT NOT NULL DEFAULT 'RUB',
   contact_channel  TEXT NOT NULL,
+  employer_contact TEXT,
   status           TEXT NOT NULL DEFAULT 'sent'
                      CHECK (status IN ('sent','viewed','accepted','rejected','withdrawn','expired')),
   status_updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
