@@ -1,5 +1,5 @@
 package: apisearch
-output: internal/search/infrastructure/http/api.gen.go
+output: internal/search/infrastructure/http/api/api.gen.go
 generate:
   models: true
   gin-server: true

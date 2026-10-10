@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"testing"
 
-	"TimofeyChernyshev/LCT-hack-2/internal/testing/domain"
+	"github.com/TimofeyChernyshev/LCT-hack-2/internal/testing/domain"
 )
 
 func TestGrader_SingleChoice(t *testing.T) {

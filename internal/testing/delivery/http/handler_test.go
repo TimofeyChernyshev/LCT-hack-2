@@ -12,13 +12,13 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 
-	"TimofeyChernyshev/LCT-hack-2/internal/testing/domain"
-	"TimofeyChernyshev/LCT-hack-2/internal/testing/infrastructure/config"
-	apitesting "TimofeyChernyshev/LCT-hack-2/internal/testing/infrastructure/http"
-	"TimofeyChernyshev/LCT-hack-2/internal/testing/repository"
-	"TimofeyChernyshev/LCT-hack-2/internal/testing/service"
-	"TimofeyChernyshev/LCT-hack-2/pkg/auth"
-	"TimofeyChernyshev/LCT-hack-2/pkg/resume"
+	"github.com/TimofeyChernyshev/LCT-hack-2/internal/testing/domain"
+	"github.com/TimofeyChernyshev/LCT-hack-2/internal/testing/infrastructure/config"
+	apitesting "github.com/TimofeyChernyshev/LCT-hack-2/internal/testing/infrastructure/http/api"
+	"github.com/TimofeyChernyshev/LCT-hack-2/internal/testing/repository"
+	"github.com/TimofeyChernyshev/LCT-hack-2/internal/testing/service"
+	"github.com/TimofeyChernyshev/LCT-hack-2/pkg/auth"
+	"github.com/TimofeyChernyshev/LCT-hack-2/pkg/resume"
 )
 
 type mockRepo struct {

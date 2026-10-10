@@ -5,7 +5,7 @@ security: [{ bearerAuth: [] }]
 
 paths:
   /healthz:
-    get: { security: [], operationId: healthz, responses: { "200": { description: OK } } }
+    get: { summary: Проверка живости сервиса, security: [], operationId: healthz, responses: { "200": { description: OK } } }
 
   /me/sessions:
     post:
@@ -17,14 +17,23 @@ paths:
           application/json:
             schema: { $ref: "#/components/schemas/StartSessionRequest" }
       responses:
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
         "201":
           description: Сессия создана
           content:
             application/json:
               schema: { $ref: "#/components/schemas/Session" }
     get:
+      summary: Мои тест-сессии
       operationId: listMySessions
       responses:
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
         "200":
           description: Сессии
           content:
@@ -35,10 +44,15 @@ paths:
 
   /me/sessions/{id}:
     get:
+      summary: Сессия с заданиями без правильных ответов
       operationId: getSession
       parameters:
         - { in: path, name: id, required: true, schema: { type: string, format: uuid } }
       responses:
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
         "200":
           description: Сессия с заданиями (без решений)
           content:
@@ -47,6 +61,7 @@ paths:
 
   /me/sessions/{id}/answers:
     post:
+      summary: Ответ на задание
       operationId: answerItem
       parameters:
         - { in: path, name: id, required: true, schema: { type: string, format: uuid } }
@@ -63,10 +78,15 @@ paths:
 
   /me/sessions/{id}/submit:
     post:
+      summary: Завершить тест и получить результат
       operationId: submitSession
       parameters:
         - { in: path, name: id, required: true, schema: { type: string, format: uuid } }
       responses:
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
         "200":
           description: Результат и итоговая категория
           content:
@@ -78,6 +98,10 @@ paths:
       summary: История смены грейда и остаток кулдауна
       operationId: listGradeChanges
       responses:
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
         "200":
           description: Список
           content:
@@ -117,8 +141,13 @@ paths:
 
   /me/periodic-tasks:
     get:
+      summary: Регулярные задания кандидата
       operationId: listPeriodicTasks
       responses:
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
         "200":
           description: Регулярные задачи для кандидата
           content:
@@ -129,6 +158,7 @@ paths:
 
   /me/periodic-tasks/{id}/submit:
     post:
+      summary: Ответ на регулярное задание
       operationId: submitPeriodicTask
       parameters:
         - { in: path, name: id, required: true, schema: { type: string, format: uuid } }
@@ -141,11 +171,16 @@ paths:
               properties: { answer: { type: string } }
               required: [answer]
       responses:
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
         "200": { description: Принято }
 
   # админ/работодательское
   /periodic-tasks:
     post:
+      summary: Создать регулярное задание
       operationId: createPeriodicTask
       requestBody:
         required: true
@@ -153,6 +188,10 @@ paths:
           application/json:
             schema: { $ref: "#/components/schemas/PeriodicTaskInput" }
       responses:
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
         "201":
           description: Создано
           content:
@@ -166,6 +205,10 @@ paths:
       parameters:
         - { in: path, name: userId, required: true, schema: { type: string, format: uuid } }
       responses:
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
         "200":
           description: Категория
           content:
@@ -297,7 +340,39 @@ paths:
 components:
   securitySchemes:
     bearerAuth: { type: http, scheme: bearer, bearerFormat: JWT }
+  responses:
+    BadRequest:
+      description: Неверный запрос
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+    Unauthorized:
+      description: Не авторизован
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+    Forbidden:
+      description: Доступ запрещён
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+    NotFound:
+      description: Не найдено
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+    Conflict:
+      description: Конфликт состояния
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
   schemas:
+    Error:
+      type: object
+      properties:
+        code: { type: string, example: BAD_REQUEST }
+        message: { type: string }
+      required: [code, message]
     StartSessionRequest:
       type: object
       properties:
@@ -310,6 +385,7 @@ components:
         targetCategoryId: { type: string, format: uuid }
         status: { type: string, enum: [in_progress, submitted, evaluated, expired, cancelled] }
         startedAt: { type: string, format: date-time }
+        expiresAt: { type: [string, "null"], format: date-time, description: Момент, когда сессия закрывается по таймеру }
         finishedAt: { type: [string, "null"], format: date-time }
       required: [id, targetCategoryId, status, startedAt]
     SessionWithItems:
@@ -328,13 +404,27 @@ components:
         type: { type: string, enum: [single_choice, multi_choice, code, text, sql, regex] }
         topic: { type: string }
         body: { type: string }
+        options:
+          type: array
+          description: Варианты для single_choice и multi_choice. Для открытых заданий пустой список.
+          items:
+            type: object
+            properties:
+              id: { type: string }
+              label: { type: string }
+            required: [id, label]
         status: { type: string, enum: [pending, answered, skipped] }
       required: [id, position, type, topic, body, status]
     AnswerInput:
       type: object
       properties:
         itemId: { type: string, format: uuid }
-        answer: { description: Произвольный JSON-ответ }
+        answer:
+          description: Строка, список id вариантов или объект
+          oneOf:
+            - { type: string }
+            - { type: array, items: { type: string } }
+            - { type: object, additionalProperties: true }
         skipped: { type: boolean, default: false }
       required: [itemId]
     SessionResult:
@@ -473,3 +563,4 @@ components:
         verifiedAt: { type: string, format: date-time }
         member: { $ref: "#/components/schemas/FSPRegistryMember" }
       required: [isValid, message, verifiedAt]
+

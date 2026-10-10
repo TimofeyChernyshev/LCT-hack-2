@@ -8,8 +8,8 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"TimofeyChernyshev/LCT-hack-2/internal/testing/infrastructure/config"
-	"TimofeyChernyshev/LCT-hack-2/pkg/fsp"
+	"github.com/TimofeyChernyshev/LCT-hack-2/internal/testing/infrastructure/config"
+	"github.com/TimofeyChernyshev/LCT-hack-2/pkg/fsp"
 )
 
 func TestFSPService_LinkFSP_Success(t *testing.T) {

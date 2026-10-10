@@ -5,7 +5,7 @@ import (
 
 	"github.com/google/uuid"
 
-	"TimofeyChernyshev/LCT-hack-2/pkg/fsp"
+	"github.com/TimofeyChernyshev/LCT-hack-2/pkg/fsp"
 )
 
 // CandidateFSPProfile represents candidate's sports programming profile in testing service

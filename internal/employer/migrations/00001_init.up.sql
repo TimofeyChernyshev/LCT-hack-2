@@ -1,3 +1,7 @@
+-- +goose Up
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+CREATE EXTENSION IF NOT EXISTS citext;
+
 CREATE TABLE companies (
   id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   owner_user_id UUID NOT NULL,
@@ -9,7 +13,7 @@ CREATE TABLE companies (
   created_at    TIMESTAMPTZ NOT NULL DEFAULT now(),
   updated_at    TIMESTAMPTZ NOT NULL DEFAULT now()
 );
-CREATE INDEX idx_companies_owner ON companies(owner_user_id);
+CREATE UNIQUE INDEX idx_companies_owner ON companies(owner_user_id);
 
 CREATE TABLE employer_needs (
   id                UUID PRIMARY KEY DEFAULT gen_random_uuid(),

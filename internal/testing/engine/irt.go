@@ -3,7 +3,7 @@ package engine
 import (
 	"math"
 
-	"TimofeyChernyshev/LCT-hack-2/internal/testing/domain"
+	"github.com/TimofeyChernyshev/LCT-hack-2/internal/testing/domain"
 )
 
 type ItemEvaluation struct {

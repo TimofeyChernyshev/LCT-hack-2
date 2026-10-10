@@ -6,9 +6,9 @@ import (
 	"testing"
 	"time"
 
-	"TimofeyChernyshev/LCT-hack-2/internal/testing/domain"
-	"TimofeyChernyshev/LCT-hack-2/internal/testing/infrastructure/config"
-	"TimofeyChernyshev/LCT-hack-2/internal/testing/repository"
+	"github.com/TimofeyChernyshev/LCT-hack-2/internal/testing/domain"
+	"github.com/TimofeyChernyshev/LCT-hack-2/internal/testing/infrastructure/config"
+	"github.com/TimofeyChernyshev/LCT-hack-2/internal/testing/repository"
 	"github.com/google/uuid"
 )
 

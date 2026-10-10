@@ -16,13 +16,13 @@ import (
 	_ "github.com/jackc/pgx/v5/stdlib"
 	"github.com/pressly/goose/v3"
 
-	httpdelivery "TimofeyChernyshev/LCT-hack-2/internal/testing/delivery/http"
-	"TimofeyChernyshev/LCT-hack-2/internal/testing/infrastructure/config"
-	apitesting "TimofeyChernyshev/LCT-hack-2/internal/testing/infrastructure/http"
-	"TimofeyChernyshev/LCT-hack-2/internal/testing/migrations"
-	"TimofeyChernyshev/LCT-hack-2/internal/testing/repository"
-	"TimofeyChernyshev/LCT-hack-2/internal/testing/service"
-	"TimofeyChernyshev/LCT-hack-2/pkg/auth"
+	httpdelivery "github.com/TimofeyChernyshev/LCT-hack-2/internal/testing/delivery/http"
+	"github.com/TimofeyChernyshev/LCT-hack-2/internal/testing/infrastructure/config"
+	apitesting "github.com/TimofeyChernyshev/LCT-hack-2/internal/testing/infrastructure/http/api"
+	"github.com/TimofeyChernyshev/LCT-hack-2/internal/testing/migrations"
+	"github.com/TimofeyChernyshev/LCT-hack-2/internal/testing/repository"
+	"github.com/TimofeyChernyshev/LCT-hack-2/internal/testing/service"
+	"github.com/TimofeyChernyshev/LCT-hack-2/pkg/auth"
 )
 
 func main() {

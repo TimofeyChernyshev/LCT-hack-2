@@ -8,10 +8,10 @@ import (
 
 	"github.com/google/uuid"
 
-	"TimofeyChernyshev/LCT-hack-2/internal/search/domain"
-	"TimofeyChernyshev/LCT-hack-2/internal/search/infrastructure/config"
-	"TimofeyChernyshev/LCT-hack-2/internal/search/repository"
-	"TimofeyChernyshev/LCT-hack-2/pkg/ranking"
+	"github.com/TimofeyChernyshev/LCT-hack-2/internal/search/domain"
+	"github.com/TimofeyChernyshev/LCT-hack-2/internal/search/infrastructure/config"
+	"github.com/TimofeyChernyshev/LCT-hack-2/internal/search/repository"
+	"github.com/TimofeyChernyshev/LCT-hack-2/pkg/ranking"
 )
 
 type SearchService struct {

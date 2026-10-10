@@ -10,8 +10,8 @@ import (
 
 	"github.com/google/uuid"
 
-	"TimofeyChernyshev/LCT-hack-2/internal/testing/domain"
-	"TimofeyChernyshev/LCT-hack-2/pkg/fsp"
+	"github.com/TimofeyChernyshev/LCT-hack-2/internal/testing/domain"
+	"github.com/TimofeyChernyshev/LCT-hack-2/pkg/fsp"
 )
 
 func (r *PostgresRepository) SaveCandidateFSP(ctx context.Context, profile *domain.CandidateFSPProfile) error {

@@ -17,15 +17,15 @@ import (
 	_ "github.com/jackc/pgx/v5/stdlib"
 	"github.com/pressly/goose/v3"
 
-	httpdelivery "TimofeyChernyshev/LCT-hack-2/internal/search/delivery/http"
-	"TimofeyChernyshev/LCT-hack-2/internal/search/domain"
-	"TimofeyChernyshev/LCT-hack-2/internal/search/infrastructure/config"
-	apisearch "TimofeyChernyshev/LCT-hack-2/internal/search/infrastructure/http"
-	"TimofeyChernyshev/LCT-hack-2/internal/search/migrations"
-	"TimofeyChernyshev/LCT-hack-2/internal/search/repository"
-	"TimofeyChernyshev/LCT-hack-2/internal/search/service"
-	"TimofeyChernyshev/LCT-hack-2/pkg/auth"
-	"TimofeyChernyshev/LCT-hack-2/pkg/ranking"
+	httpdelivery "github.com/TimofeyChernyshev/LCT-hack-2/internal/search/delivery/http"
+	"github.com/TimofeyChernyshev/LCT-hack-2/internal/search/domain"
+	"github.com/TimofeyChernyshev/LCT-hack-2/internal/search/infrastructure/config"
+	apisearch "github.com/TimofeyChernyshev/LCT-hack-2/internal/search/infrastructure/http/api"
+	"github.com/TimofeyChernyshev/LCT-hack-2/internal/search/migrations"
+	"github.com/TimofeyChernyshev/LCT-hack-2/internal/search/repository"
+	"github.com/TimofeyChernyshev/LCT-hack-2/internal/search/service"
+	"github.com/TimofeyChernyshev/LCT-hack-2/pkg/auth"
+	"github.com/TimofeyChernyshev/LCT-hack-2/pkg/ranking"
 )
 
 func main() {

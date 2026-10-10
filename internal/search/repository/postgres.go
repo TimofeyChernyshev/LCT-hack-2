@@ -11,7 +11,7 @@ import (
 
 	"github.com/google/uuid"
 
-	"TimofeyChernyshev/LCT-hack-2/internal/search/domain"
+	"github.com/TimofeyChernyshev/LCT-hack-2/internal/search/domain"
 	_ "github.com/jackc/pgx/v5/stdlib"
 )
 

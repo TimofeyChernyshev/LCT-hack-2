@@ -1,5 +1,5 @@
 package: apitesting
-output: internal/testing/infrastructure/http/api.gen.go
+output: internal/testing/infrastructure/http/api/api.gen.go
 generate:
   models: true
   gin-server: true

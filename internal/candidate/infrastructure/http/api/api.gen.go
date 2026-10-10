@@ -62,34 +62,84 @@ func (e ResumeSource) Valid() bool {
 	}
 }
 
+// Defines values for InternalRecordRevealJSONBodyEntityType.
+const (
+	Application InternalRecordRevealJSONBodyEntityType = "application"
+	Invitation  InternalRecordRevealJSONBodyEntityType = "invitation"
+)
+
+// Valid indicates whether the value is a known member of the InternalRecordRevealJSONBodyEntityType enum.
+func (e InternalRecordRevealJSONBodyEntityType) Valid() bool {
+	switch e {
+	case Application:
+		return true
+	case Invitation:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for InternalRecordRevealJSONBodyReason.
+const (
+	ApplicationSent    InternalRecordRevealJSONBodyReason = "application_sent"
+	InvitationAccepted InternalRecordRevealJSONBodyReason = "invitation_accepted"
+)
+
+// Valid indicates whether the value is a known member of the InternalRecordRevealJSONBodyReason enum.
+func (e InternalRecordRevealJSONBodyReason) Valid() bool {
+	switch e {
+	case ApplicationSent:
+		return true
+	case InvitationAccepted:
+		return true
+	default:
+		return false
+	}
+}
+
 // CandidateCard defines model for CandidateCard.
 type CandidateCard struct {
-	CategoryId *openapi_types.UUID `json:"categoryId,omitempty"`
-
-	// Contacts null, если контакты не раскрыты
-	Contacts    *CandidateContacts `json:"contacts,omitempty"`
-	DisplayName *string            `json:"displayName,omitempty"`
-	Fsp         *struct {
-		AchievementsCount *int  `json:"achievementsCount,omitempty"`
-		BestPlace         *int  `json:"bestPlace,omitempty"`
-		HasFSP            *bool `json:"hasFSP,omitempty"`
-	} `json:"fsp,omitempty"`
+	CategoryId       *openapi_types.UUID    `json:"categoryId,omitempty"`
+	Contacts         *CandidateContacts     `json:"contacts,omitempty"`
+	DisplayName      *string                `json:"displayName,omitempty"`
+	Fsp              *CandidateCardFsp      `json:"fsp,omitempty"`
 	GradeId          *openapi_types.UUID    `json:"gradeId,omitempty"`
 	Headline         *string                `json:"headline,omitempty"`
+	Location         *string                `json:"location,omitempty"`
+	Salary           *CandidateCardSalary   `json:"salary,omitempty"`
+	SoftSkills       *[]string              `json:"softSkills,omitempty"`
 	SpecializationId *openapi_types.UUID    `json:"specializationId,omitempty"`
 	Technologies     *[]CandidateTechnology `json:"technologies,omitempty"`
 	UserId           *openapi_types.UUID    `json:"userId,omitempty"`
 	YearsExperience  *float32               `json:"yearsExperience,omitempty"`
 }
 
+// CandidateCardFsp defines model for CandidateCardFsp.
+type CandidateCardFsp struct {
+	AchievementsCount *int  `json:"achievementsCount,omitempty"`
+	BestPlace         *int  `json:"bestPlace,omitempty"`
+	HasFSP            *bool `json:"hasFSP,omitempty"`
+}
+
+// CandidateCardSalary defines model for CandidateCardSalary.
+type CandidateCardSalary struct {
+	Currency *string `json:"currency,omitempty"`
+	Masked   *bool   `json:"masked,omitempty"`
+	Max      *int    `json:"max,omitempty"`
+	Min      *int    `json:"min,omitempty"`
+}
+
 // CandidateContacts defines model for CandidateContacts.
 type CandidateContacts struct {
-	Email    *openapi_types.Email `json:"email,omitempty"`
-	Github   *string              `json:"github,omitempty"`
-	Linkedin *string              `json:"linkedin,omitempty"`
-	Phone    *string              `json:"phone,omitempty"`
-	Telegram *string              `json:"telegram,omitempty"`
-	Website  *string              `json:"website,omitempty"`
+	Email        *openapi_types.Email `json:"email,omitempty"`
+	Github       *string              `json:"github,omitempty"`
+	Linkedin     *string              `json:"linkedin,omitempty"`
+	Masked       *bool                `json:"masked,omitempty"`
+	MaskedFields *[]string            `json:"maskedFields,omitempty"`
+	Phone        *string              `json:"phone,omitempty"`
+	Telegram     *string              `json:"telegram,omitempty"`
+	Website      *string              `json:"website,omitempty"`
 }
 
 // CandidateProfile defines model for CandidateProfile.
@@ -102,6 +152,11 @@ type CandidateProfile struct {
 	Headline         *string             `json:"headline,omitempty"`
 	LastName         *string             `json:"lastName,omitempty"`
 	Location         *string             `json:"location,omitempty"`
+	MiddleName       *string             `json:"middleName,omitempty"`
+	SalaryCurrency   *string             `json:"salaryCurrency,omitempty"`
+	SalaryMax        *int                `json:"salaryMax,omitempty"`
+	SalaryMin        *int                `json:"salaryMin,omitempty"`
+	SoftSkills       *[]string           `json:"softSkills,omitempty"`
 	SpecializationId *openapi_types.UUID `json:"specializationId,omitempty"`
 	UpdatedAt        time.Time           `json:"updatedAt"`
 	UserId           openapi_types.UUID  `json:"userId"`
@@ -122,8 +177,9 @@ type CategoryState struct {
 		CategoryId    *openapi_types.UUID         `json:"categoryId,omitempty"`
 		EffectiveFrom *time.Time                  `json:"effectiveFrom,omitempty"`
 		EffectiveTo   *time.Time                  `json:"effectiveTo,omitempty"`
-		GradeId       *openapi_types.UUID         `json:"gradeId,omitempty"`
-		Reason        *CategoryStateHistoryReason `json:"reason,omitempty"`
+		GradeId          *openapi_types.UUID         `json:"gradeId,omitempty"`
+		Reason           *CategoryStateHistoryReason `json:"reason,omitempty"`
+		SpecializationId *openapi_types.UUID         `json:"specializationId,omitempty"`
 	} `json:"history,omitempty"`
 	SpecializationId *openapi_types.UUID `json:"specializationId,omitempty"`
 }
@@ -191,12 +247,18 @@ type ResumeInput struct {
 
 // UpdateProfileRequest defines model for UpdateProfileRequest.
 type UpdateProfileRequest struct {
-	About           *string  `json:"about,omitempty"`
-	FirstName       *string  `json:"firstName,omitempty"`
-	Headline        *string  `json:"headline,omitempty"`
-	LastName        *string  `json:"lastName,omitempty"`
-	Location        *string  `json:"location,omitempty"`
-	YearsExperience *float32 `json:"yearsExperience,omitempty"`
+	About           *string   `json:"about,omitempty"`
+	FirstName       *string   `json:"firstName,omitempty"`
+	Headline        *string   `json:"headline,omitempty"`
+	LastName        *string   `json:"lastName,omitempty"`
+	Location        *string   `json:"location,omitempty"`
+	MiddleName      *string   `json:"middleName,omitempty"`
+	SalaryCurrency  *string   `json:"salaryCurrency,omitempty"`
+	SalaryMax       *int      `json:"salaryMax,omitempty"`
+	SalaryMin        *int                 `json:"salaryMin,omitempty"`
+	SoftSkills       *[]string           `json:"softSkills,omitempty"`
+	SpecializationId *openapi_types.UUID `json:"specializationId,omitempty"`
+	YearsExperience  *float32            `json:"yearsExperience,omitempty"`
 }
 
 // Visibility defines model for Visibility.
@@ -204,14 +266,31 @@ type Visibility struct {
 	Contacts   *bool `json:"contacts,omitempty"`
 	Experience *bool `json:"experience,omitempty"`
 	Fsp        *bool `json:"fsp,omitempty"`
+	Links      *bool `json:"links,omitempty"`
 	Resume     *bool `json:"resume,omitempty"`
+	Salary     *bool `json:"salary,omitempty"`
+	SoftSkills *bool `json:"softSkills,omitempty"`
 }
 
-// GetCandidateForEmployerParams defines parameters for GetCandidateForEmployer.
-type GetCandidateForEmployerParams struct {
-	// RevealContacts Показывать ли контакты (только при accepted-приглашении/отклике)
-	RevealContacts *bool `form:"revealContacts,omitempty" json:"revealContacts,omitempty"`
+// InternalRecordRevealJSONBody defines parameters for InternalRecordReveal.
+type InternalRecordRevealJSONBody struct {
+	CandidateUserId openapi_types.UUID                     `json:"candidateUserId"`
+	EmployerUserId  openapi_types.UUID                     `json:"employerUserId"`
+	EntityId        openapi_types.UUID                     `json:"entityId"`
+	EntityType      InternalRecordRevealJSONBodyEntityType `json:"entityType"`
+	Reason          InternalRecordRevealJSONBodyReason     `json:"reason"`
 }
+
+// InternalRecordRevealParams defines parameters for InternalRecordReveal.
+type InternalRecordRevealParams struct {
+	XInternalToken string `json:"X-Internal-Token"`
+}
+
+// InternalRecordRevealJSONBodyEntityType defines parameters for InternalRecordReveal.
+type InternalRecordRevealJSONBodyEntityType string
+
+// InternalRecordRevealJSONBodyReason defines parameters for InternalRecordReveal.
+type InternalRecordRevealJSONBodyReason string
 
 // LinkFSPJSONBody defines parameters for LinkFSP.
 type LinkFSPJSONBody struct {
@@ -225,6 +304,9 @@ type UploadResumePDFMultipartBody struct {
 
 // ReplaceTechnologiesJSONBody defines parameters for ReplaceTechnologies.
 type ReplaceTechnologiesJSONBody = []CandidateTechnology
+
+// InternalRecordRevealJSONRequestBody defines body for InternalRecordReveal for application/json ContentType.
+type InternalRecordRevealJSONRequestBody InternalRecordRevealJSONBody
 
 // ReplaceMyContactsJSONRequestBody defines body for ReplaceMyContacts for application/json ContentType.
 type ReplaceMyContactsJSONRequestBody = CandidateContacts
@@ -254,10 +336,13 @@ type UpdateMyVisibilityJSONRequestBody = Visibility
 type ServerInterface interface {
 
 	// (GET /candidates/{userId})
-	GetCandidateForEmployer(c *gin.Context, userId openapi_types.UUID, params GetCandidateForEmployerParams)
+	GetCandidateForEmployer(c *gin.Context, userId openapi_types.UUID)
 
 	// (GET /healthz)
 	Healthz(c *gin.Context)
+
+	// (POST /internal/reveals)
+	InternalRecordReveal(c *gin.Context, params InternalRecordRevealParams)
 
 	// (GET /me/category)
 	GetMyCategory(c *gin.Context)
@@ -329,17 +414,6 @@ func (siw *ServerInterfaceWrapper) GetCandidateForEmployer(c *gin.Context) {
 		return
 	}
 
-	// Parameter object where we will unmarshal all parameters from the context
-	var params GetCandidateForEmployerParams
-
-	// ------------- Optional query parameter "revealContacts" -------------
-
-	err = runtime.BindQueryParameterWithOptions("form", true, false, "revealContacts", c.Request.URL.Query(), &params.RevealContacts, runtime.BindQueryParameterOptions{Type: "boolean", Format: ""})
-	if err != nil {
-		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter revealContacts: %w", err), http.StatusBadRequest)
-		return
-	}
-
 	for _, middleware := range siw.HandlerMiddlewares {
 		middleware(c)
 		if c.IsAborted() {
@@ -347,7 +421,7 @@ func (siw *ServerInterfaceWrapper) GetCandidateForEmployer(c *gin.Context) {
 		}
 	}
 
-	siw.Handler.GetCandidateForEmployer(c, userId, params)
+	siw.Handler.GetCandidateForEmployer(c, userId)
 }
 
 // Healthz operation middleware
@@ -361,6 +435,49 @@ func (siw *ServerInterfaceWrapper) Healthz(c *gin.Context) {
 	}
 
 	siw.Handler.Healthz(c)
+}
+
+// InternalRecordReveal operation middleware
+func (siw *ServerInterfaceWrapper) InternalRecordReveal(c *gin.Context) {
+
+	var err error
+	_ = err
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params InternalRecordRevealParams
+
+	headers := c.Request.Header
+
+	// ------------- Required header parameter "X-Internal-Token" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("X-Internal-Token")]; found {
+		var XInternalToken string
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandler(c, fmt.Errorf("Expected one value for X-Internal-Token, got %d", n), http.StatusBadRequest)
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "X-Internal-Token", valueList[0], &XInternalToken, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: ""})
+		if err != nil {
+			siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter X-Internal-Token: %w", err), http.StatusBadRequest)
+			return
+		}
+
+		params.XInternalToken = XInternalToken
+
+	} else {
+		siw.ErrorHandler(c, fmt.Errorf("Header parameter X-Internal-Token is required, but not found"), http.StatusBadRequest)
+		return
+	}
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.InternalRecordReveal(c, params)
 }
 
 // GetMyCategory operation middleware
@@ -602,6 +719,7 @@ func RegisterHandlersWithOptions(router gin.IRouter, si ServerInterface, options
 	router.GET(options.BaseURL+"/me/fsp", wrapper.GetMyFSP)
 	router.PUT(options.BaseURL+"/me/fsp", wrapper.LinkFSP)
 	router.GET(options.BaseURL+"/candidates/:userId", wrapper.GetCandidateForEmployer)
+	router.POST(options.BaseURL+"/internal/reveals", wrapper.InternalRecordReveal)
 }
 
 // Base64 encoded, compressed with deflate, json marshaled OpenAPI spec.
@@ -609,42 +727,49 @@ func RegisterHandlersWithOptions(router gin.IRouter, si ServerInterface, options
 // const string: with thousands of chunks the chained `+` fold is several
 // times slower for the Go compiler than parsing a slice literal.
 var swaggerSpec = []string{
-	"xFrdbhvHFX6VxbQXCbAW5SYFAt65tpW6TRrBdtoLQwiGu4fkxPvn2VnVjEBAogukhY0KLQIUCJC6KfoA",
-	"lCzatGzRr3DmFfokxcwuyVlyuNzKknIncX7Oz5zzne8cco94cZjEEUQiJc09knpdCKn+8yaNfOZTATcp",
-	"99UHCY8T4IKBXvaogE7Me3f0WjvmIRWkSbKM+cQlopcAaZJUcBZ1SN8lXhwJ6uVCfEg9zhLB4og0SZQF",
-	"gevgSB7gGxw7eIoTPJMDHOKpHMinDp7hyJH7OJQHeCr35VP1KXFJHMEXbdJ8sEd+zqFNmuRnjbktjcKQ",
-	"xtyKqQJ9d2+qnhJN+jt9l/gsTQLa+x0NgTRn63P122my7ALqdRnsQqgE3oyzSBhHWSSgA1ydbUEqtgPq",
-	"GTc/mK27uRJKhy5Nt+5tG3e04jgAGpF+f+bQuPU1eELd2uHUh5rO7wL1AxaVFChWDflpAh6jAfuGqpep",
-	"ebUArxvFQdwpfMIEhPqPWo9yf3q6R+Y2Us6p/j9LgddUoweUp7cfJ8AZRGVPR1nYMh1tc+ZylCw9NoSU",
-	"BSVd8k8synSY6GatamcHLHoIPouqdyXdeN2rCQigw2lYveuP0EqZgLIvOSPuyjOVbtrmcZsFYEmJVpyJ",
-	"alXqAIftXJvxVJQT1LotTT4H9eJ3/OqNaxPIdqheJgW0jqZB7NEcAy8mK22ns0Q9l39DlI6pz64JFoIt",
-	"et8v62Zn2kFMBXGr0pDDo4xx8NVyIdXUeKcqAg3kWArCAHZBp2pIH7MwC0nzly4JWZT/fd21YPQMxurV",
-	"swXlS6ftaucxf09QAeerpRcXwiwVMe+VwPq9Sju02+AJtgtbPA7rx9ns2P14zaFzmW5I4kDTPM0gysK8",
-	"+jLBaPCVgFQQtUHQh0peSKOMBmRn6RIbGi6Wq/fJVNv95cRaeKI4TGjUs3KVEr2qghaIfCs0VDqe1fN5",
-	"EqesrIGxmArKRbXoVammpU2tN8SYl+5UOvNOlGTiAjxqrJ/LkZfloXM4Z+ve9o05l10NCGvCaRcicYsK",
-	"WK3zymMriTc8FsAjGqyr5nXDsgYPT72YVzJIRadYp2ul+327e1cAv9lB1GbPC69lQaLaHChnoWvZQT28",
-	"ugtpFtqwisP/y0FqviZLtzkLKe/ZmiaXJJSnoG+ivq8zgQbbhmqCZzA3sTDEDIQ44x6YdaOoDy5J/PZX",
-	"WRLEVOnVgQi4MtFSOFwimAhssb3ahSsRKhIQCctVC57woU2zQJBmmwYpuBbPVOhU4jV6mzuTbMOOLxOj",
-	"IbgLjzJIxdq+wOysl2l9ZedqLC7TbHNxiV3XaRenuW59nd+zlLVYwETP/jjTxnHZ32ATZawX44XlBT7L",
-	"qfUzARWx4GWcid49BRW5Yi2gHPiNTHTn/21NE+s3f7hP3Hzooy/Xq/NM6wqRkL66mEVtzdKKwFGQ5mwH",
-	"VKgUdf67/50zI+bOPeC7zAPikl3gqX4Bcn1jc2NT2RMnENGEkSb5aOP6xqbKJCq6WtGGN70ibezl7UBf",
-	"fd4BsTw0wr/jBF/hsZ4L/QWHOJIDNToayn05wIn8Fk/lEwePcISvFkZKOMHjDQe/XxwzvcOJPMRjeSgH",
-	"8kAeOnrnG/lMnc5X1YBq5FDPg0SAv0G0OXzG9sinIGZu2Ir57TAJ4p72Z0I5DUEAT/XAiikTlOHEJZEO",
-	"4Hn/M8+/HJ5y1K/Vkyw56TlOlE/wlXyKxziUA/nMsQ/ZPliwVu7jeGbptfx/fIFvcCj/jCM8wzGOGziR",
-	"AzxVF+Ipjj4kbm7Yowx4b24Zh12gwWywYlq0Dqj6OzoDkjhK82D+xebmAhLSJAlYnumNrwuWPxdQbzJI",
-	"uZ9H+YL7vjfDCYc6vvAMT3CMJ8qbOFQh/fHmx5b4/AFHanI5xNd4oh02USL6Lml0gQai+40R2uUo+nWx",
-	"bje9LOaL35bSnjQf6NLcCKFhcjarnE9BfN6bNqbkUh1tNr82R/8bRypfVSLLwzyNBzjCFzhRcScPG/hC",
-	"7uNI+dJR0TuWB3IwXZz6VdlsgHCFzfNQvILgmgqzB1gpC/M9SWZR/C5o5rqgvC62v4r93mXrXQal/k/u",
-	"uH/ikUopPFaIbCZXCI15rV0dB5+xVNw29r2nQbVo+1zeMmW3mvhOfdWhv/nAI5wYARKnFpNu+L4h4XKi",
-	"Y7GJrhUb1y9BvNVj3+EEj3BoDYqCYK0GBfXNyyWG9awFtCn+XFfXY3mIr4o64+B/8Ed87ty5pfHuRJEP",
-	"OcAxvsyLrzx0PsC3OMGXOfE50t+KPVOF+4naKZ/i2w8r4OQzFj2cWny+MCmzX2vDuaqrMDcvdxS14abC",
-	"icOF10/mX1esjoDpdxpXAW5TWauiYSL/hGNFx6ycQz8rFV532ZK8Gysbc/E4YO35fqpCUeVLo07Iv+EZ",
-	"nsmn+DqntzMXG3GSd1vVZeNusecqSkYuq1a5+JfqdORf8S2OqqrETT2LKe69nOAwZxhXXCCm/rL450fd",
-	"L54sQUPx5I1imNPcmzlu4YJ/4FCxUPmkAOntW1uOPHBUvSm4qPqBwjstRvH+Yy1qjCN8u9QofqmF5dpu",
-	"39qqfIgwCwRLKBcN1f9d86mglUhc4NysWWyxiGp+vwaU1bnzofGVvJ8R3448MB/T1c25bs3zgV++foIj",
-	"uY8vcazq41jNCtQW+e0MB0ZOcYP+xwiJxZ80VBHy++be8+fTxf1q4rzls4pR75bmXqsrqDEfu0TgN6TY",
-	"AuUHlYdyoBAeX+Opok/HuniOFWHKaVQFM5oW0AVbLh4mF824uEcrDwTKE8AHO2qmkgLfnc6iMh4Uk75m",
-	"o6GGpkE3TkXzk81PPlI/jfrfAA==",
+	"xFrrbhvHFX6VxbY/WoAS5dgFAvWXY1up2rgVJLktYAvGaHcoTrQ3z86qZgwBuhRIC7kRWgQoEMB1EvQB",
+	"aFm0aVmiX+HMK/RJijOzXM6SwyUlS8ofQ+TczuU737nQz1wvDpM4opFI3flnbuo1aUjUn3dI5DOfCHqH",
+	"cB+/SHicUC4YVcseEXQj5q1FtdaIeUiEO+9mGfPdmitaCXXnH7qp4CzacGtulAWBu7Zdc704EsTTr/2c",
+	"04Y77/6sPhCinktQHzzfP7Bdc32WJgFp/Z6EFM/rV/qPbNfcRppMfy/h/kKa4LENTnx6XkWalPgBiwxB",
+	"bLuC2COCxVH1rpQEhLfOJfqKPoKH44ZY2WRBoGzKBA1Tq3HyLwjnRJ9LqMdIwL5SAp5XfUG9ZhQH8UaO",
+	"h+LdqTRY7Z9u2STLUsqr5DGUalHC03tPE8oZjbySM6IsXKd8IPPgoXj9S+oJPD6ChhGcE6/J6BYNUY87",
+	"cRYJw7YsEnSDcrxonaZiKSBlCfrrJmpIurCyZNyxHscBJZE7WbyVAiRDkZhxTiOvVQ2xkKSb1Lc9jGtP",
+	"J4gdsqhyR7XwRsiXRachYUHJz/qbKuBtMNHM1idEHYs2qc+ijzEJri0wGvjnDKukGU8iBUEDusFJWL3r",
+	"L3Q9ZYKWw4CzCuNUemGJxw0WUAvC1+NMVItyUbJvMJ6KMltbt6XJfYrBuuhXb7xKoibTSDodnYfM9wM6",
+	"+TZN+3eM+PVpg2QBqrX84LNKrfTZ+zpyQxaxMAvd+blaVRTnZ3RcTHtmyuwSkqeLevGTucvONVmCAPZv",
+	"i9Ix/G5GsJDa8sLHpZDiTCOIiTBks+QUTp9kjCOPPOy/akq8VhWTRhocCcuAblHFjSF5qh31q9rAaTdq",
+	"liRU5OTWVKoPCV86bRdbs8CKIIJeXkV4saBmqYh1NiwweX5xDBTQRoN6gm3RBR6H0+OsOLYaTzh0IdWN",
+	"lzglqSYeGiECMFqZYCR4LGiKGOVUkE18LyRRRgLDhYbDR5x6mZFqu78cWEMuisOERC0rn/g09ThLJpMt",
+	"jXwrNVQank1n8yROWVkCYzEVhIvqp8eFmnqtr73xjHnpWqUxF6NEJ+2PtKgJ5YsY8qosdAHjLKws3R4U",
+	"6+MJYQKctmgk7pKhumuiHdSxsX0pfSooj0gwqb6ZFpZTNBqpF/PKdggLTLbRtPYz23bzjiF+s0WauhUc",
+	"8paFiaauCnW1P7E6mI6vlmmahTau4vS8NciU3mTpEmchMYFpdiIJ4anuUojvq0ggwZIhmuAZHaiYK1Iq",
+	"4DKu0dLPG3l+qLmJ33icJUFMUK4NGlGOKloSR80VTAQ2bI834ViGigQtddFjLFGUwg0SpIWGpmUqZCrV",
+	"NWpbrXjZxh0PEqNFWqZPMkypkzolc/A02ugYq6MdiLE42niYiyP9hllyW9oMk31HuosxW8Y2EWZtOaF3",
+	"KG29lJbBUpZbns1ZzYrDP7KUrbOAiZYdhv2ZxCiyqGWgZK7nc8bRBaSiMXfyglhG1wbzP8tayZqTp0Z4",
+	"hHoZZ6K1glyr9V2nhFN+OxPNwaeFPjP99k+rmF3VbrxcrQ6oqilE4m7jxSxqqDI3jzzMCc5SQARynPO/",
+	"nW+dorNxVijfYh7G3RblqYKwe2N2bnYOdYoTGpGEufPuzdkbs3NIRUQ0laB1r39FWn+m+6lt/H6DCs0K",
+	"RhHjwr+gB2/hSO5AW/4d2tCRew6cQFvuyD3oya/hRO6rL+AMjqELx9CWe9CedeA76MEZ/g0nck8eOHAK",
+	"bbkLJ9CVO3JffiP35K48rDnQkbvwHroOnOHtjyLieTQR1J+BD3IHuvAa3kNb/g06cAZdeehAV2/vyT04",
+	"wT/xeby+A2/gWO478h9yD7pw6qDU8Ept7OWSdeA9dODUwQuGpe7B6eyjCL7XcsodeaDu6TjQU6J04BjP",
+	"y0OUE4V35C505A4cqX97eO0H6Dk59B9zukVJkP7aeZJR3pqBD2g2aKOkck8dOHLgGC/UIvfgNfRyM8w+",
+	"wnoMA6poE9zPqSjcvxDze2ESxC2Fo4RwElJBeerOP3zmIocoh2OaUuw1aJwHxK3zmi4Xpmlm11SIJXGU",
+	"asR/Mjc3lG9IkgRM82n9y7yXGtw/9eRdh8IQEL8zMYf+HsEc4v7W3E0LiH+EHryXz+EEzZsbfBw03ulr",
+	"blmueYFQOIM2vFNAOINeiQyU6U0aeLi2rUqgepOSQDS/MqKs7Njf5Ot2A5el+MPvhh/Vb2B6wAq4nqNO",
+	"MXKcWmNaHsBbeQBHOp4VktVx4uGWmQLVXbmboxoD0akMTAwoFZiPIrmrQN6Tu8pfh9q28jlaDG8zA7dj",
+	"J4+XeBr9YUaG3WfyuSP3UVi8QrNTiXhskbSYG2uZejH3l5XFxoQRlha6qteB9OeZ/uGZ1XiTRpUhZQ0h",
+	"Vft8Fvutc0XPcKuVx8uD6cdwNOeL8xyJBBOtc21eVV+bM5QtJkjeXxoqWotg2wimf/xxH37lex6n5ZJz",
+	"XLs7ZLARc5TkNzQvhBqtastvoO+3RyL4lj2CxzHVC+jk2eRMHsA7px/VMwrzJxhq+C4GfEjrZsNtJZbP",
+	"qbjf6k8V3Svlb3NyaePvH6GDtQIWEZjDT/LwfQ095BJ5WIfXKsW+g2OVnLs5e6hFU2ejrqzQub/rWnJW",
+	"8QO6NW+V2EjvyRu3suDLVI0dhoS/GFtcQO5JSL5uw/0HXqmEcaTSsk62fRAM2ofxOPiCpeKese8jFZpq",
+	"5mJ0UyPzFquKH7DGNBJbAZA8c5dVuu37xgtXg47hCehU2LhxBc9bLfYt9OAVtK2gyHvG8aSwsLJ0lXxQ",
+	"zO9sgr9UFdORPIS3efnqwH/hB3jpLN5VfHec10tdeFN0Or/AKgo/Y1nzCqEin2Mxto875QGc/rKCTr5g",
+	"0WZf48soOazTwnHp1tx8scRpKX1LRmwPeT8Z/Po+HgH9n+ivg9z6b41DQ0/+FQtm9KillVFuJcJrjmqi",
+	"R2llZS6fB6wDu58qUVTZ0sgT8p9wlhdOqkUpTGzgRE+JqtPGcr7nOlJGPg6fJl18Dx14K7+BU+hUZYk7",
+	"apCe33s14DAH0NecIPr2stjnBzWrOh6hhtzl9XwSP74x/je0sQqV+zlJL91dcOSug/kmr0Xbchc+qGfO",
+	"VBZqq9a3A6cjLeYD9ZiWdunuQqUjwiwQLCFc1LHJmvGJIJVMnPNc0ZGts4io+n4CKeO5i7HxtfjPwLej",
+	"Jg+FM2tqsKbmAfrXGr1+rDqlN7rt78JbXRbIrwse6Dj5DeqDAYnh/1xZVZCvmnsvHk+X9/83L5o+qyrq",
+	"rdIof3wGNUb+V0j8xis2oLzAOMxHqO/gBMunfP5TjJ26FZVRP4EO6XL5NDmsxuU5bdLYEZf5Vn+QlfEg",
+	"/5Vhvl4PYo8EzTgV85/OfXrT3V7b/n8AAAD//w==",
 }
 
 // decodeSpec returns the embedded OpenAPI spec as raw JSON bytes,

@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	"TimofeyChernyshev/LCT-hack-2/internal/testing/domain"
+	"github.com/TimofeyChernyshev/LCT-hack-2/internal/testing/domain"
 )
 
 type GeneratorRule struct {

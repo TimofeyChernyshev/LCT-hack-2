@@ -10,9 +10,9 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	apitesting "TimofeyChernyshev/LCT-hack-2/internal/testing/infrastructure/http"
-	"TimofeyChernyshev/LCT-hack-2/pkg/auth"
-	"TimofeyChernyshev/LCT-hack-2/pkg/fsp"
+	apitesting "github.com/TimofeyChernyshev/LCT-hack-2/internal/testing/infrastructure/http/api"
+	"github.com/TimofeyChernyshev/LCT-hack-2/pkg/auth"
+	"github.com/TimofeyChernyshev/LCT-hack-2/pkg/fsp"
 )
 
 func TestHTTP_FSP_GetMyFSP_NoFSP(t *testing.T) {

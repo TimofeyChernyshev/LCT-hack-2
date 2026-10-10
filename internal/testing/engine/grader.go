@@ -6,7 +6,7 @@ import (
 	"regexp"
 	"strings"
 
-	"TimofeyChernyshev/LCT-hack-2/internal/testing/domain"
+	"github.com/TimofeyChernyshev/LCT-hack-2/internal/testing/domain"
 )
 
 type Grader struct{}

@@ -15,10 +15,10 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"TimofeyChernyshev/LCT-hack-2/internal/search/domain"
-	"TimofeyChernyshev/LCT-hack-2/internal/search/infrastructure/config"
-	apisearch "TimofeyChernyshev/LCT-hack-2/internal/search/infrastructure/http"
-	"TimofeyChernyshev/LCT-hack-2/internal/search/service"
+	"github.com/TimofeyChernyshev/LCT-hack-2/internal/search/domain"
+	"github.com/TimofeyChernyshev/LCT-hack-2/internal/search/infrastructure/config"
+	apisearch "github.com/TimofeyChernyshev/LCT-hack-2/internal/search/infrastructure/http/api"
+	"github.com/TimofeyChernyshev/LCT-hack-2/internal/search/service"
 )
 
 type mockRepo struct {

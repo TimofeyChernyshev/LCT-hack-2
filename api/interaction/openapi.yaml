@@ -5,7 +5,7 @@ security: [{ bearerAuth: [] }]
 
 paths:
   /healthz:
-    get: { security: [], operationId: healthz, responses: { "200": { description: OK } } }
+    get: { summary: Проверка живости сервиса, security: [], operationId: healthz, responses: { "200": { description: OK } } }
 
   # --- сторона работодателя ---
   /me/invitations:
@@ -18,14 +18,23 @@ paths:
           application/json:
             schema: { $ref: "#/components/schemas/CreateInvitationRequest" }
       responses:
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
         "201":
           description: Отправлено
           content:
             application/json:
               schema: { $ref: "#/components/schemas/Invitation" }
     get:
+      summary: Исходящие приглашения
       operationId: listMyInvitationsAsEmployer
       responses:
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
         "200":
           description: Приглашения, отправленные компанией
           content:
@@ -36,10 +45,15 @@ paths:
 
   /me/invitations/{id}/withdraw:
     post:
+      summary: Отозвать приглашение
       operationId: withdrawInvitation
       parameters:
         - { in: path, name: id, required: true, schema: { type: string, format: uuid } }
       responses:
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
         "200":
           description: Отозвано
           content:
@@ -49,8 +63,13 @@ paths:
   # --- сторона кандидата ---
   /me/invitations/incoming:
     get:
+      summary: Входящие приглашения
       operationId: listIncomingInvitations
       responses:
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
         "200":
           description: Входящие приглашения
           content:
@@ -61,11 +80,16 @@ paths:
 
   /me/invitations/{id}/accept:
     post:
+      summary: Принять приглашение
       operationId: acceptInvitation
       description: Принятие раскрывает контакты работодателю
       parameters:
         - { in: path, name: id, required: true, schema: { type: string, format: uuid } }
       responses:
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
         "200":
           description: Принято
           content:
@@ -74,10 +98,15 @@ paths:
 
   /me/invitations/{id}/reject:
     post:
+      summary: Отклонить приглашение
       operationId: rejectInvitation
       parameters:
         - { in: path, name: id, required: true, schema: { type: string, format: uuid } }
       responses:
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
         "200":
           description: Отклонено
           content:
@@ -95,14 +124,23 @@ paths:
           application/json:
             schema: { $ref: "#/components/schemas/CreateApplicationRequest" }
       responses:
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
         "201":
           description: Отправлено
           content:
             application/json:
               schema: { $ref: "#/components/schemas/Application" }
     get:
+      summary: Мои отклики
       operationId: listMyApplicationsAsCandidate
       responses:
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
         "200":
           description: Мои отклики
           content:
@@ -113,10 +151,15 @@ paths:
 
   /me/vacancies/{vacancyId}/applications:
     get:
+      summary: Отклики на вакансию
       operationId: listApplicationsForVacancy
       parameters:
         - { in: path, name: vacancyId, required: true, schema: { type: string, format: uuid } }
       responses:
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
         "200":
           description: Отклики на вакансию
           content:
@@ -127,22 +170,33 @@ paths:
 
   /me/applications/{id}/accept:
     post:
+      summary: Принять отклик
       operationId: acceptApplication
       parameters:
         - { in: path, name: id, required: true, schema: { type: string, format: uuid } }
       responses:
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
         "200": { description: Принято }
   /me/applications/{id}/reject:
     post:
+      summary: Отклонить отклик
       operationId: rejectApplication
       parameters:
         - { in: path, name: id, required: true, schema: { type: string, format: uuid } }
       responses:
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
         "200": { description: Отклонено }
 
   # аудит раскрытия контактов
   /internal/reveals:
     post:
+      summary: Зафиксировать раскрытие контактов
       operationId: internalRecordReveal
       requestBody:
         required: true
@@ -150,12 +204,48 @@ paths:
           application/json:
             schema: { $ref: "#/components/schemas/RevealRecordInput" }
       responses:
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
         "201": { description: Записано }
 
 components:
   securitySchemes:
     bearerAuth: { type: http, scheme: bearer, bearerFormat: JWT }
+  responses:
+    BadRequest:
+      description: Неверный запрос
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+    Unauthorized:
+      description: Не авторизован
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+    Forbidden:
+      description: Доступ запрещён
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+    NotFound:
+      description: Не найдено
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+    Conflict:
+      description: Конфликт состояния
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
   schemas:
+    Error:
+      type: object
+      properties:
+        code: { type: string, example: BAD_REQUEST }
+        message: { type: string }
+      required: [code, message]
     CreateInvitationRequest:
       type: object
       properties:
@@ -167,6 +257,7 @@ components:
         salaryMax: { type: integer, minimum: 0 }
         currency: { type: string, default: RUB }
         contactChannel: { type: string, enum: [email, telegram, phone, platform] }
+        employerContact: { type: string, description: Как с вами связаться. Соискатель видит это сразу. }
       required: [candidateUserId, message, salaryMin, salaryMax, contactChannel]
 
     CreateApplicationRequest:
@@ -190,6 +281,8 @@ components:
         salaryMax: { type: integer }
         currency: { type: string }
         contactChannel: { type: string }
+        companyName: { type: [string, "null"], description: Название компании, видно соискателю сразу }
+        employerContact: { type: [string, "null"], description: Контакт работодателя для связи }
         status: { type: string, enum: [sent, viewed, accepted, rejected, withdrawn, expired] }
         createdAt: { type: string, format: date-time }
         statusUpdatedAt: { type: string, format: date-time }

@@ -12,11 +12,11 @@ import (
 	"github.com/google/uuid"
 	openapi_types "github.com/oapi-codegen/runtime/types"
 
-	"TimofeyChernyshev/LCT-hack-2/internal/search/domain"
-	apisearch "TimofeyChernyshev/LCT-hack-2/internal/search/infrastructure/http"
-	"TimofeyChernyshev/LCT-hack-2/internal/search/repository"
-	"TimofeyChernyshev/LCT-hack-2/internal/search/service"
-	"TimofeyChernyshev/LCT-hack-2/pkg/resume"
+	"github.com/TimofeyChernyshev/LCT-hack-2/internal/search/domain"
+	apisearch "github.com/TimofeyChernyshev/LCT-hack-2/internal/search/infrastructure/http/api"
+	"github.com/TimofeyChernyshev/LCT-hack-2/internal/search/repository"
+	"github.com/TimofeyChernyshev/LCT-hack-2/internal/search/service"
+	"github.com/TimofeyChernyshev/LCT-hack-2/pkg/resume"
 )
 
 type Handler struct {

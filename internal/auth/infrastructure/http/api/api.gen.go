@@ -20,6 +20,24 @@ import (
 	openapi_types "github.com/oapi-codegen/runtime/types"
 )
 
+// Defines values for ConsentType.
+const (
+	ConsentTypePdnProcessing      ConsentType = "pdn_processing"
+	ConsentTypeProfilePublication ConsentType = "profile_publication"
+)
+
+// Valid indicates whether the value is a known member of the ConsentType enum.
+func (e ConsentType) Valid() bool {
+	switch e {
+	case ConsentTypePdnProcessing:
+		return true
+	case ConsentTypeProfilePublication:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for UserRole.
 const (
 	Admin     UserRole = "admin"
@@ -62,6 +80,54 @@ func (e UserStatus) Valid() bool {
 	}
 }
 
+// Defines values for GrantConsentParamsType.
+const (
+	GrantConsentParamsTypePdnProcessing      GrantConsentParamsType = "pdn_processing"
+	GrantConsentParamsTypeProfilePublication GrantConsentParamsType = "profile_publication"
+)
+
+// Valid indicates whether the value is a known member of the GrantConsentParamsType enum.
+func (e GrantConsentParamsType) Valid() bool {
+	switch e {
+	case GrantConsentParamsTypePdnProcessing:
+		return true
+	case GrantConsentParamsTypeProfilePublication:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for RevokeConsentParamsType.
+const (
+	RevokeConsentParamsTypePdnProcessing      RevokeConsentParamsType = "pdn_processing"
+	RevokeConsentParamsTypeProfilePublication RevokeConsentParamsType = "profile_publication"
+)
+
+// Valid indicates whether the value is a known member of the RevokeConsentParamsType enum.
+func (e RevokeConsentParamsType) Valid() bool {
+	switch e {
+	case RevokeConsentParamsTypePdnProcessing:
+		return true
+	case RevokeConsentParamsTypeProfilePublication:
+		return true
+	default:
+		return false
+	}
+}
+
+// Consent defines model for Consent.
+type Consent struct {
+	GrantedAt time.Time          `json:"grantedAt"`
+	Id        openapi_types.UUID `json:"id"`
+	RevokedAt *time.Time         `json:"revokedAt,omitempty"`
+	Type      ConsentType        `json:"type"`
+	Version   string             `json:"version"`
+}
+
+// ConsentType defines model for Consent.Type.
+type ConsentType string
+
 // Error defines model for Error.
 type Error struct {
 	Code    string `json:"code"`
@@ -87,9 +153,11 @@ type RefreshRequest struct {
 
 // RegisterRequest defines model for RegisterRequest.
 type RegisterRequest struct {
-	Email    openapi_types.Email `json:"email"`
-	Password string              `json:"password"`
-	Role     UserRole            `json:"role"`
+	ConsentPdn                bool                `json:"consentPdn"`
+	ConsentProfilePublication bool                `json:"consentProfilePublication"`
+	Email                     openapi_types.Email `json:"email"`
+	Password                  string              `json:"password"`
+	Role                      UserRole            `json:"role"`
 }
 
 // ResetPasswordRequest defines model for ResetPasswordRequest.
@@ -143,6 +211,12 @@ type NotFound = Error
 // Unauthorized defines model for Unauthorized.
 type Unauthorized = Error
 
+// GrantConsentParamsType defines parameters for GrantConsent.
+type GrantConsentParamsType string
+
+// RevokeConsentParamsType defines parameters for RevokeConsent.
+type RevokeConsentParamsType string
+
 // ForgotPasswordJSONBody defines parameters for ForgotPassword.
 type ForgotPasswordJSONBody struct {
 	Email openapi_types.Email `json:"email"`
@@ -194,6 +268,15 @@ type ServerInterface interface {
 	// ConfirmEmail Подтверждение email по токену из письма
 	// (POST /auth/confirm-email)
 	ConfirmEmail(c *gin.Context)
+
+	// (GET /auth/consents)
+	ListConsents(c *gin.Context)
+
+	// (POST /auth/consents/{type}/grant)
+	GrantConsent(c *gin.Context, pType GrantConsentParamsType)
+
+	// (POST /auth/consents/{type}/revoke)
+	RevokeConsent(c *gin.Context, pType RevokeConsentParamsType)
 	// ExternalCallback Callback внешнего identity-провайдера (задел под Keycloak/OIDC)
 	// (POST /auth/external/{provider}/callback)
 	ExternalCallback(c *gin.Context, provider string)
@@ -252,6 +335,69 @@ func (siw *ServerInterfaceWrapper) ConfirmEmail(c *gin.Context) {
 	}
 
 	siw.Handler.ConfirmEmail(c)
+}
+
+// ListConsents operation middleware
+func (siw *ServerInterfaceWrapper) ListConsents(c *gin.Context) {
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.ListConsents(c)
+}
+
+// GrantConsent operation middleware
+func (siw *ServerInterfaceWrapper) GrantConsent(c *gin.Context) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "type" -------------
+	var pType GrantConsentParamsType
+
+	err = runtime.BindStyledParameterWithOptions("simple", "type", c.Param("type"), &pType, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", ValueIsUnescaped: true})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter type: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.GrantConsent(c, pType)
+}
+
+// RevokeConsent operation middleware
+func (siw *ServerInterfaceWrapper) RevokeConsent(c *gin.Context) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "type" -------------
+	var pType RevokeConsentParamsType
+
+	err = runtime.BindStyledParameterWithOptions("simple", "type", c.Param("type"), &pType, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "", ValueIsUnescaped: true})
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter type: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.RevokeConsent(c, pType)
 }
 
 // ExternalCallback operation middleware
@@ -474,6 +620,9 @@ func RegisterHandlersWithOptions(router gin.IRouter, si ServerInterface, options
 	router.GET(options.BaseURL+"/auth/me", wrapper.Me)
 	router.POST(options.BaseURL+"/auth/external/:provider/callback", wrapper.ExternalCallback)
 	router.GET(options.BaseURL+"/internal/users/:userId", wrapper.InternalGetUser)
+	router.GET(options.BaseURL+"/auth/consents", wrapper.ListConsents)
+	router.POST(options.BaseURL+"/auth/consents/:type/grant", wrapper.GrantConsent)
+	router.POST(options.BaseURL+"/auth/consents/:type/revoke", wrapper.RevokeConsent)
 }
 
 // Base64 encoded, compressed with deflate, json marshaled OpenAPI spec.
@@ -481,41 +630,45 @@ func RegisterHandlersWithOptions(router gin.IRouter, si ServerInterface, options
 // const string: with thousands of chunks the chained `+` fold is several
 // times slower for the Go compiler than parsing a slice literal.
 var swaggerSpec = []string{
-	"3FndbhvHFX6VxbQXNroSJcUFXN45stSqVhJBstsLQyhWu0NxouUOMztUrAgEJCppY9it2yJAgBaJ27oP",
-	"wLBiREsm/QpnXqFPUpyZWXJJ7ZK0/lD4ij87c+bM+c7Pd87uE59XqjyikYxJcZ8IGld5FFP940MvWKef",
-	"1Wgs8ZfPI0kj/dWrVkPme5LxqPBpzCP8L/bLtOLht58KWiJF8pPCQHTBPI0LS0JwQer1uksCGvuCVVEI",
-	"KRL4DtrQgrY6gK56Bq8dOIEmvFUH0FOHpO6SRR6VQubfhCp/gx501ZdwBh04VQ3nFnStLh14gyq6Dq14",
-	"LHTUEfwIbaNqV71Qjduo6TIXWywIaHQDqn6D5lENdQRvBxZrq6fqL9BFXT7mcpnXouBmAHS0oV7DMbSh",
-	"Cz1U4FHk1WSZC/YFvTElmtBSDehpvE6gBy2Eh+BqKwDlGxnFfVIVvEqFZMbnfR5Q/KRPvEo1pKRIlj66",
-	"t7L6u4f3Hix9TFwi96r4ZywFi7bxghUax972yB7jHl4oqBfsOYJus1hSQYPzAuouEfSzGsOHxcfm+IHQ",
-	"zf56vvUp9SUeuPREUhF54aIXhluev5MK0eyrnFNZ0IAJ6stHguHzEhcVT5IiqQk2nYJZaq3ybRbl6qIN",
-	"MnSY+SfDoFUvjj/nIshQfUSXRER/R5Ze67QkaFzO1UyY5w/5jgnY8UcOrc4+zmB91ZaoeE9WabQty6Q4",
-	"v3DXJRUWJb/vZmwVPKSTouhRTMU6rptoVysv+74xlWt2Ye6lI/r52sUvI6fDxixzhw7LUlmDt+axjOj3",
-	"fJ/G8dKTKhM0vieHYAo8SWckq9AsqMzGPCdyE7+5gOQJ/umSWkzFNFCfs1da55Fz3HOWyLiCPTrXxLne",
-	"8E54Zol/ZK88ku8E9SQN3sW47xCM+sFvqGAlNsUZj5OdLolqYUg26y5hwXC2rbGAXDp0XRJLT9biaXZs",
-	"mJWjdtZqJPfWp/eFuimj5gGxbvWlUa2iK4QXBQwtoqVWQ75HBTpUUGFpNAcXTqmWEuP5ku2ijK2Q+zu6",
-	"dAY0pJIGGULQDNSvCSb3NvDCxiG2qCeouFeT5cGv5cT8v/7tQ2IJAUoyTwd4lKWsGobBohLH/SNM4x/Q",
-	"hv9AR7OvA2iq30NHvXAdeAs9OFYNy2V/tFyoA23DGV0HzqCHO6HrOjamXEcdwg+G66KEJn6FMy2vBV1o",
-	"q6+tDBbQSDK5N4uaMomWJ8sba85a6En0LOe/B984eGNng4pd5qMBd6mIjdLzs3Ozc2hyXqWRV2WkSD6Y",
-	"nZ+d07lelrXRCsjXCj6PSkxUZvoBUuUmkjHgNGVbCUhRk3ImKkuJ85iI/5AHe1fG9YZSSX3Yd6Wo0bo7",
-	"3LQszN05j5ZWMAObhCbfmZvL06MvvJBqh7TD1SoVT+yRIoGX4zHXBztISeEUn6gjB5kp/o3+8xzeQBPx",
-	"9LZj7fnosJt4hMGCWsJX2K8KvssCKuoF35K/fGhGaaLGWHgVKqnAY/YJQ8sg7sQlkaejIDmAjFrZTaE1",
-	"oLk7dM8PubeTwRo3r8cb8sjvVI4xd7VOqSlEVhPySh3CWxO0ppVtqa/QQ4ynzU/2tKGmadjXkounEwMm",
-	"ol4/NcyYrhlaSSuG6cm5pbtDdMwzGwfOA4te4ZOV+4u3xzhgiYttLmfSdDTb55b1wrUUbbygC1yQMmfy",
-	"2PN1axpfWchI+S91R6kbfeg5t2xst9ShRuAYmghKD06gpSvCU2hCWzWchbkFB44xnesWXT2FjmqoZw70",
-	"VMPBcmdNeHs0rXw7mIDozjqvSoyBLsSuLB8w3bRdU+Ieagjf5/jETR9M3jQYC43A/PeED5g6od2qkML3",
-	"T+Px5TU5FmB8fj0Ij7TWFy3O8E9oq0N1CB0bIaaOqq91FW1eImtaSqirXZoMPt6sbw5B8L1qwIl6Bq2E",
-	"kc0MqvXY2lyh5j5ITM9b/77+/yN6ZZlwzGwEj/Ds9rweZCQ/jpmbZERNPskZ+Cq04Y2moINEB02T6BY3",
-	"1pcd6GAOO1NH6g+6OnW16/dwkHoMTb2/i25ALuZIf4ZTOIWmOoKuavSFIslzbZ7OwNdmYpO49SD32WUT",
-	"wU2Pyge54vk7Ov6rtN3N7DRlQuQNMS9Jxzi48zN8jph19SS8AydJ42NS1/zPF2bg3/BtBplwyTbNyE82",
-	"Nq6pDNixR4Yv6yr6JXTQZFp3/JIMi1UDaZJ6cROZ51/QhlN1hLECr/M0eT4mA1mHzi8BNkv/H9WAm6rz",
-	"31kjvkgipJlqwvDZVRBy+B5+MNJSYWSmZ9MWkeT9wDgM7YrrAnF4aD0VivM3EKbZ0YA1BLM1pq6um26j",
-	"e46hxjmVCt6YVI+kutkHrHehCQBu+cXkLf3XliNekzk+ys9E45wnplEwYwc2njFdvh/h4sX02ve6STMw",
-	"3ZkMU/89acZkJ3mZ2DWpJO1Ap9BMu19zkvtNwHGaHnvohcu15YOMlzoXpvcvB+zEgd4gW17R8O0VxpDl",
-	"JRYR89VQy3SjfH4Qlw1ImXqhLH+BWmWyll/Z55esbMMBNJjjDwZsfGdi/Nht01D4Tx6M2G6V7dKIxrFT",
-	"FXyLpmxhDGCtwSI7f8TXPXFhHz9WgnqudVbs+l9SqTP7NINHI3Ps2HHCi5P65iXRuMoKdem881d0Tl0a",
-	"MHd0NTlUf4QuHOv00tENjm60TMXAhgqnSvlk1vj+yn3nVjKLOlYH6kgXoa+womKyamEqw31Z40DUkIrd",
-	"BMVhS6xy3wudgO4Sl9REaN+gFAuFEB+UeSyLd+fuzpP6Zl/wfgK+PqDu9n9b76tv1v83AA==",
+	"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",
+	"bwAAAP//",
 }
 
 // decodeSpec returns the embedded OpenAPI spec as raw JSON bytes,

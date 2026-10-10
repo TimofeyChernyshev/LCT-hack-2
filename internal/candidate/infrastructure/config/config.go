@@ -31,14 +31,23 @@ type Config struct {
 	TestingURL string `env:"TESTING_SERVICE_URL" envDefault:"http://testing:8080"`
 
 	// загрузка файлов
-	UploadDir     string `env:"CANDIDATE_UPLOAD_DIR" envDefault:"/var/lib/fsp/uploads"`
-	MaxUploadSize int64  `env:"CANDIDATE_MAX_UPLOAD_BYTES" envDefault:"10485760"` // 10 MiB
+	UploadDir      string `env:"CANDIDATE_UPLOAD_DIR" envDefault:"/var/lib/fsp/uploads"`
+	MaxUploadBytes int64  `env:"CANDIDATE_MAX_UPLOAD_BYTES" envDefault:"10485760"`
 
 	// HTTP-клиенты
 	HTTPTimeout time.Duration `env:"CANDIDATE_HTTP_TIMEOUT" envDefault:"5s"`
 	HTTPRetries int           `env:"CANDIDATE_HTTP_RETRIES" envDefault:"3"`
 
 	CORSAllowedOrigins []string `env:"CORS_ALLOWED_ORIGINS" envSeparator:"," envDefault:"http://localhost:3000"`
+
+	InternalToken string `env:"INTERNAL_TOKEN" envDefault:"dev-internal-token"`
+
+	RateLimiter RateLimiterConfig `envPrefix:"CANDIDATE_RATE_LIMITER_"`
+}
+
+type RateLimiterConfig struct {
+	RPS   float64 `env:"RPS" envDefault:"50"`
+	Burst int     `env:"BURST" envDefault:"100"`
 }
 
 func (c Config) DSN() string {

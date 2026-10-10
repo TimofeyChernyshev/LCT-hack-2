@@ -8,7 +8,7 @@ import (
 
 	"github.com/google/uuid"
 
-	"TimofeyChernyshev/LCT-hack-2/internal/testing/domain"
+	"github.com/TimofeyChernyshev/LCT-hack-2/internal/testing/domain"
 	_ "github.com/jackc/pgx/v5/stdlib"
 )
 

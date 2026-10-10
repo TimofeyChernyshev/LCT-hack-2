@@ -9,8 +9,8 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"TimofeyChernyshev/LCT-hack-2/internal/search/domain"
-	"TimofeyChernyshev/LCT-hack-2/internal/search/infrastructure/config"
+	"github.com/TimofeyChernyshev/LCT-hack-2/internal/search/domain"
+	"github.com/TimofeyChernyshev/LCT-hack-2/internal/search/infrastructure/config"
 )
 
 type mockRepo struct {

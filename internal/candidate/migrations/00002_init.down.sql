@@ -1,3 +1,4 @@
+-- +goose Up
 CREATE TABLE candidate_profiles (
   user_id             UUID PRIMARY KEY, -- = auth.users.id
   first_name          TEXT,
@@ -10,9 +11,12 @@ CREATE TABLE candidate_profiles (
   current_category_id UUID,
   current_grade_id    UUID,
   specialization_id   UUID,
-  fsp_member_id       TEXT, -- nullable, ок если нет
-  fsp_linked_at       TIMESTAMPTZ,
-  visibility          JSONB NOT NULL DEFAULT '{}'::jsonb, -- {contacts:true, fsp:true, ...}
+  fsp_member_id       TEXT,
+  salary_min          INT,
+  salary_max          INT,
+  salary_currency     TEXT DEFAULT 'RUB',
+  soft_skills         TEXT[] NOT NULL DEFAULT '{}',
+  visibility          JSONB NOT NULL DEFAULT '{}'::jsonb,
   created_at          TIMESTAMPTZ NOT NULL DEFAULT now(),
   updated_at          TIMESTAMPTZ NOT NULL DEFAULT now()
 );
@@ -32,11 +36,36 @@ CREATE TABLE candidate_contacts (
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
+CREATE TABLE candidate_visibility (
+  user_id     UUID PRIMARY KEY REFERENCES candidate_profiles(user_id) ON DELETE CASCADE,
+  contacts    BOOLEAN NOT NULL DEFAULT TRUE,
+  links       BOOLEAN NOT NULL DEFAULT TRUE,
+  fsp         BOOLEAN NOT NULL DEFAULT TRUE,
+  experience  BOOLEAN NOT NULL DEFAULT TRUE,
+  resume      BOOLEAN NOT NULL DEFAULT TRUE,
+  salary      BOOLEAN NOT NULL DEFAULT TRUE,
+  soft_skills BOOLEAN NOT NULL DEFAULT TRUE,
+  updated_at  TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+CREATE TABLE contact_reveals (
+  id                 UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  candidate_user_id  UUID NOT NULL,
+  employer_user_id   UUID NOT NULL,
+  entity_type        TEXT NOT NULL CHECK (entity_type IN ('invitation','application')),
+  entity_id          UUID NOT NULL,
+  reason             TEXT NOT NULL CHECK (reason IN ('invitation_accepted','application_sent')),
+  revealed_at        TIMESTAMPTZ NOT NULL DEFAULT now(),
+  UNIQUE (candidate_user_id, employer_user_id, entity_type, entity_id)
+);
+CREATE INDEX idx_reveals_pair ON contact_reveals(candidate_user_id, employer_user_id);
+
 CREATE TABLE resumes (
   id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id    UUID NOT NULL,
   title      TEXT NOT NULL,
   source     TEXT NOT NULL CHECK (source IN ('manual','pdf_upload','generated')),
+  content    TEXT,
   file_path  TEXT,
   parsed     JSONB,
   is_primary BOOLEAN NOT NULL DEFAULT FALSE,
@@ -98,3 +127,12 @@ CREATE TABLE candidate_category_history (
   effective_to      TIMESTAMPTZ
 );
 CREATE INDEX idx_cat_hist_user ON candidate_category_history(user_id, effective_from DESC);
+
+-- +goose Down
+DROP TABLE candidate_category_history;
+DROP TABLE fsp_achievements;
+DROP TABLE candidate_experiences;
+DROP TABLE candidate_technologies;
+DROP TABLE resumes;
+DROP TABLE candidate_contacts;
+DROP TABLE candidate_profiles;

@@ -5,7 +5,7 @@ import (
 
 	"github.com/google/uuid"
 
-	"TimofeyChernyshev/LCT-hack-2/pkg/ranking"
+	"github.com/TimofeyChernyshev/LCT-hack-2/pkg/ranking"
 )
 
 // CandidateSearchDoc represents a candidate's indexed profile in search_db

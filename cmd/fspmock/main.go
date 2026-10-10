@@ -13,7 +13,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"TimofeyChernyshev/LCT-hack-2/pkg/fsp"
+	"github.com/TimofeyChernyshev/LCT-hack-2/pkg/fsp"
 )
 
 func main() {

@@ -4,7 +4,7 @@ import (
 	"errors"
 	"time"
 
-	"TimofeyChernyshev/LCT-hack-2/internal/testing/domain"
+	"github.com/TimofeyChernyshev/LCT-hack-2/internal/testing/domain"
 )
 
 var (

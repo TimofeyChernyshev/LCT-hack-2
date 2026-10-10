@@ -1,5 +1,5 @@
 package: apidict
-output: internal/dict/infrastructure/http/api.gen.go
+output: internal/dict/infrastructure/http/api/api.gen.go
 generate:
   models: true
   gin-server: true

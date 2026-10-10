@@ -12,8 +12,8 @@ import (
 
 	"github.com/google/uuid"
 
-	"TimofeyChernyshev/LCT-hack-2/internal/testing/domain"
-	"TimofeyChernyshev/LCT-hack-2/pkg/fsp"
+	"github.com/TimofeyChernyshev/LCT-hack-2/internal/testing/domain"
+	"github.com/TimofeyChernyshev/LCT-hack-2/pkg/fsp"
 )
 
 // LinkFSP links candidate's account to an FSP registry member ID, enriching profile with achievements
