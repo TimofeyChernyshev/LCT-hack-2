@@ -1,0 +1,25 @@
+# Git & IDE
+.git
+.gitignore
+.github
+.idea
+.vscode
+.DS_Store
+
+# Frontend host dependencies and build artifacts
+front/node_modules
+front/dist
+
+# Python artifacts
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.venv
+venv
+ENV
+
+# Documentation & logs
+docs
+for_devs
+*.log
