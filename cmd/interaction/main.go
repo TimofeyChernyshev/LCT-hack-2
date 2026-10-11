@@ -45,7 +45,7 @@ func main() {
 	if token == "" {
 		token = "dev-internal-token"
 	}
-	router := interactionhttp.NewRouter(interactionhttp.NewServer(pool, cfg.CandidateURL, token), jwtx.NewHS256Signer(cfg.JWTSecret, cfg.JWTIssuer), cfg.CORSAllowedOrigins, cfg.Env)
+	router := interactionhttp.NewRouter(interactionhttp.NewServer(pool, cfg.CandidateURL, cfg.EmployerURL, token), jwtx.NewHS256Signer(cfg.JWTSecret, cfg.JWTIssuer), cfg.CORSAllowedOrigins, cfg.Env)
 	srv := &http.Server{Addr: ":" + cfg.HTTPPort, Handler: router, ReadHeaderTimeout: 5 * time.Second}
 	go func() {
 		log.Info("interaction service started", "port", cfg.HTTPPort)

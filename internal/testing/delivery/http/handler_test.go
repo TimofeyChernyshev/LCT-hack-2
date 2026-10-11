@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"fmt"
 	"mime/multipart"
 	"net/http"
 	"net/http/httptest"
@@ -26,7 +27,8 @@ type mockRepo struct {
 	items       map[uuid.UUID]*domain.SessionItem
 	tasks       map[uuid.UUID]*domain.Task
 	answers     map[uuid.UUID]*domain.TestAnswer
-	fspProfiles map[uuid.UUID]*domain.CandidateFSPProfile
+	fspProfiles   map[uuid.UUID]*domain.CandidateFSPProfile
+	periodicTasks []domain.PeriodicTask
 }
 
 func newMockRepo() *mockRepo {
@@ -154,10 +156,20 @@ func (m *mockRepo) CreateGradeChangeEvent(ctx context.Context, event *domain.Gra
 }
 
 func (m *mockRepo) ListPeriodicTasks(ctx context.Context, categoryID *uuid.UUID) ([]domain.PeriodicTask, error) {
-	return nil, nil
+	if categoryID == nil {
+		return m.periodicTasks, nil
+	}
+	var res []domain.PeriodicTask
+	for _, t := range m.periodicTasks {
+		if t.CategoryID == *categoryID {
+			res = append(res, t)
+		}
+	}
+	return res, nil
 }
 
 func (m *mockRepo) CreatePeriodicTask(ctx context.Context, task *domain.PeriodicTask) error {
+	m.periodicTasks = append(m.periodicTasks, *task)
 	return nil
 }
 
@@ -242,6 +254,8 @@ func setupTestServer() (*gin.Engine, uuid.UUID) {
 	router.POST("/resumes/parse-pdf", handler.ParseResumePDF)
 	router.POST("/me/resumes/upload", handler.ParseResumePDF)
 	router.POST("/candidates/export-pdf", handler.ExportCandidatePDF)
+	router.GET("/periodic-tasks", handler.ListTaskResponses)
+	router.POST("/periodic-tasks/reactions", handler.ReactToAnswer)
 
 	testUserID := uuid.New()
 	return router, testUserID
@@ -525,5 +539,107 @@ func TestHTTP_ExportCandidatePDF(t *testing.T) {
 		t.Errorf("expected PDF header %%PDF-1.4")
 	}
 }
+
+func TestHTTP_PeriodicTasks(t *testing.T) {
+	router, userID := setupTestServer()
+	categoryID := uuid.New()
+
+	// 1. Employer creates periodic task: POST /periodic-tasks
+	createReq := apitesting.CreatePeriodicTaskJSONRequestBody{
+		CategoryId: categoryID,
+		Title:      "Оптимизация SQL-запроса",
+		Body:       "Напишите запрос с window function для расчета скользящего среднего",
+	}
+	createBytes, _ := json.Marshal(createReq)
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest(http.MethodPost, "/periodic-tasks", bytes.NewReader(createBytes))
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set(auth.HeaderUserID, userID.String())
+	router.ServeHTTP(w, req)
+
+	if w.Code != http.StatusCreated {
+		t.Fatalf("expected 201 on create periodic task, got %d: %s", w.Code, w.Body.String())
+	}
+	var createdTask apitesting.PeriodicTask
+	if err := json.Unmarshal(w.Body.Bytes(), &createdTask); err != nil {
+		t.Fatalf("failed to decode created task: %v", err)
+	}
+	if createdTask.Id == nil || createdTask.Title != "Оптимизация SQL-запроса" {
+		t.Errorf("unexpected created task: %+v", createdTask)
+	}
+
+	// 2. Candidate lists periodic tasks: GET /me/periodic-tasks
+	w = httptest.NewRecorder()
+	req, _ = http.NewRequest(http.MethodGet, "/me/periodic-tasks", nil)
+	req.Header.Set(auth.HeaderUserID, userID.String())
+	router.ServeHTTP(w, req)
+
+	if w.Code != http.StatusOK {
+		t.Fatalf("expected 200 on list periodic tasks, got %d", w.Code)
+	}
+	var listResp []apitesting.PeriodicTask
+	if err := json.Unmarshal(w.Body.Bytes(), &listResp); err != nil {
+		t.Fatalf("failed to decode periodic tasks list: %v", err)
+	}
+	if len(listResp) == 0 {
+		t.Fatalf("expected at least 1 periodic task, got 0")
+	}
+
+	// 3. Candidate submits solution: POST /me/periodic-tasks/:id/submit
+	taskID := *createdTask.Id
+	subReq := map[string]string{
+		"answer": "SELECT avg(val) OVER (ORDER BY ts ROWS BETWEEN 2 PRECEDING AND CURRENT ROW) FROM metrics;",
+		"kind":   "solution",
+	}
+	subBytes, _ := json.Marshal(subReq)
+	w = httptest.NewRecorder()
+	req, _ = http.NewRequest(http.MethodPost, fmt.Sprintf("/me/periodic-tasks/%s/submit", taskID), bytes.NewReader(subBytes))
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set(auth.HeaderUserID, userID.String())
+	req.Header.Set("X-User-Email", "candidate@example.com")
+	router.ServeHTTP(w, req)
+
+	if w.Code != http.StatusOK {
+		t.Fatalf("expected 200 on submit periodic task, got %d: %s", w.Code, w.Body.String())
+	}
+
+	// 4. Employer views task responses: GET /periodic-tasks
+	w = httptest.NewRecorder()
+	req, _ = http.NewRequest(http.MethodGet, "/periodic-tasks", nil)
+	req.Header.Set(auth.HeaderUserID, userID.String())
+	router.ServeHTTP(w, req)
+
+	if w.Code != http.StatusOK {
+		t.Fatalf("expected 200 on get periodic task responses, got %d: %s", w.Code, w.Body.String())
+	}
+	var answers []TaskAnswerItem
+	if err := json.Unmarshal(w.Body.Bytes(), &answers); err != nil {
+		t.Fatalf("failed to decode answers: %v", err)
+	}
+	if len(answers) == 0 {
+		t.Fatalf("expected at least 1 answer item, got 0")
+	}
+	if answers[0].TaskID != taskID {
+		t.Errorf("expected taskID %s, got %s", taskID, answers[0].TaskID)
+	}
+
+	// 5. Employer reacts to answer: POST /periodic-tasks/reactions
+	reactReq := map[string]interface{}{
+		"taskId":   taskID,
+		"userId":   userID,
+		"reaction": "like",
+	}
+	reactBytes, _ := json.Marshal(reactReq)
+	w = httptest.NewRecorder()
+	req, _ = http.NewRequest(http.MethodPost, "/periodic-tasks/reactions", bytes.NewReader(reactBytes))
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set(auth.HeaderUserID, userID.String())
+	router.ServeHTTP(w, req)
+
+	if w.Code != http.StatusOK {
+		t.Fatalf("expected 200 on react to answer, got %d: %s", w.Code, w.Body.String())
+	}
+}
+
 
 

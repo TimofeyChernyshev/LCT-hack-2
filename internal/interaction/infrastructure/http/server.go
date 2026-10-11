@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
+	"fmt"
 	"net/http"
 	"strings"
 	"time"
@@ -28,11 +30,17 @@ type invitation struct {
 type Server struct {
 	pool          *pgxpool.Pool
 	candidateURL  string
+	employerURL   string
 	internalToken string
 }
 
-func NewServer(pool *pgxpool.Pool, candidateURL, internalToken string) *Server {
-	return &Server{pool: pool, candidateURL: candidateURL, internalToken: internalToken}
+func NewServer(pool *pgxpool.Pool, candidateURL, employerURL, internalToken string) *Server {
+	return &Server{
+		pool:          pool,
+		candidateURL:  candidateURL,
+		employerURL:   employerURL,
+		internalToken: internalToken,
+	}
 }
 
 var _ api.ServerInterface = (*Server)(nil)
@@ -40,51 +48,133 @@ var _ api.ServerInterface = (*Server)(nil)
 func (s *Server) Healthz(c *gin.Context) { c.JSON(http.StatusOK, gin.H{"status": "ok"}) }
 func (s *Server) InternalRecordReveal(c *gin.Context) { c.Status(http.StatusCreated) }
 
+// CreateInvitation — отправка приглашения (LHH / Обратный подбор).
+// Обязательная валидация: вилка ЗП в рублях (salary_min > 0, salary_max >= salary_min), описание, контакты.
 func (s *Server) CreateInvitation(c *gin.Context) {
 	user, ok := mustUser(c)
 	if !ok {
 		return
 	}
+	if user.Role != "employer" && user.Role != "admin" {
+		httpx.GinError(c, http.StatusForbidden, "forbidden", "только работодатель может отправлять приглашения")
+		return
+	}
+
 	var body struct {
 		api.CreateInvitationRequest
 		EmployerContact string `json:"employerContact"`
+		CompanyName     string `json:"companyName"`
 	}
-	if err := c.ShouldBindJSON(&body); err != nil || body.Message == "" || body.SalaryMax < body.SalaryMin {
-		httpx.GinError(c, http.StatusBadRequest, "invalid_body", "нужны текст приглашения и вилка")
+	if err := c.ShouldBindJSON(&body); err != nil {
+		httpx.GinError(c, http.StatusBadRequest, "invalid_body", "некорректное тело запроса")
 		return
 	}
-	employerID, _ := uuid.Parse(user.ID)
-	companyID := uuid.New()
+
+	if body.CandidateUserId == uuid.Nil {
+		httpx.GinError(c, http.StatusBadRequest, "invalid_candidate", "укажите кандидата")
+		return
+	}
+
+	if strings.TrimSpace(body.Message) == "" {
+		httpx.GinError(c, http.StatusBadRequest, "invalid_message", "описание предложения обязательно")
+		return
+	}
+
+	if strings.TrimSpace(body.EmployerContact) == "" {
+		httpx.GinError(c, http.StatusBadRequest, "invalid_contact", "способ связи с работодателем обязателен")
+		return
+	}
+
+	// Обязательная валидация вилки зарплаты в рублях
+	if body.SalaryMin <= 0 || body.SalaryMax <= 0 || body.SalaryMax < body.SalaryMin {
+		httpx.GinError(c, http.StatusBadRequest, "invalid_salary", "вилка зарплаты в рублях обязательна: salary_min > 0 и salary_max >= salary_min")
+		return
+	}
+
 	currency := "RUB"
 	if body.Currency != nil && *body.Currency != "" {
+		if *body.Currency != "RUB" {
+			httpx.GinError(c, http.StatusBadRequest, "invalid_currency", "валюта вилки зарплаты должна быть в рублях (RUB)")
+			return
+		}
 		currency = *body.Currency
 	}
-	item := invitation{}
-	var contact *string
-	if body.EmployerContact != "" {
-		contact = &body.EmployerContact
+
+	employerID, err := uuid.Parse(user.ID)
+	if err != nil {
+		httpx.GinError(c, http.StatusUnauthorized, "unauthorized", "некорректный ID пользователя")
+		return
 	}
-	err := s.pool.QueryRow(c.Request.Context(), `
-		INSERT INTO invitations (employer_user_id, company_id, candidate_user_id, vacancy_id, need_id, message, salary_min, salary_max, currency, contact_channel, employer_contact)
-		VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)
-		RETURNING id, employer_user_id, company_id, candidate_user_id, vacancy_id, need_id, message, salary_min, salary_max, currency, contact_channel, status, created_at, employer_contact`,
-		employerID, companyID, body.CandidateUserId, body.VacancyId, body.NeedId, body.Message, body.SalaryMin, body.SalaryMax, currency, body.ContactChannel, contact,
-	).Scan(&item.Id, &item.EmployerUserId, &item.CompanyId, &item.CandidateUserId, &item.VacancyId, &item.NeedId, &item.Message, &item.SalaryMin, &item.SalaryMax, &item.Currency, &item.ContactChannel, &item.Status, &item.CreatedAt, &item.EmployerContact)
+
+	companyID := uuid.New()
+	companyName := "Компания"
+	if strings.TrimSpace(body.CompanyName) != "" {
+		companyName = strings.TrimSpace(body.CompanyName)
+	}
+
+	// Попытка получить компанию из employer service
+	if s.employerURL != "" && c.GetHeader("Authorization") != "" {
+		if comp, err := s.fetchEmployerCompany(c.Request.Context(), c.GetHeader("Authorization")); err == nil {
+			if comp.ID != uuid.Nil {
+				companyID = comp.ID
+			}
+			if comp.Name != "" {
+				companyName = comp.Name
+			}
+		}
+	}
+
+	contact := strings.TrimSpace(body.EmployerContact)
+	item := invitation{}
+	err = s.pool.QueryRow(c.Request.Context(), `
+		INSERT INTO invitations (employer_user_id, company_id, candidate_user_id, vacancy_id, need_id,
+		                        message, salary_min, salary_max, currency, contact_channel,
+		                        employer_contact, company_name, status)
+		VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,'sent')
+		RETURNING id, employer_user_id, company_id, candidate_user_id, vacancy_id, need_id,
+		          message, salary_min, salary_max, currency, contact_channel, status,
+		          created_at, status_updated_at, employer_contact, company_name`,
+		employerID, companyID, body.CandidateUserId, body.VacancyId, body.NeedId,
+		body.Message, body.SalaryMin, body.SalaryMax, currency, body.ContactChannel,
+		contact, companyName,
+	).Scan(
+		&item.Id, &item.EmployerUserId, &item.CompanyId, &item.CandidateUserId,
+		&item.VacancyId, &item.NeedId, &item.Message, &item.SalaryMin, &item.SalaryMax,
+		&item.Currency, &item.ContactChannel, &item.Status, &item.CreatedAt,
+		&item.StatusUpdatedAt, &item.EmployerContact, &item.CompanyName,
+	)
 	if err != nil {
 		httpx.GinError(c, http.StatusInternalServerError, "internal", "приглашение не отправилось")
 		return
 	}
-	name := "Компания"
-	item.CompanyName = &name
+
+	if item.CompanyName == nil || *item.CompanyName == "" {
+		item.CompanyName = &companyName
+	}
+
+	// Фиксация создания в истории статусов
+	_, _ = s.pool.Exec(c.Request.Context(), `
+		INSERT INTO interaction_status_history (entity_type, entity_id, from_status, to_status, actor_user_id)
+		VALUES ('invitation', $1, NULL, 'sent', $2)`, item.Id, employerID)
+
 	c.JSON(http.StatusCreated, item)
 }
 
+// ListMyInvitationsAsEmployer — исходящие приглашения работодателя.
 func (s *Server) ListMyInvitationsAsEmployer(c *gin.Context) {
 	user, ok := mustUser(c)
 	if !ok {
 		return
 	}
-	id, _ := uuid.Parse(user.ID)
+	if user.Role != "employer" && user.Role != "admin" {
+		httpx.GinError(c, http.StatusForbidden, "forbidden", "только работодатель")
+		return
+	}
+	id, err := uuid.Parse(user.ID)
+	if err != nil {
+		httpx.GinError(c, http.StatusUnauthorized, "unauthorized", "некорректный ID пользователя")
+		return
+	}
 	items, err := s.list(c, `WHERE employer_user_id = $1`, id)
 	if err != nil {
 		httpx.GinError(c, http.StatusInternalServerError, "internal", "приглашения не прочитались")
@@ -93,12 +183,47 @@ func (s *Server) ListMyInvitationsAsEmployer(c *gin.Context) {
 	c.JSON(http.StatusOK, items)
 }
 
+// ListIncomingInvitations — входящие приглашения соискателя.
+// Переводит статус 'sent' в 'viewed' (кандидат ознакомился с приглашением).
 func (s *Server) ListIncomingInvitations(c *gin.Context) {
 	user, ok := mustUser(c)
 	if !ok {
 		return
 	}
-	id, _ := uuid.Parse(user.ID)
+	if user.Role != "candidate" && user.Role != "admin" {
+		httpx.GinError(c, http.StatusForbidden, "forbidden", "только соискатель")
+		return
+	}
+	id, err := uuid.Parse(user.ID)
+	if err != nil {
+		httpx.GinError(c, http.StatusUnauthorized, "unauthorized", "некорректный ID пользователя")
+		return
+	}
+
+	ctx := c.Request.Context()
+
+	// Автоматический переход sent -> viewed при просмотре списка приглашений
+	rows, err := s.pool.Query(ctx, `
+		UPDATE invitations
+		SET status = 'viewed', status_updated_at = now()
+		WHERE candidate_user_id = $1 AND status = 'sent'
+		RETURNING id`, id)
+	if err == nil {
+		var updatedIDs []uuid.UUID
+		for rows.Next() {
+			var invID uuid.UUID
+			if err := rows.Scan(&invID); err == nil {
+				updatedIDs = append(updatedIDs, invID)
+			}
+		}
+		rows.Close()
+		for _, invID := range updatedIDs {
+			_, _ = s.pool.Exec(ctx, `
+				INSERT INTO interaction_status_history (entity_type, entity_id, from_status, to_status, actor_user_id)
+				VALUES ('invitation', $1, 'sent', 'viewed', $2)`, invID, id)
+		}
+	}
+
 	items, err := s.list(c, `WHERE candidate_user_id = $1`, id)
 	if err != nil {
 		httpx.GinError(c, http.StatusInternalServerError, "internal", "приглашения не прочитались")
@@ -107,8 +232,14 @@ func (s *Server) ListIncomingInvitations(c *gin.Context) {
 	c.JSON(http.StatusOK, items)
 }
 
-func (s *Server) AcceptInvitation(c *gin.Context, id openapi_types.UUID) { s.setStatus(c, id, "accepted", true) }
-func (s *Server) RejectInvitation(c *gin.Context, id openapi_types.UUID) { s.setStatus(c, id, "rejected", true) }
+func (s *Server) AcceptInvitation(c *gin.Context, id openapi_types.UUID) {
+	s.setStatus(c, id, "accepted", true)
+}
+
+func (s *Server) RejectInvitation(c *gin.Context, id openapi_types.UUID) {
+	s.setStatus(c, id, "rejected", true)
+}
+
 func (s *Server) WithdrawInvitation(c *gin.Context, id openapi_types.UUID) {
 	s.setStatus(c, id, "withdrawn", false)
 }
@@ -116,6 +247,10 @@ func (s *Server) WithdrawInvitation(c *gin.Context, id openapi_types.UUID) {
 func (s *Server) CreateApplication(c *gin.Context) {
 	user, ok := mustUser(c)
 	if !ok {
+		return
+	}
+	if user.Role != "candidate" && user.Role != "admin" {
+		httpx.GinError(c, http.StatusForbidden, "forbidden", "только соискатель")
 		return
 	}
 	var body api.CreateApplicationRequest
@@ -174,41 +309,245 @@ func (s *Server) ListApplicationsForVacancy(c *gin.Context, vacancyID openapi_ty
 	if _, ok := mustUser(c); !ok {
 		return
 	}
-	c.JSON(http.StatusOK, []api.Application{})
+	if s.pool == nil {
+		c.JSON(http.StatusOK, []api.Application{})
+		return
+	}
+	rows, err := s.pool.Query(c.Request.Context(), `
+		SELECT id, candidate_user_id, vacancy_id, company_id, cover_letter, status, created_at
+		FROM applications WHERE vacancy_id = $1 ORDER BY created_at DESC`, vacancyID)
+	if err != nil {
+		httpx.GinError(c, http.StatusInternalServerError, "internal", "отклики не прочитались")
+		return
+	}
+	defer rows.Close()
+	out := []api.Application{}
+	for rows.Next() {
+		var item api.Application
+		var status api.ApplicationStatus
+		if err := rows.Scan(&item.Id, &item.CandidateUserId, &item.VacancyId, &item.CompanyId, &item.CoverLetter, &status, &item.CreatedAt); err != nil {
+			httpx.GinError(c, http.StatusInternalServerError, "internal", "отклики не прочитались")
+			return
+		}
+		item.Status = &status
+		out = append(out, item)
+	}
+	c.JSON(http.StatusOK, out)
 }
-func (s *Server) AcceptApplication(c *gin.Context, id openapi_types.UUID) { c.Status(http.StatusOK) }
-func (s *Server) RejectApplication(c *gin.Context, id openapi_types.UUID) { c.Status(http.StatusOK) }
 
-func (s *Server) setStatus(c *gin.Context, id openapi_types.UUID, status string, asCandidate bool) {
+func (s *Server) AcceptApplication(c *gin.Context, id openapi_types.UUID) {
 	user, ok := mustUser(c)
 	if !ok {
 		return
 	}
+	if s.pool == nil {
+		httpx.GinError(c, http.StatusNotFound, "not_found", "отклик не найден")
+		return
+	}
 	uid, _ := uuid.Parse(user.ID)
+	ctx := c.Request.Context()
+
+	var candidateUserID uuid.UUID
+	var curStatus string
+	err := s.pool.QueryRow(ctx, `
+		SELECT candidate_user_id, status FROM applications WHERE id = $1`, id).
+		Scan(&candidateUserID, &curStatus)
+	if err != nil {
+		httpx.GinError(c, http.StatusNotFound, "not_found", "отклик не найден")
+		return
+	}
+
+	_, err = s.pool.Exec(ctx, `
+		UPDATE applications SET status = 'accepted', status_updated_at = now() WHERE id = $1`, id)
+	if err != nil {
+		httpx.GinError(c, http.StatusInternalServerError, "internal", "не удалось принять отклик")
+		return
+	}
+
+	_, _ = s.pool.Exec(ctx, `
+		INSERT INTO interaction_status_history (entity_type, entity_id, from_status, to_status, actor_user_id)
+		VALUES ('application', $1, $2, 'accepted', $3)`, id, curStatus, uid)
+
+	_, _ = s.pool.Exec(ctx, `
+		INSERT INTO contact_reveals (candidate_user_id, employer_user_id, reason, entity_type, entity_id)
+		VALUES ($1, $2, 'application_sent', 'application', $3)
+		ON CONFLICT (candidate_user_id, employer_user_id, entity_type, entity_id) DO NOTHING`,
+		candidateUserID, uid, id)
+
+	c.Status(http.StatusOK)
+}
+
+func (s *Server) RejectApplication(c *gin.Context, id openapi_types.UUID) {
+	user, ok := mustUser(c)
+	if !ok {
+		return
+	}
+	if s.pool == nil {
+		httpx.GinError(c, http.StatusNotFound, "not_found", "отклик не найден")
+		return
+	}
+	uid, _ := uuid.Parse(user.ID)
+	ctx := c.Request.Context()
+
+	var curStatus string
+	err := s.pool.QueryRow(ctx, `
+		SELECT status FROM applications WHERE id = $1`, id).
+		Scan(&curStatus)
+	if err != nil {
+		httpx.GinError(c, http.StatusNotFound, "not_found", "отклик не найден")
+		return
+	}
+
+	_, err = s.pool.Exec(ctx, `
+		UPDATE applications SET status = 'rejected', status_updated_at = now() WHERE id = $1`, id)
+	if err != nil {
+		httpx.GinError(c, http.StatusInternalServerError, "internal", "не удалось отклонить отклик")
+		return
+	}
+
+	_, _ = s.pool.Exec(ctx, `
+		INSERT INTO interaction_status_history (entity_type, entity_id, from_status, to_status, actor_user_id)
+		VALUES ('application', $1, $2, 'rejected', $3)`, id, curStatus, uid)
+
+	c.Status(http.StatusOK)
+}
+
+// setStatus — FSM (конечный автомат) управления статусами приглашений.
+// Валидирует допустимость перехода, фиксирует историю и инициирует раскрытие контактов при 'accepted'.
+func (s *Server) setStatus(c *gin.Context, id openapi_types.UUID, targetStatus string, asCandidate bool) {
+	user, ok := mustUser(c)
+	if !ok {
+		return
+	}
+	uid, err := uuid.Parse(user.ID)
+	if err != nil {
+		httpx.GinError(c, http.StatusUnauthorized, "unauthorized", "некорректный ID пользователя")
+		return
+	}
+
 	column := "employer_user_id"
 	if asCandidate {
 		column = "candidate_user_id"
+		if user.Role != "candidate" && user.Role != "admin" {
+			httpx.GinError(c, http.StatusForbidden, "forbidden", "только соискатель")
+			return
+		}
+	} else {
+		if user.Role != "employer" && user.Role != "admin" {
+			httpx.GinError(c, http.StatusForbidden, "forbidden", "только работодатель")
+			return
+		}
 	}
-	item := invitation{}
-	err := s.pool.QueryRow(c.Request.Context(), `
-		UPDATE invitations SET status = $3, status_updated_at = now()
-		WHERE id = $1 AND `+column+` = $2
-		RETURNING id, employer_user_id, company_id, candidate_user_id, vacancy_id, need_id, message, salary_min, salary_max, currency, contact_channel, status, created_at, employer_contact`,
-		id, uid, status,
-	).Scan(&item.Id, &item.EmployerUserId, &item.CompanyId, &item.CandidateUserId, &item.VacancyId, &item.NeedId, &item.Message, &item.SalaryMin, &item.SalaryMax, &item.Currency, &item.ContactChannel, &item.Status, &item.CreatedAt, &item.EmployerContact)
+
+	ctx := c.Request.Context()
+
+	// 1. Получаем текущее состояние
+	var cur invitation
+	var curCompanyName *string
+	err = s.pool.QueryRow(ctx, `
+		SELECT id, employer_user_id, company_id, candidate_user_id, vacancy_id, need_id,
+		       message, salary_min, salary_max, currency, contact_channel, status,
+		       created_at, status_updated_at, employer_contact, company_name
+		FROM invitations
+		WHERE id = $1 AND `+column+` = $2`, id, uid).Scan(
+		&cur.Id, &cur.EmployerUserId, &cur.CompanyId, &cur.CandidateUserId,
+		&cur.VacancyId, &cur.NeedId, &cur.Message, &cur.SalaryMin, &cur.SalaryMax,
+		&cur.Currency, &cur.ContactChannel, &cur.Status, &cur.CreatedAt,
+		&cur.StatusUpdatedAt, &cur.EmployerContact, &curCompanyName)
 	if err != nil {
 		httpx.GinError(c, http.StatusNotFound, "not_found", "приглашение не найдено")
 		return
 	}
-	name := "Компания"
-	item.CompanyName = &name
-	if status == "accepted" && asCandidate {
-		s.recordReveal(c.Request.Context(), item)
+	if curCompanyName != nil && *curCompanyName != "" {
+		cur.CompanyName = curCompanyName
+	} else {
+		defName := "Компания"
+		cur.CompanyName = &defName
 	}
+
+	curStatus := string(cur.Status)
+
+	// Идемпотентность
+	if curStatus == targetStatus {
+		c.JSON(http.StatusOK, cur)
+		return
+	}
+
+	// Терминальные статусы нельзя перезаписывать
+	if curStatus == "accepted" || curStatus == "rejected" || curStatus == "withdrawn" || curStatus == "expired" {
+		httpx.GinError(c, http.StatusConflict, "invalid_state", "приглашение уже находится в завершённом статусе: "+curStatus)
+		return
+	}
+
+	// Валидация переходов FSM
+	switch targetStatus {
+	case "accepted", "rejected":
+		if !asCandidate {
+			httpx.GinError(c, http.StatusForbidden, "forbidden", "только соискатель может принять или отклонить приглашение")
+			return
+		}
+		if curStatus != "sent" && curStatus != "viewed" {
+			httpx.GinError(c, http.StatusConflict, "invalid_transition", "невозможно перевести приглашение в статус "+targetStatus+" из статуса "+curStatus)
+			return
+		}
+	case "withdrawn":
+		if asCandidate {
+			httpx.GinError(c, http.StatusForbidden, "forbidden", "только работодатель может отозвать приглашение")
+			return
+		}
+		if curStatus != "sent" && curStatus != "viewed" {
+			httpx.GinError(c, http.StatusConflict, "invalid_transition", "невозможно отозвать приглашение в статусе "+curStatus)
+			return
+		}
+	case "viewed":
+		if curStatus != "sent" {
+			c.JSON(http.StatusOK, cur)
+			return
+		}
+	default:
+		httpx.GinError(c, http.StatusBadRequest, "invalid_status", "недопустимый статус "+targetStatus)
+		return
+	}
+
+	item := cur
+	item.Status = api.InvitationStatus(targetStatus)
+	now := time.Now()
+	item.StatusUpdatedAt = &now
+
+	err = s.pool.QueryRow(ctx, `
+		UPDATE invitations
+		SET status = $3, status_updated_at = now()
+		WHERE id = $1 AND `+column+` = $2
+		RETURNING status_updated_at`,
+		id, uid, targetStatus,
+	).Scan(&item.StatusUpdatedAt)
+	if err != nil {
+		httpx.GinError(c, http.StatusInternalServerError, "internal", "не удалось обновить статус приглашения")
+		return
+	}
+
+	// Фиксация перехода в аудит-логе
+	_, _ = s.pool.Exec(ctx, `
+		INSERT INTO interaction_status_history (entity_type, entity_id, from_status, to_status, actor_user_id)
+		VALUES ('invitation', $1, $2, $3, $4)`,
+		id, curStatus, targetStatus, uid)
+
+	// При принятии соискателем — автоматическое раскрытие контактов работодателю
+	if targetStatus == "accepted" && asCandidate {
+		s.recordReveal(ctx, item)
+	}
+
 	c.JSON(http.StatusOK, item)
 }
 
 func (s *Server) recordReveal(ctx context.Context, item invitation) {
+	// Фиксация в contact_reveals базы данных interaction
+	_, _ = s.pool.Exec(ctx, `
+		INSERT INTO contact_reveals (candidate_user_id, employer_user_id, reason, entity_type, entity_id)
+		VALUES ($1, $2, 'invitation_accepted', 'invitation', $3)
+		ON CONFLICT (candidate_user_id, employer_user_id, entity_type, entity_id) DO NOTHING`,
+		item.CandidateUserId, item.EmployerUserId, item.Id)
+
 	if s.candidateURL == "" {
 		return
 	}
@@ -239,7 +578,9 @@ func (s *Server) recordReveal(ctx context.Context, item invitation) {
 
 func (s *Server) list(c *gin.Context, where string, id uuid.UUID) ([]invitation, error) {
 	rows, err := s.pool.Query(c.Request.Context(), `
-		SELECT id, employer_user_id, company_id, candidate_user_id, vacancy_id, need_id, message, salary_min, salary_max, currency, contact_channel, status, created_at, employer_contact
+		SELECT id, employer_user_id, company_id, candidate_user_id, vacancy_id, need_id,
+		       message, salary_min, salary_max, currency, contact_channel, status,
+		       created_at, status_updated_at, employer_contact, company_name
 		FROM invitations `+where+` ORDER BY created_at DESC`, id)
 	if err != nil {
 		return nil, err
@@ -248,14 +589,53 @@ func (s *Server) list(c *gin.Context, where string, id uuid.UUID) ([]invitation,
 	out := []invitation{}
 	for rows.Next() {
 		var item invitation
-		if err := rows.Scan(&item.Id, &item.EmployerUserId, &item.CompanyId, &item.CandidateUserId, &item.VacancyId, &item.NeedId, &item.Message, &item.SalaryMin, &item.SalaryMax, &item.Currency, &item.ContactChannel, &item.Status, &item.CreatedAt, &item.EmployerContact); err != nil {
+		var cName *string
+		if err := rows.Scan(
+			&item.Id, &item.EmployerUserId, &item.CompanyId, &item.CandidateUserId,
+			&item.VacancyId, &item.NeedId, &item.Message, &item.SalaryMin, &item.SalaryMax,
+			&item.Currency, &item.ContactChannel, &item.Status, &item.CreatedAt,
+			&item.StatusUpdatedAt, &item.EmployerContact, &cName,
+		); err != nil {
 			return nil, err
 		}
-		name := "Компания"
-		item.CompanyName = &name
+		if cName != nil && *cName != "" {
+			item.CompanyName = cName
+		} else {
+			defaultName := "Компания"
+			item.CompanyName = &defaultName
+		}
 		out = append(out, item)
 	}
 	return out, rows.Err()
+}
+
+type employerCompanyResp struct {
+	ID   uuid.UUID `json:"id"`
+	Name string    `json:"name"`
+}
+
+func (s *Server) fetchEmployerCompany(ctx context.Context, authHeader string) (employerCompanyResp, error) {
+	var res employerCompanyResp
+	if s.employerURL == "" {
+		return res, errors.New("no employer url configured")
+	}
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, strings.TrimRight(s.employerURL, "/")+"/me/company", nil)
+	if err != nil {
+		return res, err
+	}
+	req.Header.Set("Authorization", authHeader)
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return res, err
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		return res, fmt.Errorf("employer service returned %d", resp.StatusCode)
+	}
+	if err := json.NewDecoder(resp.Body).Decode(&res); err != nil {
+		return res, err
+	}
+	return res, nil
 }
 
 func NewRouter(si api.ServerInterface, signer jwtx.Signer, origins []string, env string) *gin.Engine {
@@ -263,12 +643,21 @@ func NewRouter(si api.ServerInterface, signer jwtx.Signer, origins []string, env
 		gin.SetMode(gin.ReleaseMode)
 	}
 	r := gin.New()
-	r.Use(cors.New(cors.Config{AllowOrigins: origins, AllowMethods: []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"}, AllowHeaders: []string{"Authorization", "Content-Type"}, MaxAge: 5 * time.Minute}))
-	w := &api.ServerInterfaceWrapper{Handler: si, ErrorHandler: func(c *gin.Context, err error, code int) {
-		c.AbortWithStatusJSON(code, gin.H{"code": "bad_request", "message": err.Error()})
-	}}
+	r.Use(cors.New(cors.Config{
+		AllowOrigins: origins,
+		AllowMethods: []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
+		AllowHeaders: []string{"Authorization", "Content-Type", "X-Request-ID", "X-Internal-Token"},
+		MaxAge:       5 * time.Minute,
+	}))
+	w := &api.ServerInterfaceWrapper{
+		Handler: si,
+		ErrorHandler: func(c *gin.Context, err error, code int) {
+			c.AbortWithStatusJSON(code, gin.H{"code": "bad_request", "message": err.Error()})
+		},
+	}
 	r.GET("/healthz", w.Healthz)
 	r.POST("/internal/reveals", w.InternalRecordReveal)
+
 	auth := r.Group("")
 	auth.Use(httpx.GinJWTAuth(signer), httpx.GinRequireVerifiedEmail())
 	auth.POST("/me/invitations", w.CreateInvitation)

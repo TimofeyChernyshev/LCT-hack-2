@@ -8,6 +8,7 @@ const candidateLinks = [
   { to: "/candidate", label: "Кабинет", end: true },
   { to: "/candidate/onboarding", label: "Анкета" },
   { to: "/candidate/test", label: "Тест" },
+  { to: "/candidate/tasks", label: "Задания" },
   { to: "/candidate/invitations", label: "Приглашения" },
   { to: "/candidate/vacancies", label: "Вакансии" },
   { to: "/candidate/settings", label: "Настройки" },
@@ -16,6 +17,7 @@ const candidateLinks = [
 const employerLinks = [
   { to: "/employer", label: "Компания", end: true },
   { to: "/employer/candidates", label: "Каталог" },
+  { to: "/employer/vacancies", label: "Вакансии" },
   { to: "/employer/invitations", label: "Приглашения" },
   { to: "/employer/tasks", label: "Задания" },
   { to: "/employer/settings", label: "Настройки" },

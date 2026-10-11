@@ -1,7 +1,7 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { useSearchParams } from "react-router-dom";
-import { api } from "../api/client";
-import type { CandidateCard, Invitation, Named, SearchHit, SearchPage, Technology } from "../api/types";
+import { api, downloadFile } from "../api/client";
+import type { CandidateCard, Invitation, Named, Need, SearchHit, SearchPage, Technology } from "../api/types";
 import { Button, Empty, Field, Modal, Notice, PageTitle, Select, Skeleton, TextArea, TextInput } from "../components/ui";
 import { loadCatalog } from "../lib/catalog";
 import { byId } from "../lib/format";
@@ -11,15 +11,18 @@ export function CatalogPage() {
   const [specs, setSpecs] = useState<Named[]>([]);
   const [grades, setGrades] = useState<Named[]>([]);
   const [techs, setTechs] = useState<Technology[]>([]);
+  const [needs, setNeeds] = useState<Need[]>([]);
   const [page, setPage] = useState<SearchPage | null>(null);
   const [selected, setSelected] = useState<SearchHit | null>(null);
   const [card, setCard] = useState<CandidateCard | null>(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
+  const [downloadingPdf, setDownloadingPdf] = useState(false);
   const [offer, setOffer] = useState(false);
   const [pending, setPending] = useState(false);
   const [draft, setDraft] = useState({ salaryMin: "", salaryMax: "", message: "", contactChannel: "telegram", employerContact: "" });
 
+  const needId = params.get("needId") ?? "";
   const specializationId = params.get("specializationId") ?? "";
   const gradeId = params.get("gradeId") ?? "";
   const hasFsp = params.get("hasFsp") === "true";
@@ -39,7 +42,21 @@ export function CatalogPage() {
         setTechs(catalog.technologies);
       })
       .catch(() => undefined);
+    api<Need[]>("employer", "/me/needs")
+      .then(setNeeds)
+      .catch(() => undefined);
   }, []);
+
+  async function handleDownloadCandidatePdf(userId: string) {
+    setDownloadingPdf(true);
+    try {
+      await downloadFile("search", `/candidates/${userId}/export-pdf`, `fsp_candidate_${userId.slice(0, 8)}.pdf`);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Не удалось скачать PDF соискателя");
+    } finally {
+      setDownloadingPdf(false);
+    }
+  }
 
   useEffect(() => {
     const query = new URLSearchParams();
@@ -140,6 +157,31 @@ export function CatalogPage() {
       <PageTitle title="Каталог" text="Контакты скрыты, пока кандидат не примет приглашение." />
       {error ? <Notice>{error}</Notice> : null}
       <div className="grid items-end gap-3 md:grid-cols-4">
+        {needs.length > 0 ? (
+          <Field label="Подборка под потребность">
+            <Select
+              value={needId}
+              onChange={(event) => {
+                const id = event.target.value;
+                const chosen = needs.find((n) => n.id === id);
+                if (chosen) {
+                  update({
+                    needId: id,
+                    specializationId: chosen.specializationId ?? "",
+                    gradeId: chosen.gradeId ?? "",
+                  });
+                } else {
+                  update({ needId: "" });
+                }
+              }}
+            >
+              <option value="">Все кандидаты (без фильтра)</option>
+              {needs.map((n) => (
+                <option key={n.id} value={n.id}>{n.title}</option>
+              ))}
+            </Select>
+          </Field>
+        ) : null}
         <Field label="Специализация">
           <Select value={specializationId} onChange={(event) => update({ specializationId: event.target.value })}>
             <option value="">Все</option>
@@ -221,7 +263,16 @@ export function CatalogPage() {
                   ? "Контакты скрыты до подтверждения кандидатом"
                   : [card?.contacts?.email, card?.contacts?.phone, card?.contacts?.telegram].filter(Boolean).join(", ") || "Контакты пустые"}
               </p>
-              <Button onClick={() => setOffer(true)}>Пригласить</Button>
+              <div className="flex flex-wrap gap-2">
+                <Button onClick={() => setOffer(true)}>Пригласить</Button>
+                <Button
+                  variant="ghost"
+                  disabled={downloadingPdf}
+                  onClick={() => void handleDownloadCandidatePdf(selected.userId)}
+                >
+                  {downloadingPdf ? "Скачивание..." : "📄 PDF-профиль"}
+                </Button>
+              </div>
             </div>
           ) : null}
         </aside>

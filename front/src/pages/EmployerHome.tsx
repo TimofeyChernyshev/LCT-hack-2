@@ -1,4 +1,5 @@
 import { useEffect, useState, type FormEvent } from "react";
+import { Link } from "react-router-dom";
 import { api } from "../api/client";
 import type { Company, Named, Need } from "../api/types";
 import { Button, Field, Modal, Notice, PageTitle, Salary, Select, TextArea, TextInput } from "../components/ui";
@@ -169,11 +170,24 @@ export function EmployerHome() {
       {needs.length > 0 ? (
         <ul className="divide-y divide-line border-y border-line">
           {needs.map((item) => (
-            <li key={item.id}>
-              <button type="button" className="flex w-full items-center justify-between gap-3 py-3 text-left" onClick={() => setViewing(item)}>
-                <span>{item.title}</span>
-                <span className="text-sm text-dim">Открыть</span>
+            <li key={item.id} className="flex flex-wrap items-center justify-between gap-3 py-3">
+              <button type="button" className="text-left font-medium hover:underline" onClick={() => setViewing(item)}>
+                {item.title}
+                <span className="ml-3 text-xs text-dim">
+                  {formatName(specs, item.specializationId)} · {formatName(grades, item.gradeId)}
+                </span>
               </button>
+              <div className="flex items-center gap-2">
+                <Link
+                  to={`/employer/candidates?specializationId=${item.specializationId ?? ""}&gradeId=${item.gradeId ?? ""}&needId=${item.id}`}
+                  className="inline-flex min-h-9 items-center border border-accent bg-deep px-3 text-xs font-medium hover:brightness-110"
+                >
+                  Подобрать кандидатов →
+                </Link>
+                <Button variant="ghost" className="px-2 py-1 text-xs" onClick={() => setViewing(item)}>
+                  Детали
+                </Button>
+              </div>
             </li>
           ))}
         </ul>
@@ -185,7 +199,17 @@ export function EmployerHome() {
             <p>{formatName(specs, viewing.specializationId) } · {formatName(grades, viewing.gradeId)}</p>
             <p>{workFormatLabel[viewing.workFormat ?? ""] ?? viewing.workFormat}</p>
             <Salary min={viewing.salaryMin} max={viewing.salaryMax} />
-            <Button type="button" variant="ghost" onClick={() => void removeNeed(viewing.id)}>Удалить</Button>
+            <div className="mt-2 flex flex-wrap gap-3">
+              <Link
+                to={`/employer/candidates?specializationId=${viewing.specializationId ?? ""}&gradeId=${viewing.gradeId ?? ""}&needId=${viewing.id}`}
+                className="inline-flex min-h-11 items-center bg-accent px-4 text-sm font-medium text-white hover:brightness-110"
+              >
+                Подобрать кандидатов по этой потребности
+              </Link>
+              <Button type="button" variant="ghost" onClick={() => void removeNeed(viewing.id)}>
+                Удалить
+              </Button>
+            </div>
           </div>
         </Modal>
       ) : null}

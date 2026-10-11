@@ -103,3 +103,22 @@ export async function api<T>(service: string, path: string, options: Options = {
   }
   return data as T;
 }
+
+export async function downloadFile(service: string, path: string, filename: string): Promise<void> {
+  const token = localStorage.getItem(accessKey);
+  const headers: HeadersInit = token ? { Authorization: `Bearer ${token}` } : {};
+  const response = await fetch(`${base}/api/${service}${path}`, { headers });
+  if (!response.ok) {
+    throw new ApiError(response.status, `Не удалось скачать файл (${response.status})`);
+  }
+  const blob = await response.blob();
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  window.URL.revokeObjectURL(url);
+}
+

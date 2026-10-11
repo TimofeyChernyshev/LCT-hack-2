@@ -134,7 +134,61 @@ func (s *Server) CreateNeed(c *gin.Context) {
 	c.JSON(http.StatusCreated, item)
 }
 
-func (s *Server) UpdateNeed(c *gin.Context, id openapi_types.UUID) { s.writeMissing(c, id) }
+func (s *Server) UpdateNeed(c *gin.Context, id openapi_types.UUID) {
+	owner, ok := owner(c)
+	if !ok {
+		return
+	}
+	var body api.NeedInput
+	if err := c.ShouldBindJSON(&body); err != nil {
+		httpx.GinError(c, http.StatusBadRequest, "invalid_body", "некорректное тело запроса")
+		return
+	}
+	if body.SalaryMin > 0 && body.SalaryMax > 0 && body.SalaryMax < body.SalaryMin {
+		httpx.GinError(c, http.StatusBadRequest, "invalid_body", "salary_min не может быть больше salary_max")
+		return
+	}
+
+	var stackParam *[]uuid.UUID
+	if body.Stack != nil {
+		arr := uuids(body.Stack)
+		stackParam = &arr
+	}
+	var statusParam *string
+	if body.Status != nil && *body.Status != "" {
+		st := string(*body.Status)
+		statusParam = &st
+	}
+
+	row := s.pool.QueryRow(c.Request.Context(), `
+		UPDATE employer_needs n
+		SET title = coalesce(nullif($3,''), n.title),
+		    description = coalesce(nullif($4,''), n.description),
+		    category_id = coalesce($5, n.category_id),
+		    specialization_id = coalesce($6, n.specialization_id),
+		    grade_id = coalesce($7, n.grade_id),
+		    stack = case when $8::uuid[] IS NOT NULL then $8 else n.stack end,
+		    salary_min = case when $9 > 0 then $9 else n.salary_min end,
+		    salary_max = case when $10 > 0 then $10 else n.salary_max end,
+		    work_format = coalesce($11, n.work_format),
+		    status = coalesce($12, n.status),
+		    updated_at = now()
+		FROM companies c
+		WHERE n.id = $1 AND n.company_id = c.id AND c.owner_user_id = $2
+		RETURNING n.id, n.title, n.description, n.category_id, n.specialization_id, n.grade_id,
+		          n.stack, n.salary_min, n.salary_max, n.currency, n.work_format, n.status`,
+		id, owner, body.Title, body.Description,
+		body.CategoryId, body.SpecializationId, body.GradeId,
+		stackParam, body.SalaryMin, body.SalaryMax,
+		formatOfNeed(body.WorkFormat), statusParam)
+	item, err := readNeed(row)
+	if err != nil {
+		httpx.GinError(c, http.StatusNotFound, "not_found", "потребность не найдена")
+		return
+	}
+	c.JSON(http.StatusOK, item)
+}
+
 func (s *Server) DeleteNeed(c *gin.Context, id openapi_types.UUID) {
 	owner, ok := owner(c)
 	if !ok {
@@ -149,8 +203,19 @@ func (s *Server) DeleteNeed(c *gin.Context, id openapi_types.UUID) {
 	}
 	c.Status(http.StatusNoContent)
 }
+
 func (s *Server) GetNeedMatches(c *gin.Context, id openapi_types.UUID, _ api.GetNeedMatchesParams) {
-	if _, ok := owner(c); !ok {
+	owner, ok := owner(c)
+	if !ok {
+		return
+	}
+	var needID uuid.UUID
+	err := s.pool.QueryRow(c.Request.Context(), `
+		SELECT n.id FROM employer_needs n
+		JOIN companies c ON c.id = n.company_id
+		WHERE n.id = $1 AND c.owner_user_id = $2`, id, owner).Scan(&needID)
+	if err != nil {
+		httpx.GinError(c, http.StatusNotFound, "not_found", "потребность не найдена")
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"items": []api.MatchCard{}, "total": 0})

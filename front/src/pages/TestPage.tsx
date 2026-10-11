@@ -95,7 +95,7 @@ export function TestPage() {
   const highlighted = useMemo(() => (item ? paint(item.body, item.type) : null), [item]);
   const held = tracks.find((track) => track.specializationId === specializationId);
   const heldGrade = byId(catalog?.grades, held?.gradeId);
-  const grades = (catalog?.grades ?? []).filter((grade) => !heldGrade || (grade.rank ?? 0) > (heldGrade.rank ?? 0));
+  const grades = catalog?.grades ?? [];
 
   useEffect(() => {
     const current = items[index];
@@ -263,35 +263,38 @@ export function TestPage() {
   if (!session) {
     return (
       <div className="grid max-w-xl gap-5">
-        <PageTitle title="Тест на грейд" text="Грейд считается отдельно для каждой специализации. Повтор того же уровня и сдача ниже закрыты. Можно только повысить." />
+        <PageTitle
+          title="Тест на грейд"
+          text="Грейд подтверждается отдельно для каждой специализации. По результатам теста грейд не понижается принудительно: можно сдать тест на уровень ниже или повысить его."
+        />
         {error ? <Notice>{error}</Notice> : null}
         {!catalog ? <Empty title="Справочник молчит" text="Сервис dict не ответил. Без него нельзя выбрать категорию." /> : null}
         <Field label="Специализация">
           <Select
             value={specializationId}
             onChange={(event) => {
-              const nextId = event.target.value;
-              setSpecializationId(nextId);
-              const floor = tracks.find((track) => track.specializationId === nextId);
-              const floorGrade = byId(catalog?.grades, floor?.gradeId);
-              const picked = byId(catalog?.grades, gradeId);
-              if (floorGrade && picked && (picked.rank ?? 0) <= (floorGrade.rank ?? 0)) setGradeId("");
+              setSpecializationId(event.target.value);
             }}
           >
             <option value="">Выберите</option>
             {catalog?.specializations.map((entry) => <option key={entry.id} value={entry.id}>{entry.name}</option>)}
           </Select>
         </Field>
-        {heldGrade && grades.length === 0 ? (
-          <p className="text-sm text-dim">В этом направлении уже {heldGrade.name}. Выше сдавать некуда, тот же уровень закрыт.</p>
-        ) : (
-          <Field label="Грейд, на который претендуете" hint={heldGrade ? `В этом направлении уже ${heldGrade.name}. Тот же уровень и ниже скрыты.` : "В этом направлении грейд ещё не подтверждён. Доступны все уровни."}>
-            <Select value={gradeId} onChange={(event) => setGradeId(event.target.value)}>
-              <option value="">Выберите</option>
-              {grades.map((entry) => <option key={entry.id} value={entry.id}>{entry.name}</option>)}
-            </Select>
-          </Field>
-        )}
+        <Field
+          label="Грейд, на который претендуете"
+          hint={heldGrade
+            ? `Текущий подтверждённый уровень: ${heldGrade.name}. Можно пройти тест на уровень выше или ниже (при неуспехе текущий грейд сохраняется).`
+            : "В этом направлении грейд ещё не подтверждён. Доступны все уровни."}
+        >
+          <Select value={gradeId} onChange={(event) => setGradeId(event.target.value)}>
+            <option value="">Выберите</option>
+            {grades.map((entry) => (
+              <option key={entry.id} value={entry.id}>
+                {entry.name}{heldGrade?.id === entry.id ? " (текущий)" : ""}
+              </option>
+            ))}
+          </Select>
+        </Field>
         <Button disabled={pending || !specializationId || !gradeId} onClick={() => void start()}>
           {pending ? "Готовим задания" : "Начать"}
         </Button>

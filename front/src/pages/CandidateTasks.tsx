@@ -1,7 +1,7 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { api } from "../api/client";
 import type { CategoryState, PeriodicTask } from "../api/types";
-import { Button, Empty, Field, Notice, TextArea } from "../components/ui";
+import { Button, Empty, Field, Notice, PageTitle, TextArea } from "../components/ui";
 import { formatWhen } from "../lib/format";
 
 export function CandidateTasks() {
@@ -99,3 +99,16 @@ export function CandidateTasks() {
     </section>
   );
 }
+
+export function CandidateTasksPage() {
+  return (
+    <div className="grid gap-6">
+      <PageTitle
+        title="Задания от работодателей"
+        text="Решайте короткие задачи или предлагайте концептуальный подход. Это поддерживает актуальность профиля и повышает позицию в подборках."
+      />
+      <CandidateTasks />
+    </div>
+  );
+}
+
